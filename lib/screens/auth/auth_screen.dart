@@ -7,9 +7,9 @@
  * - Gerenciar entrada de dados do usuário
  * - Integrar com autenticação social
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

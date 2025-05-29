@@ -7,9 +7,9 @@
  * - Configurar recursos globais
  * - Iniciar o widget raiz
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

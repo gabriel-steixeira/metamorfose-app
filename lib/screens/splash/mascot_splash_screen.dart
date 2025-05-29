@@ -3,13 +3,13 @@
  * Description: Tela de splash com o mascote do aplicativo.
  *
  * Responsabilidades:
- * - Exibir o mascote do aplicativo
- * - Animar a transição para a próxima tela
- * - Gerenciar o tempo de exibição
+ * - Exibir mascote e animações
+ * - Fazer transição para próxima tela
+ * - Apresentar personalidade da aplicação
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

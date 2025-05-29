@@ -1,14 +1,15 @@
 /**
  * File: metamorfose_primary_button.dart
- * Description: Componente de botão primário do app Metamorfose. Usado para ações principais como "Entrar", "Cadastrar", "Confirmar", etc.
+ * Description: Componente de botão primário do aplicativo.
  *
  * Responsabilidades:
- * - Exibe um botão primário customizado e interação de clique.
- * - Suporta animações de clique e transições visuais.
+ * - Fornecer botão primário com estilo consistente
+ * - Suportar ícones opcionais
+ * - Manter padrão visual do design system
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

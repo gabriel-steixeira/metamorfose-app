@@ -1,3 +1,19 @@
+/**
+ * File: plant_config_screen.dart
+ * Description: Tela de configuração da planta virtual.
+ *
+ * Responsabilidades:
+ * - Permitir personalização da planta virtual
+ * - Configurar nome e aparência da planta
+ * - Criar conexão emocional com o usuário
+ *
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
+ * Version: 1.0.0
+ * Squad: Metamorfose
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';

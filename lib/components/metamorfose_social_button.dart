@@ -1,15 +1,15 @@
 /**
  * File: metamorfose_social_button.dart
- * Description: Componente de botão social do aplicativo Metamorfose.
+ * Description: Componente de botão para autenticação social.
  *
  * Responsabilidades:
- * - Fornecer um botão social com estilo padronizado
- * - Manter consistência visual em todos os botões sociais do app
- * - Suportar ícones SVG para diferentes provedores sociais
+ * - Fornecer botões para login social (Google, Facebook, etc.)
+ * - Manter consistência visual nos botões de redes sociais
+ * - Suportar ícones das redes sociais
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

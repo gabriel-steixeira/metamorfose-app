@@ -1,15 +1,15 @@
 /**
- * File: onboarding_plant_screen.dart
- * Description: Segunda tela do onboarding que apresenta o conceito da planta digital.
+ * File: onboarding_egg_screen.dart
+ * Description: Tela de onboarding que apresenta o conceito do ovo.
  *
  * Responsabilidades:
- * - Apresentar o conceito da planta digital
- * - Exibir a ilustração da planta
- * - Explicar a interação com a planta
+ * - Apresentar a metáfora do ovo como estado inicial
+ * - Explicar o processo de transformação
+ * - Navegação para próxima etapa do onboarding
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

@@ -1,15 +1,15 @@
 /**
  * File: onboarding_carousel_screen.dart
- * Description: Tela de onboarding com carrossel que apresenta as várias etapas em um único fluxo
+ * Description: Tela de onboarding com carousel de informações.
  *
  * Responsabilidades:
- * - Implementar navegação lateral entre as páginas de onboarding
- * - Gerenciar os indicadores de página
- * - Fornecer acesso às diferentes etapas de onboarding
+ * - Exibir carousel com informações do aplicativo
+ * - Permitir navegação entre slides
+ * - Apresentar funcionalidades principais
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

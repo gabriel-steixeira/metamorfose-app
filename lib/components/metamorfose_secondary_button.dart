@@ -1,14 +1,15 @@
 /**
  * File: metamorfose_secondary_button.dart
- * Description: Componente de botão secundário do aplicativo Metamorfose.
+ * Description: Componente de botão secundário do aplicativo.
  *
  * Responsabilidades:
- * - Fornecer um botão secundário com estilo padronizado
- * - Manter consistência visual em todos os botões secundários do app
+ * - Fornecer botão secundário com estilo consistente
+ * - Ações secundárias como "Cancelar", "Voltar"
+ * - Manter padrão visual do design system
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

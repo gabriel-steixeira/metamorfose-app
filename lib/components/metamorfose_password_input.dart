@@ -1,16 +1,15 @@
 /**
  * File: metamorfose_password_input.dart
- * Description: Componente de input de senha do aplicativo Metamorfose.
+ * Description: Componente de input de senha personalizado.
  *
  * Responsabilidades:
- * - Fornecer um campo de entrada de senha com estilo padronizado
- * - Manter consistência visual com outros inputs do app
- * - Implementar toggle de visibilidade da senha
- * - Suportar ícone prefix personalizado
+ * - Fornecer campo de senha com funcionalidade de mostrar/ocultar
+ * - Manter segurança na entrada de senhas
+ * - Seguir padrões visuais do design system
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

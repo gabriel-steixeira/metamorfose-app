@@ -1,15 +1,15 @@
 /**
- * File: onboarding_plant_screen.dart
- * Description: Segunda tela do onboarding que apresenta o conceito da planta digital.
+ * File: onboarding_butterfly_screen.dart
+ * Description: Tela de onboarding que apresenta o conceito da borboleta.
  *
  * Responsabilidades:
- * - Apresentar o conceito da planta digital
- * - Exibir a ilustração da planta
- * - Explicar a interação com a planta
+ * - Apresentar a metáfora da borboleta como transformação final
+ * - Explicar o objetivo da jornada
+ * - Navegação para próxima etapa do onboarding
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

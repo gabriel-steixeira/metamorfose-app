@@ -1,15 +1,15 @@
 /**
  * File: onboarding_plant_screen.dart
- * Description: Segunda tela do onboarding que apresenta o conceito da planta digital.
+ * Description: Tela de onboarding que apresenta a planta do usuário.
  *
  * Responsabilidades:
- * - Apresentar o conceito da planta digital
- * - Exibir a ilustração da planta
- * - Explicar a interação com a planta
+ * - Apresentar o conceito da planta virtual
+ * - Explicar como a planta representa o progresso
+ * - Navegação para próxima etapa do onboarding
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

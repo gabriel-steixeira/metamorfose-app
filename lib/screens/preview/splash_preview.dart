@@ -6,8 +6,9 @@
  * - Permitir a visualização isolada da tela de splash
  * - Facilitar testes visuais sem necessidade de emulador completo
  *
- * Author: Gabriel Teixeira
- * Created on: [Data atual]
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

@@ -1,15 +1,15 @@
 /**
  * File: brand_splash_screen.dart
- * Description: Tela de splash inicial com a marca do aplicativo.
+ * Description: Tela de splash com a marca do aplicativo.
  *
  * Responsabilidades:
- * - Exibir a marca do aplicativo
- * - Animar a transição para a próxima tela
- * - Gerenciar o tempo de exibição
+ * - Exibir logo e marca do aplicativo
+ * - Fazer transição para próxima tela
+ * - Carregamento inicial da aplicação
  *
- * Author: Gabriel Teixeira
- * Created on: 13-03-2024
- * Last modified: 13-03-2024
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */

@@ -1,14 +1,15 @@
 /**
  * File: speech_bubble.dart
- * Description: Componente de balão de fala usado no aplicativo.
+ * Description: Componente de balão de fala para conversas.
  *
  * Responsabilidades:
- * - Exibir um balão de fala com texto customizável
- * - Manter consistência visual dos balões em todo o app
+ * - Criar balões de fala estilizados
+ * - Suportar diferentes cores e tamanhos
+ * - Manter padrão visual das conversas
  *
- * Author: Gabriel Teixeira
- * Created on: atual
- * Last modified: atual
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 29-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */
