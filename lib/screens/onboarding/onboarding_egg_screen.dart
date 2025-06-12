@@ -24,7 +24,7 @@ import 'package:conversao_flutter/components/metamorfose_primary_button.dart';
 
 /// Constantes de layout para facilitar manutenção e clareza
 class _LayoutConstants {
-  static const double backgroundTopPadding = 24;
+  static const double backgroundTopPadding = 5;
   static const double statusBarExtra = 8;
   static const double ivyWidthFactor = 0.7;
   static const double ivyHeightFactor = 0.26;

@@ -119,15 +119,17 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   }
 
   void _handleTakePhoto() {
-    // Implementar funcionalidade de tirar foto
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Funcionalidade de foto será implementada')),
-    );
+    // Debug: verificar se o botão está sendo pressionado
+    print('Botão TIRAR FOTO pressionado - navegando para ${Routes.voiceChat}');
+    // Navegar para a tela de chat de voz
+    context.push(Routes.voiceChat);
   }
 
   void _handleSkip() {
-    // Navegar para próxima tela
-    context.go(Routes.voiceChat);
+    // Debug: verificar se o botão está sendo pressionado
+    print('Botão IGNORAR pressionado - navegando para ${Routes.voiceChat}');
+    // Navegar para a tela de chat de voz
+    context.push(Routes.voiceChat);
   }
 
   @override

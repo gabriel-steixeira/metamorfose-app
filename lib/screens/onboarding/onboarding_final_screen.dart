@@ -16,7 +16,7 @@ class _LayoutConstants {
   static const double statusBarExtra = 8;
   static const double ivyWidthFactor = 0.8;
   static const double textFontSize = 18;
-  static const double backgroundTopPadding = 24;
+  static const double backgroundTopPadding = 5;
 }
 
 /// Tela final do onboarding

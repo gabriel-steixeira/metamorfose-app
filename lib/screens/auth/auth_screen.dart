@@ -16,8 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:conversao_flutter/theme/colors.dart';
 import 'package:conversao_flutter/components/index.dart';
+import 'package:conversao_flutter/routes/routes.dart';
 
 /// Tela de autenticação com opções de login e cadastro
 class AuthScreen extends StatefulWidget {
@@ -289,9 +291,7 @@ class _AuthScreenState extends State<AuthScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: MetamorfeseButton(
               text: 'ENTRAR',
-              onPressed: () {
-                // Implementar ação de login
-              },
+              onPressed: () => context.go(Routes.plantConfig) 
             ),
           ),
           
@@ -343,6 +343,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     iconPath: 'assets/images/auth/ic_google_logo.svg',
                     onPressed: () {
                       // Implementar login com Google
+                      context.go(Routes.plantConfig);
                     },
                     textColor: MetamorfoseColors.blueNormal,
                   ),
@@ -513,7 +514,14 @@ class _AuthScreenState extends State<AuthScreen> {
             child: MetamorfeseButton(
               text: 'CRIAR CONTA',
               onPressed: () {
-                // Implementar ação de cadastro
+                // Debug: verificar se o botão está sendo pressionado
+                print('Botão CRIAR CONTA pressionado - navegando para ${Routes.plantConfig}');
+                try {
+                  // Navegar para a tela de configuração da planta
+                  context.push(Routes.plantConfig);
+                } catch (e) {
+                  print('Erro na navegação: $e');
+                }
               },
             ),
           ),

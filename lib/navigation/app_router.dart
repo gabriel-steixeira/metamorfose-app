@@ -14,7 +14,6 @@
  * Squad: Metamorfose
  */
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:conversao_flutter/routes/routes.dart';
 import 'package:conversao_flutter/screens/auth/auth_screen.dart';
