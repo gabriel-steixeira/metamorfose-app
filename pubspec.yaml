@@ -38,6 +38,9 @@ dependencies:
   # Maps e Localização
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
+  
+  # Notificações Locais (sem Firebase por enquanto)
+  flutter_local_notifications: ^17.2.3
 
 dev_dependencies:
   flutter_test:

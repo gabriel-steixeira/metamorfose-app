@@ -4,6 +4,7 @@
 /// Responsabilidades:
 /// - Exibir interface de visualização do dia
 /// - Exibir informações do personagem
+/// - Mostrar notificação de boas-vindas
 ///
 /// Author: Gabriel Teixeira e Vitoria Lana
 /// Created on: 30-05-2025
@@ -17,6 +18,7 @@ import 'package:conversao_flutter/components/speech_bubble.dart';
 import 'package:conversao_flutter/components/bottom_navigation_menu.dart';
 import 'package:conversao_flutter/models/weather.dart';
 import 'package:conversao_flutter/models/quote.dart';
+import 'package:conversao_flutter/services/notification_service.dart';
 
 /// Enum para estados da aplicação
 enum AppState {
@@ -46,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     _loadWeatherData();
     _loadQuoteData();
+    _showWelcomeNotification();
   }
 
   Future<void> _loadWeatherData() async {
@@ -79,6 +82,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         quoteState = AppState.error;
         quoteError = e.toString();
       });
+    }
+  }
+
+  /// Mostra notificação de boas-vindas
+  Future<void> _showWelcomeNotification() async {
+    try {
+      // Aguardar um pouco para que a tela carregue completamente
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
+      // Mostrar notificação de boas-vindas
+      await NotificationService().showWelcomeNotification();
+    } catch (e) {
+      debugPrint('❌ Erro ao mostrar notificação de boas-vindas: $e');
     }
   }
 
@@ -265,6 +281,88 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    
+                    // Seção de teste das notificações (pode ser removida em produção)
+                    if (true) // Mantém apenas em desenvolvimento
+                      Padding(
+                        padding: EdgeInsets.only(left: (screenSize.width - bubbleWidth) / 2, bottom: 4, top: 8),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Teste de Notificações',
+                            style: AppTextStyles.titleLarge.copyWith(
+                              color: MetamorfoseColors.greyDark,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'DinNext',
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (true) // Mantém apenas em desenvolvimento
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SpeechBubble(
+                          width: bubbleWidth,
+                          showTriangle: false,
+                          showBorder: true,
+                          borderColor: MetamorfoseColors.purpleLight,
+                          color: MetamorfoseColors.whiteLight,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Teste as notificações do app:',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: MetamorfoseColors.greyDark,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showWelcomeNotification(),
+                                      icon: const Icon(Icons.waving_hand, size: 16),
+                                      label: const Text('Boas-vindas'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.greenNormal,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showMotivationNotification(),
+                                      icon: const Icon(Icons.fitness_center, size: 16),
+                                      label: const Text('Motivação'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.purpleNormal,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showPlantCareNotification(),
+                                      icon: const Icon(Icons.local_florist, size: 16),
+                                      label: const Text('Cuidar da Planta'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.greenLight,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
