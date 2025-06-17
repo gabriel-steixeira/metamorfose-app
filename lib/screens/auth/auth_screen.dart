@@ -373,7 +373,7 @@ class _AuthScreenState extends State<AuthScreen> {
               text: const TextSpan(
                 style: TextStyle(
                   color: MetamorfoseColors.greyLight,
-                  fontSize: 18,
+                  fontSize: 14,
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w400,
                 ),
@@ -603,7 +603,7 @@ class _AuthScreenState extends State<AuthScreen> {
               text: const TextSpan(
                 style: TextStyle(
                   color: MetamorfoseColors.greyLight,
-                  fontSize: 18,
+                  fontSize: 14,
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w400,
                 ),

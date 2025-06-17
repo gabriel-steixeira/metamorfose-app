@@ -27,9 +27,17 @@ dependencies:
   google_fonts: ^6.1.0
   cached_network_image: ^3.3.0
   
+  # HTTP requests e APIs
+  dio: ^5.3.2
+  intl: ^0.18.1
+  
   # Áudio
   just_audio: ^0.9.35
   audio_waveforms: ^1.0.4
+  
+  # Maps e Localização
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +55,7 @@ flutter:
     - assets/images/
     - assets/animations/
     - assets/images/chat/
+    - assets/images/home/
   
   fonts:
     - family: DinNext

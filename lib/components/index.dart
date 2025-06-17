@@ -19,4 +19,5 @@ export 'metamorfose_secondary_button.dart';
 export 'metamorfose_social_button.dart';
 export 'metamorfose_input.dart';
 export 'metamorfose_select.dart';
-export 'metamorfose_password_input.dart'; 
+export 'metamorfose_password_input.dart';
+export 'bottom_navigation_menu.dart'; 

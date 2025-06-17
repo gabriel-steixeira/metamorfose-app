@@ -49,7 +49,6 @@
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules
 !**/ios/**/default.mode1v3
@@ -75,3 +74,46 @@ Thumbs.db
 
 # Debug files
 *.log
+
+# Environment variables & API keys
+env.local
+.env
+.env.local
+.env.production
+.env.development
+*.key
+api_keys.dart
+config/api_keys.dart
+**/api_keys.dart
+secrets.dart
+**/secrets.dart
+
+# Security files
+keystore.properties
+key.properties
+google-services.json
+GoogleService-Info.plist
+
+# Sensitive documentation
+**/API_KEYS.md
+**/SECRETS.md
+
+# ==================================
+# 🔄 ESTRATÉGIA HÍBRIDA DE PLATAFORMA
+# ==================================
+# As pastas de plataforma são opcionais - podem ser:
+# 1. Versionadas (padrão) - para projetos com customizações
+# 2. Regeneradas - usando scripts/setup_project.dart
+#
+# Para REMOVER do versionamento (estratégia regenerativa):
+# Descomente as linhas abaixo:
+#
+.android/
+.ios/
+.web/
+.windows/
+.linux/
+.macos/
+#
+# ⚠️  ATENÇÃO: Só faça isso se tiver certeza de que não há
+# código nativo personalizado nas pastas de plataforma!

@@ -28,9 +28,9 @@ class OnboardingScreen extends StatelessWidget {
   // Constantes de layout seguindo o padrão do Kotlin
   static const double buttonHeight = 43;
   static const double maxButtonWidth = 358;
-  static const double horizontalPadding = 24;
+  static const double horizontalPadding = 50;
   static const double spacingGapXS = 16;
-  static const double logoTopSpacing = 250;
+  static const double logoTopSpacing = 150;
 
   // Proporções originais da borboleta
   static const double originalButterflyWidth = 267;
@@ -42,7 +42,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    final double butterflyWidth = screenSize.width * 0.7; // 70% da largura da tela
+    final double butterflyWidth = screenSize.width; // 70% da largura da tela
     final double butterflyHeight = butterflyWidth / butterflyAspectRatio;
 
     return Scaffold(
@@ -104,23 +104,15 @@ class OnboardingScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-              const Spacer(),
-              SizedBox(
-                width: maxButtonWidth,
-                height: buttonHeight,
-                child: MetamorfosePrimaryButton(
-                  text: 'Começar agora',
-                      onPressed: () => context.go(Routes.onboardingWelcome),
-                    ),
+              const SizedBox(height: 60),
+              MetamorfosePrimaryButton(
+                text: 'Começar agora',
+                onPressed: () => context.go(Routes.onboardingWelcome),
               ),
               const SizedBox(height: spacingGapXS),
-              SizedBox(
-                width: maxButtonWidth,
-                height: buttonHeight,
-                child: MetamorfeseSecondaryButton(
-                      text: 'Já tenho uma conta',
-                  onPressed: () => context.go(Routes.auth),
-                    ),
+              MetamorfeseSecondaryButton(
+                text: 'Já tenho uma conta',
+                onPressed: () => context.go(Routes.auth),
               ),
               const SizedBox(height: 36),
             ],

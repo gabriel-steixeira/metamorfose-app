@@ -16,9 +16,13 @@
 
 import 'package:go_router/go_router.dart';
 import 'package:conversao_flutter/routes/routes.dart';
-import 'package:conversao_flutter/screens/auth/auth_screen.dart';
+ import 'package:conversao_flutter/screens/auth/auth_screen.dart';
 //import 'package:conversao_flutter/screens/auth/register_screen.dart';
+import 'package:conversao_flutter/screens/home/home.dart';
+//import 'package:conversao_flutter/screens/home/home_screen_bloc.dart';
 import 'package:conversao_flutter/screens/chat/voice_chat_screen.dart';
+import 'package:conversao_flutter/screens/map/map_screen.dart';
+//import 'package:conversao_flutter/screens/map/map_screen_bloc.dart';
 import 'package:conversao_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
 import 'package:conversao_flutter/screens/onboarding/onboarding_carousel_screen.dart';
 import 'package:conversao_flutter/screens/onboarding/onboarding_egg_screen.dart';
@@ -27,6 +31,7 @@ import 'package:conversao_flutter/screens/onboarding/onboarding_plant_screen.dar
 import 'package:conversao_flutter/screens/onboarding/onboarding_screen.dart';
 import 'package:conversao_flutter/screens/onboarding/onboarding_welcome_screen.dart';
 import 'package:conversao_flutter/screens/plant/plant_config_screen.dart';
+//import 'package:conversao_flutter/screens/plant/plant_config_screen_bloc.dart';
 import 'package:conversao_flutter/screens/splash/brand_splash_screen.dart';
 import 'package:conversao_flutter/screens/splash/mascot_splash_screen.dart';
 
@@ -92,11 +97,11 @@ class AppRouter {
         builder: (context, state) => const OnboardingFinalScreen(),
       ),
       
-      // Tela de autenticação
-      GoRoute(
-        path: Routes.auth,
-        builder: (context, state) => const AuthScreen(),
-      ),
+      // Tela de autenticação (agora usando BLoC como padrão)
+      // GoRoute(
+      //   path: Routes.auth,
+      //   builder: (context, state) => const AuthScreenBloc(),
+      // ),
       
       // Tela de registro
       // GoRoute(
@@ -104,16 +109,55 @@ class AppRouter {
       //   builder: (context, state) => const RegisterScreen(),
       // ),
       
-      // Tela de configuração da planta
+      // Tela de configuração da planta (agora usando BLoC como padrão)
       GoRoute(
         path: Routes.plantConfig,
         builder: (context, state) => const PlantConfigScreen(),
+      ),
+      
+      // Tela inicial/home (agora usando BLoC como padrão)
+      GoRoute(
+        path: Routes.home,
+        builder: (context, state) => const HomeScreen(),
       ),
       
       // Tela de chat por voz
       GoRoute(
         path: Routes.voiceChat,
         builder: (context, state) => const VoiceChatScreen(),
+      ),
+      
+      // Tela de mapa com floriculturas (agora usando BLoC como padrão)
+      GoRoute(
+        path: Routes.map,
+        builder: (context, state) => const MapScreen(), //Bloc(),
+      ),
+      
+      // === ROTAS DE DESENVOLVIMENTO/TESTE ===
+      // Mantidas temporariamente para compatibilidade
+      
+      // Tela de autenticação original (deprecated)
+      GoRoute(
+        path: Routes.auth,
+        builder: (context, state) => const AuthScreen(),
+      ),
+      
+      // Tela de configuração da planta original (deprecated)
+      GoRoute(
+        path: Routes.plantConfigBloc,
+        builder: (context, state) => const PlantConfigScreen(),
+      ),
+      
+      // Tela inicial original (deprecated)
+      GoRoute(
+        path: Routes.homeBloc,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      
+      // Tela de mapa original (deprecated)  
+      GoRoute(
+        path: Routes.mapBloc,
+        builder: (context, state) => const MapScreen(),
       ),
     ],
   );

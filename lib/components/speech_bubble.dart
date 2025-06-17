@@ -24,6 +24,7 @@ class SpeechBubble extends StatelessWidget {
   final double width;
   final double height;
   final bool showTriangle;
+  final bool showBorder;
   final Color borderColor;
   final Color color;
   final Color triangleColor;
@@ -33,6 +34,7 @@ class SpeechBubble extends StatelessWidget {
     this.width = 290,
     this.height = 125,
     this.showTriangle = true,
+    this.showBorder = true,
     this.triangleColor = MetamorfoseColors.whiteLight,
     this.color = MetamorfoseColors.whiteLight,
     this.borderColor = MetamorfoseColors.greenLight,
@@ -54,14 +56,14 @@ class SpeechBubble extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7.97),
             ),
-            shadows: [
+            shadows: showBorder ? [
               BoxShadow(
                 color: borderColor,
                 blurRadius: 0,
                 offset: const Offset(2.50, 2.50),
                 spreadRadius: 2.50,
               ),
-            ],
+            ] : [],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

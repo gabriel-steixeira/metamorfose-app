@@ -120,16 +120,16 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
 
   void _handleTakePhoto() {
     // Debug: verificar se o botão está sendo pressionado
-    print('Botão TIRAR FOTO pressionado - navegando para ${Routes.voiceChat}');
-    // Navegar para a tela de chat de voz
-    context.push(Routes.voiceChat);
+    print('Botão TIRAR FOTO pressionado - navegando para ${Routes.home}');
+    // Navegar para a tela home
+    context.go(Routes.home);
   }
 
   void _handleSkip() {
     // Debug: verificar se o botão está sendo pressionado
-    print('Botão IGNORAR pressionado - navegando para ${Routes.voiceChat}');
-    // Navegar para a tela de chat de voz
-    context.push(Routes.voiceChat);
+    print('Botão IGNORAR pressionado - navegando para ${Routes.home}');
+    // Navegar para a tela home
+    context.go(Routes.home);
   }
 
   @override
@@ -167,11 +167,11 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
               
               // Área da planta visual
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Center(
                   child: SizedBox(
                     width: screenWidth * 0.6,
-                    height: screenHeight * 0.35,
+                    height: screenHeight * 0.3,
                     child: SvgPicture.asset(
                       'assets/images/plantsetup/plantsetup.svg',
                       fit: BoxFit.contain,
@@ -182,7 +182,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
               
               // Painel inferior com configurações
               Expanded(
-                flex: 4,
+                flex: 5,
                 child: Container(
                   width: double.infinity,
                   decoration: const ShapeDecoration(
@@ -280,6 +280,47 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Texto para acessar o mapa de floriculturas
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navegar para a tela de mapa
+                            context.push(Routes.map);
+                          },
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: const TextSpan(
+                              style: TextStyle(
+                                color: MetamorfoseColors.greyMedium,
+                                fontSize: 16,
+                                fontFamily: 'DIN Next for Duolingo',
+                                fontWeight: FontWeight.w400,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: '🌸 Ainda não tem uma planta?\n',
+                                  style: TextStyle(
+                                    color: MetamorfoseColors.purpleLight,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: 'Encontre uma floricultura perto de você!',
+                                  style: TextStyle(
+                                    color: MetamorfoseColors.purpleLight,
+                                    fontWeight: FontWeight.w500,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                       
