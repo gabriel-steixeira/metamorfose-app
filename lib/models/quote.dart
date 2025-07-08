@@ -1,8 +1,7 @@
-import 'package:dio/dio.dart';
 import 'dart:math';
 
-/// Modelo de dados para resposta da API PaperQuotes (https://paperquotes.com/api-docs/#quotes-by-language)
-/// Contém apenas o texto da frase.
+/// Modelo de dados para quotes motivacionais
+/// Sistema focado em frases locais em português específicas para superação de vícios
 class Quote {
   final String text;
 
@@ -10,31 +9,8 @@ class Quote {
     required this.text,
   });
 
-  factory Quote.fromJson(Map<String, dynamic> json) {
-    // A API PaperQuotes retorna as frases em uma lista dentro do campo 'results'.
-    // Exemplo de resposta:
-    // {
-    //   "results": [
-    //     { "quote": "Texto da frase" },
-    //     ...
-    //   ]
-    // }
-    String raw = json['quote'] ?? '';
-    // Remove aspas e espaços do início e fim (duplas, simples, curvas)
-    String clean = raw.trim();
-    // Lista de aspas a remover
-    final aspas = ['"', '"', '"', '„', '‟', '\'', '«', '»'];
-    for (final a in aspas) {
-      if (clean.startsWith(a)) clean = clean.substring(1);
-      if (clean.endsWith(a)) clean = clean.substring(0, clean.length - 1);
-      clean = clean.trim();
-    }
-    return Quote(
-      text: clean,
-    );
-  }
-
-  /// Lista de frases motivacionais como fallback
+  /// Lista expandida de frases motivacionais em português para superação de vícios
+  /// Cada frase é cuidadosamente selecionada para o contexto do projeto Metamorfose
   static const List<String> _fallbackQuotes = [
     "Acredite em você mesmo e tudo será possível.",
     "Cada dia é uma nova oportunidade para crescer.",
@@ -50,84 +26,111 @@ class Quote {
     "Regue seus sonhos com dedicação e veja-os florescer.",
     "Cada novo dia é uma semente de possibilidades infinitas.",
     "Transforme seus obstáculos em degraus para o crescimento.",
-    "O cuidado de hoje é a felicidade de amanhã."
+    "O cuidado de hoje é a felicidade de amanhã.",
+    "Sua força interior é maior do que qualquer tempestade.",
+    "Cada respiração é uma chance de recomeçar.",
+    "O progresso não precisa ser perfeito, apenas constante.",
+    "Você é o jardineiro da sua própria vida.",
+    "Pequenas mudanças hoje criam grandes resultados amanhã.",
+    "A coragem não é a ausência do medo, mas agir apesar dele.",
+    "Sua jornada é única, não compare com a de outros.",
+    "O que você planta hoje, colherá no futuro.",
+    "Seja gentil consigo mesmo durante o processo de crescimento.",
+    "Cada dia vencido é uma vitória a ser celebrada.",
+    "Você tem tudo o que precisa para superar este desafio.",
+    "A mudança começa com um único passo corajoso.",
+    "Sua determinação é mais forte que qualquer obstáculo.",
+    "Lembre-se: você já superou 100% dos seus dias difíceis.",
+    "O autocuidado não é egoísmo, é necessidade.",
+    "Sua metamorfose acontece um dia de cada vez.",
+    "Como uma borboleta, você está se transformando constantemente.",
+    "Cada escolha saudável é um ato de amor próprio.",
+    "Você merece toda a felicidade que está construindo.",
+    "Sua planta cresce porque você escolhe cuidar dela diariamente.",
+    "A força para mudar sempre esteve dentro de você.",
+    "Celebre cada pequena vitória no seu caminho.",
+    "Você é mais resiliente do que imagina.",
+    "Sua jornada de cura inspira outros ao seu redor.",
+    "O amor próprio é o primeiro passo para qualquer transformação.",
   ];
 
-  /// Busca uma frase motivacional com fallback local
+  /// Busca uma frase motivacional do sistema local
+  /// Sempre retorna frases em português específicas para o contexto de superação
   static Future<Quote> fetchQuote() async {
     try {
-      // Tenta buscar na API PaperQuotes primeiro
-      final dio = createDioQuoteApi();
-      final response = await dio.get('apiv1/quotes/', queryParameters: {
-        'lang': 'pt',
-        'curated': '1',
-      });
+      // Simular um pequeno delay para manter a experiência natural
+      await Future.delayed(const Duration(milliseconds: 300));
       
-      if (response.statusCode == 200 && 
-          response.data['results'] != null && 
-          response.data['results'].isNotEmpty) {
-        final results = response.data['results'];
-        final randomIndex = Random().nextInt(results.length);
-        print('[Quote] Frase obtida da API PaperQuotes');
-        return Quote.fromJson(results[randomIndex]);
-      } else {
-        // Se a API não retornar dados válidos, usa fallback
-        print('[Quote] API não retornou dados válidos, usando fallback');
-        return _getFallbackQuote();
-      }
+      print('[Quote] Usando sistema local de frases motivacionais');
+      return _getLocalQuote();
     } catch (e) {
-      print('[Quote] Erro na API: $e');
-      // Se a API estiver fora do ar (erro 522 ou qualquer outro), usa fallback
-      print('[Quote] Usando frase local como fallback');
-      return _getFallbackQuote();
+      print('[Quote] Erro inesperado, usando frase padrão: $e');
+      return _getLocalQuote();
     }
   }
 
   /// Retorna uma frase local aleatória
-  static Quote _getFallbackQuote() {
+  static Quote _getLocalQuote() {
     final randomIndex = Random().nextInt(_fallbackQuotes.length);
-    return Quote(text: _fallbackQuotes[randomIndex]);
+    final selectedQuote = _fallbackQuotes[randomIndex];
+    
+    print('[Quote] Frase selecionada: "$selectedQuote"');
+    return Quote(text: selectedQuote);
   }
 
   /// Retorna uma frase local específica por índice (para testes)
-  static Quote getFallbackQuoteByIndex(int index) {
+  static Quote getQuoteByIndex(int index) {
     if (index >= 0 && index < _fallbackQuotes.length) {
       return Quote(text: _fallbackQuotes[index]);
     }
-    return _getFallbackQuote();
+    return _getLocalQuote();
   }
 
   /// Retorna o número total de frases locais disponíveis
-  static int get totalFallbackQuotes => _fallbackQuotes.length;
+  static int get totalQuotes => _fallbackQuotes.length;
 
-  /// Configuração do Dio para a API PaperQuotes
-  static Dio createDioQuoteApi() {
-    Dio dio = Dio(
-      BaseOptions(
-        connectTimeout: const Duration(seconds: 5),
-        baseUrl: 'https://api.paperquotes.com/',
-      ),
-    );
+  /// Retorna uma frase específica para momentos de dificuldade
+  static Quote getMotivationalQuote() {
+    final motivationalQuotes = [
+      "Sua força interior é maior do que qualquer tempestade.",
+      "Você tem tudo o que precisa para superar este desafio.",
+      "A mudança começa com um único passo corajoso.",
+      "Lembre-se: você já superou 100% dos seus dias difíceis.",
+      "Você é mais resiliente do que imagina.",
+      "A força para mudar sempre esteve dentro de você.",
+    ];
+    
+    final randomIndex = Random().nextInt(motivationalQuotes.length);
+    return Quote(text: motivationalQuotes[randomIndex]);
+  }
 
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        print('[PaperQuotes] Request: \\${options.method} \\${options.uri}');
-        return handler.next(options);
-      },
-      onResponse: (response, handler) async {
-        print('[PaperQuotes] Response: \\${response.statusCode}');
-        if (response.statusCode == 200) {
-          print('[PaperQuotes] Dados recebidos com sucesso');
-        } else {
-          print('[PaperQuotes] Erro na resposta: ${response.statusMessage}');
-        }
-        return handler.next(response);
-      },
-      onError: (error, handler) async {
-        print('[PaperQuotes] Error: \\${error.message}');
-        return handler.next(error);
-      },
-    ));
-    return dio;
+  /// Retorna uma frase específica para celebração de progresso
+  static Quote getCelebrationQuote() {
+    final celebrationQuotes = [
+      "Cada dia vencido é uma vitória a ser celebrada.",
+      "Celebre cada pequena vitória no seu caminho.",
+      "Você merece toda a felicidade que está construindo.",
+      "Sua metamorfose acontece um dia de cada vez.",
+      "Como uma borboleta, você está se transformando constantemente.",
+      "Sua jornada de cura inspira outros ao seu redor.",
+    ];
+    
+    final randomIndex = Random().nextInt(celebrationQuotes.length);
+    return Quote(text: celebrationQuotes[randomIndex]);
+  }
+
+  /// Retorna uma frase específica para autocuidado
+  static Quote getSelfCareQuote() {
+    final selfCareQuotes = [
+      "O autocuidado não é egoísmo, é necessidade.",
+      "Cada escolha saudável é um ato de amor próprio.",
+      "O amor próprio é o primeiro passo para qualquer transformação.",
+      "Seja gentil consigo mesmo durante o processo de crescimento.",
+      "Cada momento de cuidado consigo mesmo é um investimento no seu futuro.",
+      "Sua jornada de autocuidado é única e valiosa.",
+    ];
+    
+    final randomIndex = Random().nextInt(selfCareQuotes.length);
+    return Quote(text: selfCareQuotes[randomIndex]);
   }
 } 

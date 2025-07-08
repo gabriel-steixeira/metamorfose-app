@@ -133,14 +133,31 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
     UpdatePlantNameEvent event,
     Emitter<PlantConfigState> emit,
   ) async {
+    print('📝 BLoC recebeu UpdatePlantNameEvent: "${event.name}"');
+    
+    // Evitar atualização desnecessária se o valor for igual
+    if (state.plantName == event.name) {
+      print('📝 Nome igual ao anterior, ignorando');
+      return;
+    }
+    
     emit(state.copyWith(
       plantName: event.name,
       errorMessage: null, // Limpar erro anterior
     ));
 
-    // Validar em tempo real se o usuário já digitou algo
-    if (event.name.isNotEmpty) {
+    // Validar apenas se o campo não estiver vazio
+    // Removendo validação de tamanho mínimo que pode causar problemas
+    if (event.name.trim().isNotEmpty) {
+      print('📝 Nome não vazio, disparando validação');
       add(ValidateFormEvent());
+    } else {
+      print('📝 Nome vazio, resetando validação');
+      // Resetar validação se campo estiver vazio
+      emit(state.copyWith(
+        validationState: ValidationState.initial,
+        errorMessage: null,
+      ));
     }
   }
 
@@ -177,14 +194,25 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
     ValidateFormEvent event,
     Emitter<PlantConfigState> emit,
   ) async {
+    print('🔍 Validando formulário...');
+    print('  - Nome: "${state.plantName}"');
+    print('  - Planta: "${state.selectedPlant}"');
+    print('  - Cor: ${state.selectedColor}');
+    
     try {
       final validation = _service.validateForm(state);
+      
+      print('  - Resultado: ${validation.isValid ? "VÁLIDO" : "INVÁLIDO"}');
+      if (!validation.isValid) {
+        print('  - Erro: ${validation.error}');
+      }
       
       emit(state.copyWith(
         validationState: validation.state,
         errorMessage: validation.error,
       ));
     } catch (e) {
+      print('  - Erro na validação: $e');
       emit(state.copyWith(
         validationState: ValidationState.invalid,
         errorMessage: 'Erro na validação',
@@ -193,14 +221,32 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
   }
 
   /// Processa captura da primeira foto
+  /// REQUER VALIDAÇÃO COMPLETA DO FORMULÁRIO
   Future<void> _onTakeFirstPhoto(
     TakeFirstPhotoEvent event,
     Emitter<PlantConfigState> emit,
   ) async {
-    if (!state.canSave) {
-      emit(state.copyWith(
-        errorMessage: 'Complete o formulário antes de continuar',
-      ));
+    // Debug: Verificar estado atual
+    print('🌱 TakeFirstPhoto - Estado atual:');
+    print('  - Nome: "${state.plantName}"');
+    print('  - Planta: "${state.selectedPlant}"');
+    print('  - Cor: ${state.selectedColor}');
+    print('  - Validação: ${state.validationState}');
+    print('  - canSave: ${state.canSave}');
+    
+    // Forçar validação antes de verificar
+    final validation = _service.validateForm(state);
+    print('  - Validação forçada: ${validation.isValid} (${validation.error})');
+    
+    // Atualizar estado com validação
+    emit(state.copyWith(
+      validationState: validation.state,
+      errorMessage: validation.error,
+    ));
+    
+    // Verificar se pode salvar após validação
+    if (!validation.isValid) {
+      print('❌ Formulário inválido: ${validation.error}');
       return;
     }
 
@@ -211,7 +257,7 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
         errorMessage: null,
       ));
 
-      // Salvar configuração primeiro
+      // Salvar configuração primeiro (validação incluída)
       final saveResult = await _service.savePlantConfiguration(state);
       
       if (!saveResult.success) {
@@ -249,36 +295,19 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
   }
 
   /// Processa ação de ignorar foto
+  /// NÃO REQUER VALIDAÇÃO - NAVEGA DIRETAMENTE
   Future<void> _onSkipPhoto(
     SkipPhotoEvent event,
     Emitter<PlantConfigState> emit,
   ) async {
-    if (!state.canSave) {
-      emit(state.copyWith(
-        errorMessage: 'Complete o formulário antes de continuar',
-      ));
-      return;
-    }
-
     try {
-      // Iniciar processo de salvamento
+      // Iniciar processo de navegação sem validação
       emit(state.copyWith(
         loadingState: LoadingState.saving,
         errorMessage: null,
       ));
 
-      // Salvar configuração
-      final saveResult = await _service.savePlantConfiguration(state);
-      
-      if (!saveResult.success) {
-        emit(state.copyWith(
-          loadingState: LoadingState.idle,
-          errorMessage: saveResult.error,
-        ));
-        return;
-      }
-
-      // Processar skip da foto
+      // Simular processo de skip (sem salvar configuração)
       emit(state.copyWith(
         loadingState: LoadingState.navigating,
       ));

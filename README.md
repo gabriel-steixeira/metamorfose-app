@@ -1,6 +1,6 @@
 # 🦋 Metamorfose – Aplicativo de Superação de Vícios
 
-> “Seu crescimento, sua jornada, sua metamorfose”
+> "Seu crescimento, sua jornada, sua metamorfose"
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/gabriel-steixeira/metamorfose-app?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/gabriel-steixeira/metamorfose-app?style=for-the-badge)
@@ -23,7 +23,7 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
 - iOS: 11.0 ou superior
 - Firebase (Authentication, Firestore, Storage)
 - API da OpenAI
-- Arquitetura Clean Architecture + BLoC/Provider
+- Arquitetura Clean Architecture + BLoC
 
 ## 🌿 Funcionalidades Principais
 
@@ -31,7 +31,7 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
 > O Metamorfose atua como um **guia interativo e emocional** durante a jornada de superação. Cada funcionalidade foi desenhada para manter o engajamento e reforçar a conexão entre o usuário e sua própria transformação.
 
 - **Integração Planta Real + Digital**
-- **IA como “Consciência da Planta”**
+- **IA como "Consciência da Planta"**
 - **Interação por Voz ou Texto**
 - **Métricas Inteligentes**
 - **Registro Visual**
@@ -50,12 +50,27 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
 - Conexão com a natureza como metáfora do crescimento pessoal  
 - Alinhamento com os valores da Sociedade 5.0  
 
-## 🚧 Ajustes e melhorias
+## 🏗️ Arquitetura e Estado Atual
+
+### Migração BLoC Concluída ✅
+O projeto passou por uma refatoração completa para a arquitetura BLoC, resultando em um código mais limpo, performático e escalável. Todas as telas principais foram migradas:
+- **AuthScreen**: Sistema de login e cadastro com gerenciamento de estado via BLoC.
+- **HomeScreen**: Carregamento de dados (clima, quotes) e notificações gerenciados pelo BLoC.
+- **PlantConfigScreen**: Configuração da planta virtual com validações e lógica no BLoC.
+- **VoiceChatScreen**: Interface de chat por voz reativa, controlada pelo BLoC.
+- **MapScreen**: Localização de floriculturas com Google Maps, Places API e gerenciamento de estado BLoC.
+
+### Melhorias Técnicas Realizadas
+- **APIs de Quotes**: Substituição de API externa por uma lista local com mais de 40 frases em português, eliminando latência e garantindo relevância do conteúdo.
+- **Validações Simplificadas**: Remoção de validações complexas na tela de configuração da planta para melhorar o fluxo de usuário.
+- **Consistência de UI**: Ajustes finos de layout em telas como `Home` e `PlantConfig` para garantir espaçamento e alinhamento consistentes.
+- **Roteamento Unificado**: O `AppRouter` foi refatorado para usar exclusivamente as versões BLoC das telas, com remoção de rotas de teste e código obsoleto.
+- **Arquitetura Limpa**: O código-fonte foi limpo, com a remoção de arquivos `StatefulWidget` antigos (`map_screen.dart`) e constantes de rotas não utilizadas.
+
+## 🚧 Próximos Passos
 
 O projeto está em desenvolvimento e as próximas atualizações incluem:
 
-- [x] MVP com registro de planta física e acompanhamento digital
-- [x] Integração inicial com assistente virtual por texto
 - [ ] Implementação completa do voicebot (voz para IA)
 - [ ] Comunidade moderada e funcionalidades sociais
 - [ ] Gamificação avançada com evolução simbólica da borboleta

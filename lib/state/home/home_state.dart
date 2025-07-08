@@ -1,15 +1,14 @@
 /**
  * File: home_state.dart
- * Description: Estados para o gerenciamento da tela inicial.
+ * Description: Estado da tela principal do Metamorfose
  *
  * Responsabilidades:
- * - Definir estados da UI da home
- * - Gerenciar estado de clima (Weather API)
- * - Gerenciar estado de quotes (Quote API)
- * - Controlar estados de loading e erro
+ * - Gerenciar estado do clima
+ * - Gerenciar estado das mensagens do dia
+ * - Controlar carregamento e erros
  *
  * Author: Gabriel Teixeira
- * Created on: 29-05-2025
+ * Created on: 30-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -17,101 +16,88 @@
 import 'package:conversao_flutter/models/weather.dart';
 import 'package:conversao_flutter/models/quote.dart';
 
-/// Enum para estados de operações assíncronas
-enum DataState {
+/// Estado de carregamento
+enum LoadingState {
+  idle,
   loading,
   success,
-  error,
+  error
 }
 
-/// Estado do clima
-class WeatherState {
-  final DataState state;
-  final Weather? weather;
-  final String? errorMessage;
-
-  const WeatherState({
-    this.state = DataState.loading,
-    this.weather,
-    this.errorMessage,
-  });
-
-  WeatherState copyWith({
-    DataState? state,
-    Weather? weather,
-    String? errorMessage,
-  }) {
-    return WeatherState(
-      state: state ?? this.state,
-      weather: weather ?? this.weather,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
-
-  bool get isLoading => state == DataState.loading;
-  bool get isSuccess => state == DataState.success;
-  bool get isError => state == DataState.error;
-  bool get hasWeather => weather != null;
-  bool get hasError => errorMessage != null;
-}
-
-/// Estado das quotes motivacionais
-class QuoteState {
-  final DataState state;
-  final Quote? quote;
-  final String? errorMessage;
-
-  const QuoteState({
-    this.state = DataState.loading,
-    this.quote,
-    this.errorMessage,
-  });
-
-  QuoteState copyWith({
-    DataState? state,
-    Quote? quote,
-    String? errorMessage,
-  }) {
-    return QuoteState(
-      state: state ?? this.state,
-      quote: quote ?? this.quote,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
-
-  bool get isLoading => state == DataState.loading;
-  bool get isSuccess => state == DataState.success;
-  bool get isError => state == DataState.error;
-  bool get hasQuote => quote != null;
-  bool get hasError => errorMessage != null;
-}
-
-/// Estado principal da home
+/// Estado da tela principal
 class HomeState {
-  final WeatherState weatherState;
-  final QuoteState quoteState;
+  final LoadingState weatherLoadingState;
+  final LoadingState quoteLoadingState;
+  final Weather? weather;
+  final Quote? quote;
+  final String? weatherError;
+  final String? quoteError;
+  final String? errorMessage;
 
   const HomeState({
-    this.weatherState = const WeatherState(),
-    this.quoteState = const QuoteState(),
+    this.weatherLoadingState = LoadingState.idle,
+    this.quoteLoadingState = LoadingState.idle,
+    this.weather,
+    this.quote,
+    this.weatherError,
+    this.quoteError,
+    this.errorMessage,
   });
 
+  /// Copia o estado com novos valores
   HomeState copyWith({
-    WeatherState? weatherState,
-    QuoteState? quoteState,
+    LoadingState? weatherLoadingState,
+    LoadingState? quoteLoadingState,
+    Weather? weather,
+    Quote? quote,
+    String? weatherError,
+    String? quoteError,
+    String? errorMessage,
   }) {
     return HomeState(
-      weatherState: weatherState ?? this.weatherState,
-      quoteState: quoteState ?? this.quoteState,
+      weatherLoadingState: weatherLoadingState ?? this.weatherLoadingState,
+      quoteLoadingState: quoteLoadingState ?? this.quoteLoadingState,
+      weather: weather ?? this.weather,
+      quote: quote ?? this.quote,
+      weatherError: weatherError ?? this.weatherError,
+      quoteError: quoteError ?? this.quoteError,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
-  /// Verifica se há algum carregamento em andamento
-  bool get isLoading => weatherState.isLoading || quoteState.isLoading;
+  /// Getters de conveniência
+  bool get hasError => errorMessage != null;
+  bool get isWeatherLoading => weatherLoadingState == LoadingState.loading;
+  bool get isQuoteLoading => quoteLoadingState == LoadingState.loading;
+  bool get isLoading => isWeatherLoading || isQuoteLoading;
 
-  /// Verifica se todos os dados foram carregados com sucesso
-  bool get isFullyLoaded => weatherState.isSuccess && quoteState.isSuccess;
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
 
-  /// Verifica se há algum erro
-  bool get hasErrors => weatherState.hasError || quoteState.hasError;
+    return other is HomeState &&
+      other.weatherLoadingState == weatherLoadingState &&
+      other.quoteLoadingState == quoteLoadingState &&
+      other.weather == weather &&
+      other.quote == quote &&
+      other.weatherError == weatherError &&
+      other.quoteError == quoteError &&
+      other.errorMessage == errorMessage;
+  }
+
+  @override
+  int get hashCode {
+    return weatherLoadingState.hashCode ^
+      quoteLoadingState.hashCode ^
+      weather.hashCode ^
+      quote.hashCode ^
+      weatherError.hashCode ^
+      quoteError.hashCode ^
+      errorMessage.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'HomeState(weatherState: $weatherLoadingState, quoteState: $quoteLoadingState, weather: $weather, quote: $quote, weatherError: $weatherError, quoteError: $quoteError, error: $errorMessage)';
+  }
 } 

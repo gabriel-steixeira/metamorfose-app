@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:conversao_flutter/state/plant_config/plant_config_state.dart';
+import 'package:conversao_flutter/theme/colors.dart';
 
 /// Resultado de validação
 class ValidationResult {
@@ -64,24 +65,14 @@ class PlantConfigService {
   ValidationResult validatePlantName(String name) {
     final trimmedName = name.trim();
     
+    debugPrint('🌱 Validando nome da planta: "$trimmedName" (length: ${trimmedName.length})');
+    
     if (trimmedName.isEmpty) {
+      debugPrint('❌ Nome vazio');
       return ValidationResult.invalid('Nome da planta é obrigatório');
     }
     
-    if (trimmedName.length < 2) {
-      return ValidationResult.invalid('Nome deve ter pelo menos 2 caracteres');
-    }
-    
-    if (trimmedName.length > 50) {
-      return ValidationResult.invalid('Nome deve ter no máximo 50 caracteres');
-    }
-    
-    // Validar caracteres especiais (apenas letras, números e espaços)
-    final validPattern = RegExp(r'^[a-zA-ZÀ-ÿ0-9\s]+$');
-    if (!validPattern.hasMatch(trimmedName)) {
-      return ValidationResult.invalid('Nome deve conter apenas letras, números e espaços');
-    }
-    
+    debugPrint('✅ Nome válido: "$trimmedName"');
     return ValidationResult.valid;
   }
 
@@ -98,7 +89,13 @@ class PlantConfigService {
 
   /// Valida a seleção de cor
   ValidationResult validateColorSelection(Color color) {
-    final validColors = ColorOption.values.map((option) => option.value).toList();
+    // Lista de cores válidas
+    final validColors = [
+      MetamorfoseColors.purpleNormal,
+      MetamorfoseColors.greenNormal,
+      MetamorfoseColors.blueNormal,
+      MetamorfoseColors.pinkNormal,
+    ];
     
     if (!validColors.contains(color)) {
       return ValidationResult.invalid('Cor do vaso inválida');

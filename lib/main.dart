@@ -20,10 +20,13 @@ import 'package:flutter/services.dart';
 import 'package:conversao_flutter/app.dart';
 import 'package:conversao_flutter/services/notification_service.dart';
 
+
 /// Ponto de entrada do aplicativo Flutter
 void main() async {
   // Inicializa o binding do Flutter
   WidgetsFlutterBinding.ensureInitialized();
+  
+
   
   // Inicializar serviço de notificações de forma segura
   try {
@@ -39,11 +42,13 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Define a cor da barra de status
+  // Define a cor da barra de status e otimizações
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
   

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:conversao_flutter/theme/colors.dart';
 
 /// Input de texto do aplicativo Metamorfose.
@@ -90,49 +91,72 @@ class MetamorfeseInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: ShapeDecoration(
-        color: backgroundColor ?? MetamorfoseColors.whiteLight,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: borderColor ?? MetamorfoseColors.whiteDark,
+    return RepaintBoundary(
+      child: Container(
+        width: double.infinity,
+        height: 56,
+        decoration: ShapeDecoration(
+          color: backgroundColor ?? MetamorfoseColors.whiteLight,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              width: 1,
+              color: borderColor ?? MetamorfoseColors.whiteDark,
+            ),
+            borderRadius: BorderRadius.circular(borderRadius ?? 16),
           ),
-          borderRadius: BorderRadius.circular(borderRadius ?? 16),
+          shadows: showShadow ? const [
+            BoxShadow(
+              color: MetamorfoseColors.shadowLight,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+              spreadRadius: 0,
+            ),
+          ] : [],
         ),
-        shadows: showShadow ? const [
-          BoxShadow(
-            color: MetamorfoseColors.shadowLight,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-            spreadRadius: 0,
-          ),
-        ] : [],
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        onTap: onTap,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            color: MetamorfoseColors.greyLight,
+        child: TextField(
+          controller: controller,
+          readOnly: readOnly,
+          onTap: onTap,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          // Otimizações de performance mantendo o design
+          autocorrect: false,
+          enableSuggestions: false,
+          smartDashesType: SmartDashesType.disabled,
+          smartQuotesType: SmartQuotesType.disabled,
+          enableInteractiveSelection: true,
+          // Reduzir rebuilds desnecessários
+          enableIMEPersonalizedLearning: false,
+          scribbleEnabled: false,
+          // Otimizar renderização
+          maxLines: 1,
+          expands: false,
+          style: const TextStyle(
+            color: MetamorfoseColors.greyDark,
             fontSize: 16,
             fontFamily: 'DIN Next for Duolingo',
             fontWeight: FontWeight.w400,
           ),
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: const TextStyle(
+              color: MetamorfoseColors.greyLight,
+              fontSize: 16,
+              fontFamily: 'DIN Next for Duolingo',
+              fontWeight: FontWeight.w400,
+            ),
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            // Otimizar comportamento do cursor
+            isCollapsed: false,
+            isDense: false,
           ),
         ),
       ),

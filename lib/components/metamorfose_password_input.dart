@@ -137,6 +137,7 @@ class _MetamorfesePasswordInputState extends State<MetamorfesePasswordInput> {
               ]
             : [],
       ),
+      child: RepaintBoundary(
       child: TextField(
         controller: widget.controller,
         readOnly: widget.readOnly,
@@ -146,6 +147,10 @@ class _MetamorfesePasswordInputState extends State<MetamorfesePasswordInput> {
         textInputAction: widget.textInputAction,
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
+          autocorrect: false,
+          enableSuggestions: false,
+          smartDashesType: SmartDashesType.disabled,
+          smartQuotesType: SmartQuotesType.disabled,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: const TextStyle(
@@ -179,6 +184,7 @@ class _MetamorfesePasswordInputState extends State<MetamorfesePasswordInput> {
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,
+            ),
           ),
         ),
       ),

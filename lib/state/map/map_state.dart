@@ -37,25 +37,29 @@ class LocationState {
   final bool isLoading;
   final String? errorMessage;
   final LocationPermission? permission;
+  final bool shouldShowError; // Nova propriedade
 
   const LocationState({
+    this.isLoading = true,
     this.position,
-    this.isLoading = false,
-    this.errorMessage,
     this.permission,
+    this.errorMessage,
+    this.shouldShowError = true, // Valor padrão
   });
 
   LocationState copyWith({
-    Position? position,
     bool? isLoading,
-    String? errorMessage,
+    Position? position,
     LocationPermission? permission,
+    String? errorMessage,
+    bool? shouldShowError,
   }) {
     return LocationState(
-      position: position ?? this.position,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      position: position ?? this.position,
       permission: permission ?? this.permission,
+      errorMessage: errorMessage, // Permitir que seja nulo
+      shouldShowError: shouldShowError ?? this.shouldShowError,
     );
   }
 

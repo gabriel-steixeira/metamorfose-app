@@ -5,6 +5,7 @@
  * Responsabilidades:
  * - Gerenciar API de clima (Weather)
  * - Gerenciar API de quotes motivacionais
+ * - Gerenciar notificações de boas-vindas
  * - Centralizar lógica de chamadas assíncronas
  * - Tratamento de erros e fallbacks
  *
@@ -17,6 +18,7 @@
 import 'dart:async';
 import 'package:conversao_flutter/models/weather.dart';
 import 'package:conversao_flutter/models/quote.dart';
+import 'package:conversao_flutter/services/notification_service.dart';
 
 /// Resultado de uma operação de clima
 class WeatherResult {
@@ -85,23 +87,55 @@ class HomeDataResult {
 
 /// Serviço para gerenciamento de dados da home
 class HomeService {
-  /// Busca dados do clima
-  Future<WeatherResult> fetchWeather() async {
+  final NotificationService _notificationService;
+
+  HomeService({NotificationService? notificationService})
+      : _notificationService = notificationService ?? NotificationService();
+
+  /// Carrega dados do clima (método esperado pelo BLoC)
+  Future<Weather> loadWeatherData() async {
     try {
-      final weather = await Weather.fetchWeatherWithLocation();
-      return WeatherResult.success(weather);
+      return await Weather.fetchWeatherWithLocation();
     } catch (e) {
-      return WeatherResult.error('Erro ao carregar clima: $e');
+      throw Exception('Erro ao carregar clima: $e');
     }
   }
 
-  /// Busca quote motivacional
+  /// Carrega quote do dia (método esperado pelo BLoC)
+  Future<Quote> loadQuoteData() async {
+    try {
+      return await Quote.fetchQuote();
+    } catch (e) {
+      throw Exception('Erro ao carregar mensagem: $e');
+    }
+  }
+
+  /// Mostra notificação de boas-vindas (método esperado pelo BLoC)
+  Future<void> showWelcomeNotification() async {
+    try {
+      await _notificationService.showWelcomeNotification();
+    } catch (e) {
+      throw Exception('Erro ao mostrar notificação: $e');
+    }
+  }
+
+  /// Busca dados do clima (método legado - mantido para compatibilidade)
+  Future<WeatherResult> fetchWeather() async {
+    try {
+      final weather = await loadWeatherData();
+      return WeatherResult.success(weather);
+    } catch (e) {
+      return WeatherResult.error(e.toString());
+    }
+  }
+
+  /// Busca quote motivacional (método legado - mantido para compatibilidade)
   Future<QuoteResult> fetchQuote() async {
     try {
-      final quote = await Quote.fetchQuote();
+      final quote = await loadQuoteData();
       return QuoteResult.success(quote);
     } catch (e) {
-      return QuoteResult.error('Erro ao carregar mensagem: $e');
+      return QuoteResult.error(e.toString());
     }
   }
 

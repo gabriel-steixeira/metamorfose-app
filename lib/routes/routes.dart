@@ -30,10 +30,4 @@ class Routes {
   static const home = '/home';
   static const voiceChat = '/voice-chat';
   static const map = '/map';
-  
-  // Rotas temporárias para desenvolvimento/teste (serão removidas)
-  static const authBloc = '/auth-bloc';
-  static const plantConfigBloc = '/plant-config-bloc';
-  static const homeBloc = '/home-bloc';
-  static const mapBloc = '/map-bloc';
 } 

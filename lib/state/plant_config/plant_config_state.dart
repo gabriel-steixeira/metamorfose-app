@@ -137,7 +137,7 @@ class PlantConfigState {
   bool get canSave => isValid && !isLoading;
 
   /// Valida se o nome da planta é válido
-  bool get isNameValid => plantName.trim().isNotEmpty && plantName.trim().length >= 2;
+  bool get isNameValid => plantName.trim().isNotEmpty;
 
   /// Busca opção de planta por valor
   PlantOption get plantOption {

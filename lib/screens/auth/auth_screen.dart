@@ -1,11 +1,12 @@
 /**
  * File: auth_screen.dart
- * Description: Tela de autenticação do aplicativo Metamorfose.
+ * Description: Tela de autenticação do aplicativo Metamorfose com BLoC.
  *
  * Responsabilidades:
- * - Exibir interface de login e cadastro
- * - Gerenciar entrada de dados do usuário
+ * - Exibir interface de login e cadastro usando BLoC
+ * - Gerenciar entrada de dados do usuário via BLoC
  * - Integrar com autenticação social
+ * - Preservar design original exatamente
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
@@ -15,13 +16,16 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:conversao_flutter/theme/colors.dart';
 import 'package:conversao_flutter/components/index.dart';
 import 'package:conversao_flutter/routes/routes.dart';
+import 'package:conversao_flutter/blocs/auth_bloc.dart';
+import 'package:conversao_flutter/state/auth/auth_state.dart';
 
-/// Tela de autenticação com opções de login e cadastro
+/// Tela de autenticação com opções de login e cadastro usando BLoC
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -34,9 +38,18 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  bool _rememberMe = false;
-  int _selectedTabIndex = 0; // 0 = Entrar, 1 = Cadastrar
-  bool _isPasswordVisible = false; // Controla a imagem dos olhos do personagem
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Inicializar BLoC sem listeners pesados nos controllers
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AuthBloc>().add(AuthToggleModeEvent(AuthScreenMode.login));
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -48,6 +61,9 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildCustomTabBar() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (previous, current) => previous.mode != current.mode,
+      builder: (context, state) {
     return Container(
       width: double.infinity,
       height: 43,
@@ -64,14 +80,12 @@ class _AuthScreenState extends State<AuthScreen> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  _selectedTabIndex = 0;
-                });
+                    context.read<AuthBloc>().add(AuthToggleModeEvent(AuthScreenMode.login));
               },
               child: Container(
                 height: 35,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: _selectedTabIndex == 0
+                    decoration: state.mode == AuthScreenMode.login
                     ? ShapeDecoration(
                         color: MetamorfoseColors.whiteLight,
                         shape: RoundedRectangleBorder(
@@ -92,12 +106,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     'Entrar',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: _selectedTabIndex == 0 
+                          color: state.mode == AuthScreenMode.login 
                           ? MetamorfoseColors.greyMedium 
                           : MetamorfoseColors.greyLight,
                       fontSize: 16,
                       fontFamily: 'DIN Next for Duolingo',
-                      fontWeight: _selectedTabIndex == 0 
+                          fontWeight: state.mode == AuthScreenMode.login 
                           ? FontWeight.w700 
                           : FontWeight.w400,
                     ),
@@ -110,14 +124,12 @@ class _AuthScreenState extends State<AuthScreen> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  _selectedTabIndex = 1;
-                });
+                    context.read<AuthBloc>().add(AuthToggleModeEvent(AuthScreenMode.register));
               },
               child: Container(
                 height: 35,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: _selectedTabIndex == 1
+                    decoration: state.mode == AuthScreenMode.register
                     ? ShapeDecoration(
                         color: MetamorfoseColors.whiteLight,
                         shape: RoundedRectangleBorder(
@@ -138,12 +150,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     'Cadastrar-se',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: _selectedTabIndex == 1 
+                          color: state.mode == AuthScreenMode.register 
                           ? MetamorfoseColors.greyMedium 
                           : MetamorfoseColors.greyLight,
                       fontSize: 16,
                       fontFamily: 'DIN Next for Duolingo',
-                      fontWeight: _selectedTabIndex == 1 
+                          fontWeight: state.mode == AuthScreenMode.register 
                           ? FontWeight.w700 
                           : FontWeight.w400,
                       height: 1.40,
@@ -155,10 +167,14 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ],
       ),
+        );
+      },
     );
   }
 
   Widget _buildLoginForm() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -195,9 +211,7 @@ class _AuthScreenState extends State<AuthScreen> {
               hintText: 'Senha',
               controller: _passwordController,
               onVisibilityChanged: (isVisible) {
-                setState(() {
-                  _isPasswordVisible = isVisible;
-                });
+                     context.read<AuthBloc>().add(AuthToggleEyesEvent(!isVisible));
               },
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12),
@@ -223,9 +237,9 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      _rememberMe = !_rememberMe;
-                    });
+                        context.read<AuthBloc>().add(AuthUpdateLoginFieldEvent(
+                          rememberMe: !state.loginState.rememberMe,
+                        ));
                   },
                   child: Row(
                     children: [
@@ -233,18 +247,18 @@ class _AuthScreenState extends State<AuthScreen> {
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                          color: _rememberMe 
+                              color: state.loginState.rememberMe 
                               ? MetamorfoseColors.purpleLight 
                               : MetamorfoseColors.transparent,
                           border: Border.all(
-                            color: _rememberMe 
+                                color: state.loginState.rememberMe 
                                 ? MetamorfoseColors.purpleLight 
                                 : MetamorfoseColors.whiteDark,
                             width: 2,
                           ),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: _rememberMe
+                            child: state.loginState.rememberMe
                             ? const Icon(
                                 Icons.check,
                                 size: 14,
@@ -290,10 +304,54 @@ class _AuthScreenState extends State<AuthScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: MetamorfeseButton(
-              text: 'ENTRAR',
-              onPressed: () => context.go(Routes.plantConfig) 
+                  text: state.loginState.isLoading ? 'ENTRANDO...' : 'ENTRAR',
+                  onPressed: state.loginState.isLoading 
+                      ? () {} 
+                      : () {
+                          context.read<AuthBloc>().add(AuthSubmitLoginEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            rememberMe: state.loginState.rememberMe,
+                          ));
+                        },
+                ),
+              ),
+              
+              // Exibir erro se houver
+              if (state.loginState.errorMessage != null) ...[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MetamorfoseColors.redLight,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MetamorfoseColors.redNormal),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: MetamorfoseColors.redNormal,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            state.loginState.errorMessage!,
+                            style: const TextStyle(
+                              color: MetamorfoseColors.redNormal,
+                              fontSize: 14,
+                              fontFamily: 'DIN Next for Duolingo',
+                            ),
             ),
           ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
           
           const SizedBox(height: 24),
           
@@ -403,6 +461,8 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 24),
         ],
       ),
+        );
+      },
     );
   }
 
@@ -442,7 +502,6 @@ class _AuthScreenState extends State<AuthScreen> {
             child: MetamorfeseInput(
               hintText: 'Telefone',
               controller: _phoneController,
-              keyboardType: TextInputType.phone,
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Icon(
@@ -462,7 +521,6 @@ class _AuthScreenState extends State<AuthScreen> {
             child: MetamorfeseInput(
               hintText: 'E-mail',
               controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12),
                 child: SvgPicture.asset(
@@ -487,9 +545,7 @@ class _AuthScreenState extends State<AuthScreen> {
               hintText: 'Senha',
               controller: _passwordController,
               onVisibilityChanged: (isVisible) {
-                setState(() {
-                  _isPasswordVisible = isVisible;
-                });
+                context.read<AuthBloc>().add(AuthToggleEyesEvent(!isVisible));
               },
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12),
@@ -642,7 +698,18 @@ class _AuthScreenState extends State<AuthScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenHeight < 700;
     
-    return Scaffold(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // Navegar para home quando login for bem-sucedido
+        if (state.loginState.errorMessage == null && 
+            !state.loginState.isLoading &&
+            _emailController.text.isNotEmpty &&
+            _passwordController.text.isNotEmpty) {
+          // Simular sucesso de login (já que o AuthService sempre retorna sucesso para credenciais válidas)
+          context.go(Routes.plantConfig);
+        }
+      },
+      child: Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -664,37 +731,42 @@ class _AuthScreenState extends State<AuthScreen> {
                         width: 34,
                         height: 34,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                         onPressed: () => context.go(Routes.onboarding),
                     ),
                   ],
                 ),
               ),
               
-              // Personagem robô
+                // Personagem robô (reativo ao estado dos olhos)
               Expanded(
                 flex: 2,
-                child: Stack(
+                  child: BlocBuilder<AuthBloc, AuthState>(
+                    buildWhen: (previous, current) => previous.eyesOpen != current.eyesOpen,
+                    builder: (context, state) {
+                      return Stack(
                   children: [
                     Positioned(
                       bottom: -50, // 5% da imagem ficará atrás da parte branca
-                      left: _isPasswordVisible 
-                              ? screenWidth * 0.2375
-                              : screenWidth * 0.175, // 15% de margem esquerda
-                      right: _isPasswordVisible 
-                              ? screenWidth * 0.2375
-                              : screenWidth * 0.175, // 15% de margem direita
+                            left: state.eyesOpen 
+                                    ? screenWidth * 0.175
+                                    : screenWidth * 0.2375, // 15% de margem esquerda
+                            right: state.eyesOpen 
+                                    ? screenWidth * 0.175
+                                    : screenWidth * 0.2375, // 15% de margem direita
                       child: Image.asset(
-                        _isPasswordVisible 
-                            ? 'assets/images/auth/ivy_eyes_closed.png'
-                            : 'assets/images/auth/ivy_eyes_open.png',
+                              state.eyesOpen 
+                                  ? 'assets/images/auth/ivy_eyes_open.png'
+                                  : 'assets/images/auth/ivy_eyes_closed.png',
                         width: 
-                          _isPasswordVisible 
-                              ? screenWidth * 0.525
-                              : screenWidth * 0.65, // 70% da largura da tela
+                                state.eyesOpen 
+                                    ? screenWidth * 0.65
+                                    : screenWidth * 0.525, // 70% da largura da tela
                         fit: BoxFit.contain,
                       ),
                     ),
                   ],
+                      );
+                    },
                 ),
               ),
               
@@ -721,15 +793,21 @@ class _AuthScreenState extends State<AuthScreen> {
                       
                       // Formulário
                       Expanded(
-                        child: _selectedTabIndex == 0 
+                          child: BlocBuilder<AuthBloc, AuthState>(
+                            buildWhen: (previous, current) => previous.mode != current.mode,
+                            builder: (context, state) {
+                              return state.mode == AuthScreenMode.login 
                             ? _buildLoginForm() 
-                            : _buildRegisterForm(),
+                                  : _buildRegisterForm();
+                            },
+                          ),
                       ),
                     ],
                   ),
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),
