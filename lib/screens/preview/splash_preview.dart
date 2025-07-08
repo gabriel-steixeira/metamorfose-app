@@ -21,7 +21,7 @@ import 'package:conversao_flutter/screens/onboarding/onboarding_welcome_screen.d
 import 'package:conversao_flutter/screens/plant/plant_config_screen.dart';
 import 'package:conversao_flutter/screens/auth/auth_screen.dart';
 import 'package:conversao_flutter/screens/chat/voice_chat_screen.dart';
-import 'package:conversao_flutter/screens/map/map_screen.dart';
+import 'package:conversao_flutter/screens/map/map_screen_bloc.dart';
 import 'package:conversao_flutter/screens/home/home.dart';
 
 void main() {

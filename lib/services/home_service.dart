@@ -110,14 +110,9 @@ class HomeService {
     }
   }
 
-  /// Mostra notificação de boas-vindas (método esperado pelo BLoC)
-  Future<void> showWelcomeNotification() async {
-    try {
-      await _notificationService.showWelcomeNotification();
-    } catch (e) {
-      throw Exception('Erro ao mostrar notificação: $e');
-    }
-  }
+  // O método `showWelcomeNotification` foi removido pois a lógica de notificação
+  // agora é gerenciada centralmente pelo `NotificationService` com Firebase
+  // e não deve ser disparada manualmente a partir de outros serviços.
 
   /// Busca dados do clima (método legado - mantido para compatibilidade)
   Future<WeatherResult> fetchWeather() async {

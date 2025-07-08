@@ -139,7 +139,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
-      await _service.showWelcomeNotification();
+      // A chamada para a notificação de boas-vindas foi removida
+      // pois essa lógica agora é gerenciada de forma centralizada.
+      // await _service.showWelcomeNotification();
     } catch (e) {
       debugPrint('❌ Erro ao mostrar notificação de boas-vindas: $e');
       // Não emitir erro para não atrapalhar a UX

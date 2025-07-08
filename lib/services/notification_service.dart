@@ -1,223 +1,172 @@
 /**
  * File: notification_service.dart
- * Description: Serviço para gerenciar notificações locais.
+ * Description: Serviço para gerenciamento de push notifications com Firebase.
  *
  * Responsabilidades:
- * - Gerenciar permissões de notificação
- * - Exibir notificações locais
- * - Simular notificações de boas-vindas
+ * - Inicializar o Firebase Cloud Messaging (FCM)
+ * - Solicitar permissões de notificação (iOS e Android)
+ * - Lidar com notificações recebidas (foreground, background, terminated)
+ * - Exibir notificações locais para mensagens em foreground
+ * - Obter o token FCM do dispositivo
  *
  * Author: Gabriel Teixeira
- * Created on: 29-05-2025
+ * Created on: 31-05-2025
+ * Last modified: 31-05-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */
 
-import 'dart:io';
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+/// Lida com mensagens em background/terminated.
+/// Deve ser uma função top-level (fora de qualquer classe).
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Se você precisar fazer algo com a mensagem aqui (ex: salvar em storage),
+  // certifique-se de inicializar os serviços necessários.
+  // Ex: await Firebase.initializeApp();
+  log('Handling a background message: ${message.messageId}');
+}
+
+
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
-  factory NotificationService() => _instance;
-  NotificationService._internal();
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  /// Canal para notificações Android.
+  static const AndroidNotificationChannel _androidChannel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'Notificações Importantes', // title
+    description: 'Este canal é usado para notificações importantes.', // description
+    importance: Importance.max,
+  );
 
-  bool _isInitialized = false;
 
-  /// Inicializa o serviço de notificações
-  Future<void> initialize() async {
-    if (_isInitialized) return;
-
+  /// Inicializa o serviço de notificações.
+  static Future<void> initialize() async {
     try {
-      // Configurar notificações locais
-      await _setupLocalNotifications();
+      // Configura o handler para mensagens em background
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+      // Solicita permissões
+      await _requestPermission();
       
-      _isInitialized = true;
-      debugPrint('🔔 NotificationService inicializado com sucesso');
+      // Cria o canal Android e inicializa o plugin de notificações locais
+      if (!kIsWeb) {
+        await _localNotifications
+            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+            ?.createNotificationChannel(_androidChannel);
+        
+        await _initializeLocalNotifications();
+      }
+
+      // Configura o handler para mensagens em foreground
+      _configureForegroundHandler();
+
+      // Configura o handler para quando o app é aberto a partir de uma notificação
+      _configureOpenedAppHandler();
+
+      // Obtém e imprime o token FCM para testes
+      final token = await getToken();
+      log('==============================================');
+      log('FCM TOKEN: $token');
+      log('==============================================');
+
     } catch (e) {
-      debugPrint('❌ Erro ao inicializar NotificationService: $e');
+      log('Erro ao inicializar NotificationService: $e');
     }
   }
 
-  /// Configurar notificações locais
-  Future<void> _setupLocalNotifications() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+  /// Solicita permissão do usuário para receber notificações.
+  static Future<void> _requestPermission() async {
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      log('Permissão de notificação concedida.');
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      log('Permissão de notificação concedida provisoriamente.');
+    } else {
+      log('Permissão de notificação negada.');
+    }
+  }
+
+  /// Inicializa o plugin de notificações locais.
+  static Future<void> _initializeLocalNotifications() async {
+    // Configurações para Android e iOS
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+            onDidReceiveLocalNotification: (id, title, body, payload) async {
+      // handler para iOS < 10
+    });
+
+    final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
     );
     
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
+    await _localNotifications.initialize(initializationSettings);
+  }
 
-    await _localNotifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        debugPrint('🔔 Notificação local tocada: ${response.payload}');
-      },
-    );
+  /// Configura o listener para mensagens recebidas com o app em foreground.
+  static void _configureForegroundHandler() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log('Recebida mensagem em foreground: ${message.notification?.title}');
+      
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
 
-    // Solicitar permissões no Android 13+
-    if (Platform.isAndroid) {
-      await _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
+      // Se for uma notificação e tivermos detalhes para Android, exibe.
+      if (notification != null && android != null && !kIsWeb) {
+        _localNotifications.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              _androidChannel.id,
+              _androidChannel.name,
+              channelDescription: _androidChannel.description,
+              icon: 'launch_background', // ou o nome do seu ícone
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  /// Configura o listener para quando o app é aberto a partir de uma notificação.
+  static void _configureOpenedAppHandler() {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('App aberto a partir de uma notificação: ${message.messageId}');
+      // Aqui você pode adicionar lógica para navegar para uma tela específica
+      // com base no conteúdo da notificação.
+      // Ex: navigatorKey.currentState?.pushNamed('/minha-rota', arguments: message.data);
+    });
+  }
+
+
+  /// Obtém o token FCM do dispositivo.
+  static Future<String?> getToken() async {
+    try {
+      return await _messaging.getToken();
+    } catch (e) {
+      log('Erro ao obter token FCM: $e');
+      return null;
     }
-  }
-
-  /// Exibir notificação local
-  Future<void> _showLocalNotification({
-    required String title,
-    required String body,
-    String? payload,
-    int id = 0,
-  }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'metamorfose_channel',
-      'Metamorfose Notifications',
-      channelDescription: 'Notificações do aplicativo Metamorfose',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      color: Color(0xFF6B46C1), // Cor roxa do tema
-      playSound: true,
-      enableVibration: true,
-    );
-
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    const details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    await _localNotifications.show(
-      id,
-      title,
-      body,
-      details,
-      payload: payload,
-    );
-  }
-
-  /// Simular notificação de boas-vindas
-  Future<void> showWelcomeNotification() async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-
-    // Lista de mensagens de boas-vindas aleatórias
-    final welcomeMessages = [
-      {
-        'title': '🌱 Bem-vindo de volta!',
-        'body': 'Sua jornada de transformação continua hoje. Que tal cuidar da sua plantinha?'
-      },
-      {
-        'title': '🦋 Parabéns por começar!',
-        'body': 'Cada dia é uma nova oportunidade de crescer. Vamos juntos nessa metamorfose!'
-      },
-      {
-        'title': '✨ Hora de brilhar!',
-        'body': 'Sua planta está ansiosa para te ver. Que tal começar o dia com energia positiva?'
-      },
-      {
-        'title': '🌟 Você é incrível!',
-        'body': 'Lembre-se: pequenos passos levam a grandes transformações. Continue assim!'
-      },
-      {
-        'title': '💚 Metamorfose em ação!',
-        'body': 'Cada momento que você está aqui é um passo na direção certa. Orgulhe-se!'
-      },
-    ];
-
-    // Selecionar mensagem aleatória
-    final random = DateTime.now().millisecondsSinceEpoch % welcomeMessages.length;
-    final message = welcomeMessages[random];
-
-    // Aguardar um pouco para simular um comportamento mais natural
-    await Future.delayed(const Duration(seconds: 2));
-
-    // Mostrar notificação
-    await _showLocalNotification(
-      title: message['title']!,
-      body: message['body']!,
-      payload: 'welcome_home',
-      id: 1001, // ID específico para notificações de boas-vindas
-    );
-
-    debugPrint('🔔 Notificação de boas-vindas enviada: ${message['title']}');
-  }
-
-  /// Simular notificação de motivação
-  Future<void> showMotivationNotification() async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-
-    await _showLocalNotification(
-      title: '💪 Força e determinação!',
-      body: 'Você está no caminho certo. Sua planta acredita em você!',
-      payload: 'motivation',
-      id: 1002,
-    );
-  }
-
-  /// Simular notificação de cuidado com a planta
-  Future<void> showPlantCareNotification() async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-
-    await _showLocalNotification(
-      title: '🌿 Sua planta precisa de você!',
-      body: 'Que tal dar uma olhada em como ela está? Talvez seja hora de regá-la.',
-      payload: 'plant_care',
-      id: 1003,
-    );
-  }
-
-  /// Verificar se as notificações estão habilitadas
-  Future<bool> areNotificationsEnabled() async {
-    if (Platform.isAndroid) {
-      final androidImplementation = _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-      return await androidImplementation?.areNotificationsEnabled() ?? false;
-    }
-    return true; // Para iOS, assumimos que estão habilitadas
-  }
-
-  /// Solicitar permissões de notificação
-  Future<bool> requestPermissions() async {
-    if (Platform.isAndroid) {
-      final androidImplementation = _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-      return await androidImplementation?.requestNotificationsPermission() ?? false;
-    }
-    return true; // Para iOS, assumimos que estão habilitadas
-  }
-
-  /// Cancelar notificação específica
-  Future<void> cancelNotification(int id) async {
-    await _localNotifications.cancel(id);
-  }
-
-  /// Cancelar todas as notificações
-  Future<void> cancelAllNotifications() async {
-    await _localNotifications.cancelAll();
-  }
-
-  /// Dispose do serviço
-  void dispose() {
-    // Cleanup se necessário
   }
 } 
