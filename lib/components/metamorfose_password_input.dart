@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Input de senha do aplicativo Metamorfose.
 /// 
@@ -71,6 +71,9 @@ class MetamorfesePasswordInput extends StatefulWidget {
   /// Cor da borda (opcional, padrão é whiteDark)
   final Color? borderColor;
 
+  /// Texto de erro a ser exibido abaixo do input
+  final String? errorText;
+
   /// Construtor do input de senha Metamorfose
   const MetamorfesePasswordInput({
     super.key,
@@ -88,6 +91,7 @@ class MetamorfesePasswordInput extends StatefulWidget {
     this.borderRadius,
     this.showShadow = true,
     this.borderColor,
+    this.errorText,
   });
 
   @override
@@ -114,80 +118,101 @@ class _MetamorfesePasswordInputState extends State<MetamorfesePasswordInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: ShapeDecoration(
-        color: widget.backgroundColor ?? MetamorfoseColors.whiteLight,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: widget.borderColor ?? MetamorfoseColors.whiteDark,
+    final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          height: 56,
+          decoration: ShapeDecoration(
+            color: widget.backgroundColor ?? MetamorfoseColors.whiteLight,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                width: 1,
+                color: hasError
+                    ? MetamorfoseColors.redNormal
+                    : widget.borderColor ?? MetamorfoseColors.whiteDark,
+              ),
+              borderRadius: BorderRadius.circular(widget.borderRadius ?? 16),
+            ),
+            shadows: widget.showShadow
+                ? const [
+                    BoxShadow(
+                      color: MetamorfoseColors.shadowLight,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                      spreadRadius: 0,
+                    ),
+                  ]
+                : [],
           ),
-          borderRadius: BorderRadius.circular(widget.borderRadius ?? 16),
-        ),
-        shadows: widget.showShadow
-            ? const [
-                BoxShadow(
-                  color: MetamorfoseColors.shadowLight,
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                  spreadRadius: 0,
+          child: RepaintBoundary(
+            child: TextField(
+              controller: widget.controller,
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              obscureText: !_isPasswordVisible,
+              keyboardType: TextInputType.visiblePassword,
+              textInputAction: widget.textInputAction,
+              onChanged: widget.onChanged,
+              onSubmitted: widget.onSubmitted,
+                autocorrect: false,
+                enableSuggestions: false,
+                smartDashesType: SmartDashesType.disabled,
+                smartQuotesType: SmartQuotesType.disabled,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: const TextStyle(
+                  color: MetamorfoseColors.greyLight,
+                  fontSize: 16,
+                  fontFamily: 'DIN Next for Duolingo',
+                  fontWeight: FontWeight.w400,
                 ),
-              ]
-            : [],
-      ),
-      child: RepaintBoundary(
-      child: TextField(
-        controller: widget.controller,
-        readOnly: widget.readOnly,
-        onTap: widget.onTap,
-        obscureText: !_isPasswordVisible,
-        keyboardType: TextInputType.visiblePassword,
-        textInputAction: widget.textInputAction,
-        onChanged: widget.onChanged,
-        onSubmitted: widget.onSubmitted,
-          autocorrect: false,
-          enableSuggestions: false,
-          smartDashesType: SmartDashesType.disabled,
-          smartQuotesType: SmartQuotesType.disabled,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          hintStyle: const TextStyle(
-            color: MetamorfoseColors.greyLight,
-            fontSize: 16,
-            fontFamily: 'DIN Next for Duolingo',
-            fontWeight: FontWeight.w400,
-          ),
-          prefixIcon: widget.prefixIcon,
-          suffixIcon: GestureDetector(
-            onTap: _togglePasswordVisibility,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: SizedBox(
-                width: 22,
-                height: 22,
-                child: SvgPicture.asset(
-                  _isPasswordVisible
-                      ? 'assets/images/auth/ic_visibility_on.svg'
-                      : 'assets/images/auth/ic_visibility_off.svg',                  
-                  fit: BoxFit.contain,
-                  colorFilter: const ColorFilter.mode(
-                    MetamorfoseColors.greyMedium,
-                    BlendMode.srcIn,
+                prefixIcon: widget.prefixIcon,
+                suffixIcon: GestureDetector(
+                  onTap: _togglePasswordVisibility,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: SvgPicture.asset(
+                        _isPasswordVisible
+                            ? 'assets/images/auth/ic_visibility_on.svg'
+                            : 'assets/images/auth/ic_visibility_off.svg',                  
+                        fit: BoxFit.contain,
+                        colorFilter: const ColorFilter.mode(
+                          MetamorfoseColors.greyMedium,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                  ),
+                ),
+            ),
+          ),
+        ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 16),
+            child: Text(
+              widget.errorText!,
+              style: const TextStyle(
+                color: MetamorfoseColors.redNormal,
+                fontSize: 12,
               ),
             ),
           ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-            ),
-          ),
-        ),
-      ),
+      ],
     );
   }
 } 

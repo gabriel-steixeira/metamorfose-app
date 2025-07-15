@@ -19,20 +19,46 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
+  <meta name="google-signin-client_id" content="163566256556-e4s8699pk520uoockbadfhah33jep4fc.apps.googleusercontent.com" />
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="conversao_flutter">
+  <meta name="apple-mobile-web-app-title" content="metamorfose_flutter">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>conversao_flutter</title>
+  <title>metamorfose_flutter</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"></script>
+
+  <!-- Firebase Inicialização -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIU8eVLfB1n7E9FeBgNzYAkHHKZsx5_wc",
+      authDomain: "metamorfose-d7aa5.firebaseapp.com",
+      projectId: "metamorfose-d7aa5",
+      storageBucket: "metamorfose-d7aa5.firebasestorage.app",
+      messagingSenderId: "163566256556",
+      appId: "1:163566256556:web:32310d68653ef365dfba09"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

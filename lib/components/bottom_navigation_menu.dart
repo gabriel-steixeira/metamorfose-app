@@ -19,9 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/components/confirmation_dialog.dart';
-import 'package:conversao_flutter/routes/routes.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
+import 'package:metamorfose_flutter/routes/routes.dart';
 
 /// Componente de menu de navegação inferior do aplicativo.
 /// 

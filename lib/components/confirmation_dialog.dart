@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Componente de diálogo de confirmação customizado.
 /// Mantém consistência visual com os balões de fala do app.

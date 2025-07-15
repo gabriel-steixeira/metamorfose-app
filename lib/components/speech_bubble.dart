@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Componente de balão de fala customizável.
 /// Exibe um balão com sombra verde e texto customizável.

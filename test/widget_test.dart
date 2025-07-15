@@ -24,7 +24,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_test/flutter_test.dart';
 
-// import 'package:conversao_flutter/app.dart';
+// import 'package:metamorfose_flutter/app.dart';
 
 // void main() {
 //   testWidgets('Teste inicial do app', (WidgetTester tester) async {

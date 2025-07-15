@@ -28,6 +28,8 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
+        //minSdk = 19
+        //multiDexEnabled = true
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -46,6 +48,7 @@ android {
 dependencies {
     // Core library desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
 }
 
 flutter {

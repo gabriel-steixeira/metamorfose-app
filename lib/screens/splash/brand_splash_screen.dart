@@ -16,8 +16,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:conversao_flutter/routes/routes.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/routes/routes.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// Tela de splash inicial que exibe o logo da marca Metamorfose.

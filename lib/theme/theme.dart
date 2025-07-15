@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Classe que define o tema do aplicativo Metamorfose.
 /// Responsável por estabelecer as configurações visuais globais para garantir 

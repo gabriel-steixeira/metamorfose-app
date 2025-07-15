@@ -13,8 +13,8 @@
  * Squad: Metamorfose
  */
 
-import 'package:conversao_flutter/models/weather.dart';
-import 'package:conversao_flutter/models/quote.dart';
+import 'package:metamorfose_flutter/models/weather.dart';
+import 'package:metamorfose_flutter/models/quote.dart';
 
 /// Estado de carregamento
 enum LoadingState {

@@ -14,8 +14,8 @@
  */
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:conversao_flutter/state/voice_chat/voice_chat_state.dart';
-import 'package:conversao_flutter/services/voice_chat_service.dart';
+import 'package:metamorfose_flutter/state/voice_chat/voice_chat_state.dart';
+import 'package:metamorfose_flutter/services/voice_chat_service.dart';
 
 /// Eventos do VoiceChatBloc
 abstract class VoiceChatEvent {}

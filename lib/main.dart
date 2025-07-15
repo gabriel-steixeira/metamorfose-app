@@ -18,8 +18,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import do Firebase
-import 'package:conversao_flutter/app.dart';
-import 'package:conversao_flutter/services/notification_service.dart';
+import 'package:metamorfose_flutter/app.dart';
+import 'package:metamorfose_flutter/config/firebase_config.dart';
+import 'package:metamorfose_flutter/services/notification_service.dart';
 
 
 /// Ponto de entrada do aplicativo Flutter
@@ -27,17 +28,8 @@ void main() async {
   // Inicializa o binding do Flutter
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Inicializa o Firebase ANTES de qualquer outro serviço que dependa dele
-  await Firebase.initializeApp();
-  
-  // Inicializar serviço de notificações de forma segura
-  try {
-    // Agora o método é estático, não precisa mais instanciar
-    await NotificationService.initialize();
-  } catch (e) {
-    debugPrint('⚠️ Erro ao inicializar NotificationService com Firebase: $e');
-    debugPrint('⚠️ App continuará sem notificações');
-  }
+  // Inicializa o Firebase
+  await FirebaseConfig.initialize();
   
   // Define a orientação do aplicativo como apenas retrato
   await SystemChrome.setPreferredOrientations([
@@ -56,5 +48,5 @@ void main() async {
   );
   
   // Inicia o aplicativo
-  runApp(const MetamorfeseApp());
+  runApp(const MetamorfoseApp());
 } 

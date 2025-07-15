@@ -400,11 +400,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: MetamorfoseSocialButton(
                     text: 'GOOGLE',
                     iconPath: 'assets/images/auth/ic_google_logo.svg',
-                    onPressed: state.loginState.isLoading
-                        ? () {}
-                        : () {
-                            context.read<AuthBloc>().add(AuthSignInWithGoogleEvent());
-                          },
+                    onPressed: () {
+                      // Implementar login com Google
+                      context.go(Routes.plantConfig);
+                    },
                     textColor: MetamorfoseColors.blueNormal,
                   ),
                 ),
@@ -413,11 +412,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: MetamorfoseSocialButton(
                     text: 'FACEBOOK',
                     iconPath: 'assets/images/auth/ic_facebook_logo.svg',
-                    onPressed: state.loginState.isLoading
-                        ? () {}
-                        : () {
-                            context.read<AuthBloc>().add(AuthSignInWithFacebookEvent());
-                          },
+                    onPressed: () {
+                      // Implementar login com Facebook
+                    },
                     textColor: MetamorfoseColors.blueDark,
                   ),
                 ),
@@ -682,11 +679,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       child: MetamorfoseSocialButton(
                         text: 'GOOGLE',
                         iconPath: 'assets/images/auth/ic_google_logo.svg',
-                        onPressed: state.registerState.isLoading
-                            ? () {}
-                            : () {
-                                context.read<AuthBloc>().add(AuthSignInWithGoogleEvent());
-                              },
+                        onPressed: () {
+                          // Implementar cadastro com Google
+                        },
                         textColor: MetamorfoseColors.blueNormal,
                       ),
                     ),
@@ -695,11 +690,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       child: MetamorfoseSocialButton(
                         text: 'FACEBOOK',
                         iconPath: 'assets/images/auth/ic_facebook_logo.svg',
-                        onPressed: state.registerState.isLoading
-                            ? () {}
-                            : () {
-                                context.read<AuthBloc>().add(AuthSignInWithFacebookEvent());
-                              },
+                        onPressed: () {
+                          // Implementar cadastro com Facebook
+                        },
                         textColor: MetamorfoseColors.blueDark,
                       ),
                     ),

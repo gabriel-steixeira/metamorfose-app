@@ -16,8 +16,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:conversao_flutter/state/map/map_state.dart';
-import 'package:conversao_flutter/services/map_service.dart';
+import 'package:metamorfose_flutter/state/map/map_state.dart';
+import 'package:metamorfose_flutter/services/map_service.dart';
 
 /// Eventos do MapBloc
 abstract class MapEvent {}

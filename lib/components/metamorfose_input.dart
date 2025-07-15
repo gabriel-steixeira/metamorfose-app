@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Input de texto do aplicativo Metamorfose.
 /// 
@@ -70,6 +70,9 @@ class MetamorfeseInput extends StatelessWidget {
   /// Cor da borda (opcional, padrão é whiteDark)
   final Color? borderColor;
 
+  /// Texto de erro a ser exibido abaixo do input
+  final String? errorText;
+
   /// Construtor do input de texto Metamorfose
   const MetamorfeseInput({
     super.key,
@@ -87,78 +90,102 @@ class MetamorfeseInput extends StatelessWidget {
     this.borderRadius,
     this.showShadow = true,
     this.borderColor,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasError = errorText != null && errorText!.isNotEmpty;
+
     return RepaintBoundary(
-      child: Container(
-        width: double.infinity,
-        height: 56,
-        decoration: ShapeDecoration(
-          color: backgroundColor ?? MetamorfoseColors.whiteLight,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              width: 1,
-              color: borderColor ?? MetamorfoseColors.whiteDark,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 56,
+            decoration: ShapeDecoration(
+              color: backgroundColor ?? MetamorfoseColors.whiteLight,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  width: 1,
+                  color: hasError
+                      ? MetamorfoseColors.redNormal
+                      : borderColor ?? MetamorfoseColors.whiteDark,
+                ),
+                borderRadius: BorderRadius.circular(borderRadius ?? 16),
+              ),
+              shadows: showShadow
+                  ? const [
+                      BoxShadow(
+                        color: MetamorfoseColors.shadowLight,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                        spreadRadius: 0,
+                      ),
+                    ]
+                  : [],
             ),
-            borderRadius: BorderRadius.circular(borderRadius ?? 16),
+            child: TextField(
+              controller: controller,
+              readOnly: readOnly,
+              onTap: onTap,
+              keyboardType: keyboardType,
+              textInputAction: textInputAction,
+              onChanged: onChanged,
+              onSubmitted: onSubmitted,
+              // Otimizações de performance mantendo o design
+              autocorrect: false,
+              enableSuggestions: false,
+              smartDashesType: SmartDashesType.disabled,
+              smartQuotesType: SmartQuotesType.disabled,
+              enableInteractiveSelection: true,
+              // Reduzir rebuilds desnecessários
+              enableIMEPersonalizedLearning: false,
+              scribbleEnabled: false,
+              // Otimizar renderização
+              maxLines: 1,
+              expands: false,
+              style: const TextStyle(
+                color: MetamorfoseColors.greyDark,
+                fontSize: 16,
+                fontFamily: 'DIN Next for Duolingo',
+                fontWeight: FontWeight.w400,
+              ),
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: const TextStyle(
+                  color: MetamorfoseColors.greyLight,
+                  fontSize: 16,
+                  fontFamily: 'DIN Next for Duolingo',
+                  fontWeight: FontWeight.w400,
+                ),
+                prefixIcon: prefixIcon,
+                suffixIcon: suffixIcon,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                // Otimizar comportamento do cursor
+                isCollapsed: false,
+                isDense: false,
+              ),
+            ),
           ),
-          shadows: showShadow ? const [
-            BoxShadow(
-              color: MetamorfoseColors.shadowLight,
-              blurRadius: 8,
-              offset: Offset(0, 2),
-              spreadRadius: 0,
+          if (hasError)
+            Padding(
+              padding: const EdgeInsets.only(top: 4, left: 16),
+              child: Text(
+                errorText!,
+                style: const TextStyle(
+                  color: MetamorfoseColors.redNormal,
+                  fontSize: 12,
+                ),
+              ),
             ),
-          ] : [],
-        ),
-        child: TextField(
-          controller: controller,
-          readOnly: readOnly,
-          onTap: onTap,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          onSubmitted: onSubmitted,
-          // Otimizações de performance mantendo o design
-          autocorrect: false,
-          enableSuggestions: false,
-          smartDashesType: SmartDashesType.disabled,
-          smartQuotesType: SmartQuotesType.disabled,
-          enableInteractiveSelection: true,
-          // Reduzir rebuilds desnecessários
-          enableIMEPersonalizedLearning: false,
-          scribbleEnabled: false,
-          // Otimizar renderização
-          maxLines: 1,
-          expands: false,
-          style: const TextStyle(
-            color: MetamorfoseColors.greyDark,
-            fontSize: 16,
-            fontFamily: 'DIN Next for Duolingo',
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: const TextStyle(
-              color: MetamorfoseColors.greyLight,
-              fontSize: 16,
-              fontFamily: 'DIN Next for Duolingo',
-              fontWeight: FontWeight.w400,
-            ),
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-            // Otimizar comportamento do cursor
-            isCollapsed: false,
-            isDense: false,
-          ),
-        ),
+        ],
       ),
     );
   }

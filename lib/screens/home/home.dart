@@ -15,12 +15,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/theme/text_styles.dart';
-import 'package:conversao_flutter/components/speech_bubble.dart';
-import 'package:conversao_flutter/components/bottom_navigation_menu.dart';
-import 'package:conversao_flutter/blocs/home_bloc.dart';
-import 'package:conversao_flutter/state/home/home_state.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/text_styles.dart';
+import 'package:metamorfose_flutter/components/speech_bubble.dart';
+import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/blocs/home_bloc.dart';
+import 'package:metamorfose_flutter/state/home/home_state.dart';
 
 /// Tela principal de visualização do dia com o assistente usando BLoC.
 class HomeScreen extends StatefulWidget {

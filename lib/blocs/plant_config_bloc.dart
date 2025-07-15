@@ -16,9 +16,9 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/state/plant_config/plant_config_state.dart';
-import 'package:conversao_flutter/services/plant_config_service.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
+import 'package:metamorfose_flutter/services/plant_config_service.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Eventos do PlantConfigBloc
 abstract class PlantConfigEvent {}

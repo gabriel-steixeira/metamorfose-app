@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Modelo para opções do select
 class SelectOption<T> {

@@ -18,11 +18,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/components/speech_bubble.dart';
-import 'package:conversao_flutter/components/bottom_navigation_menu.dart';
-import 'package:conversao_flutter/blocs/voice_chat_bloc.dart';
-import 'package:conversao_flutter/state/voice_chat/voice_chat_state.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/components/speech_bubble.dart';
+import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+import 'package:metamorfose_flutter/state/voice_chat/voice_chat_state.dart';
 
 /// Tela principal de chat por voz com o assistente usando BLoC.
 /// Permite ao usuário interagir por voz com o aplicativo.

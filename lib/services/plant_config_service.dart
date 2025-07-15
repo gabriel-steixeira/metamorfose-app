@@ -14,8 +14,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/state/plant_config/plant_config_state.dart';
-import 'package:conversao_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
 
 /// Resultado de validação
 class ValidationResult {

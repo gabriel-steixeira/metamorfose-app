@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/components/custom_button.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/components/custom_button.dart';
 
 /// Componente de botão primário (usado para ações principais na interface do usuário),
 /// como "Entrar", "Cadastrar", "Confirmar", etc. A interação do usuário é definida pelo parâmetro `onPressed`.

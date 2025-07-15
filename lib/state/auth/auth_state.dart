@@ -1,36 +1,21 @@
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../models/user_model.dart';
 import 'login_state.dart';
 import 'register_state.dart';
 
-enum AuthScreenMode {
-  login,
-  register,
-}
+part 'auth_state.freezed.dart';
 
-class AuthState {
-  final AuthScreenMode mode;
-  final LoginState loginState;
-  final RegisterState registerState;
-  final bool eyesOpen;
+enum AuthScreenMode { login, register }
 
-  AuthState({
-    this.mode = AuthScreenMode.login,
-    this.loginState = const LoginState(),
-    this.registerState = const RegisterState(),
-    this.eyesOpen = true,
-  });
-
-  AuthState copyWith({
-    AuthScreenMode? mode,
-    LoginState? loginState,
-    RegisterState? registerState,
-    bool? eyesOpen,
-  }) {
-    return AuthState(
-      mode: mode ?? this.mode,
-      loginState: loginState ?? this.loginState,
-      registerState: registerState ?? this.registerState,
-      eyesOpen: eyesOpen ?? this.eyesOpen,
-    );
-  }
+@freezed
+class AuthState with _$AuthState {
+  const factory AuthState({
+    @Default(AuthScreenMode.login) AuthScreenMode mode,
+    @Default(false) bool eyesOpen,
+    @Default(false) bool isLoading,
+    UserModel? user,
+    String? error,
+    @Default(LoginState()) LoginState loginState,
+    @Default(RegisterState()) RegisterState registerState,
+  }) = _AuthState;
 } 

@@ -15,27 +15,31 @@
  */
 
 import 'package:go_router/go_router.dart';
-import 'package:conversao_flutter/routes/routes.dart';
+import 'package:metamorfose_flutter/routes/routes.dart';
 
 // Telas principais (padrão BLoC)
-import 'package:conversao_flutter/screens/auth/auth_screen.dart';
-import 'package:conversao_flutter/screens/home/home.dart';
-import 'package:conversao_flutter/screens/chat/voice_chat_screen.dart';
-import 'package:conversao_flutter/screens/map/map_screen_bloc.dart';
-import 'package:conversao_flutter/screens/plant/plant_config_screen.dart';
+import 'package:metamorfose_flutter/screens/auth/auth_screen.dart';
+import 'package:metamorfose_flutter/screens/home/home.dart';
+import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
+import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
+import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
+// Adicionar imports necessários para BlocProvider e PlantConfigBloc
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
+import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 
 // Telas de Onboarding
-import 'package:conversao_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_carousel_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_egg_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_final_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_plant_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_screen.dart';
-import 'package:conversao_flutter/screens/onboarding/onboarding_welcome_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_carousel_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_egg_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_final_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_plant_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_screen.dart';
+import 'package:metamorfose_flutter/screens/onboarding/onboarding_welcome_screen.dart';
 
 // Telas de Splash
-import 'package:conversao_flutter/screens/splash/brand_splash_screen.dart';
-import 'package:conversao_flutter/screens/splash/mascot_splash_screen.dart';
+import 'package:metamorfose_flutter/screens/splash/brand_splash_screen.dart';
+import 'package:metamorfose_flutter/screens/splash/mascot_splash_screen.dart';
 
 /// Classe responsável pela configuração de rotas do aplicativo usando o GO Router.
 /// Define todos os caminhos de navegação disponíveis no app.
@@ -92,11 +96,17 @@ class AppRouter {
       ),
       GoRoute(
         path: Routes.plantConfig,
-        builder: (context, state) => const PlantConfigScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (_) => PlantConfigBloc(),
+          child: const PlantConfigScreen(),
+        ),
       ),
       GoRoute(
         path: Routes.home,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (_) => HomeBloc(),
+          child: const HomeScreen(),
+        ),
       ),
       GoRoute(
         path: Routes.voiceChat,

@@ -1,4 +1,4 @@
-package br.com.metamorfose.conversao_flutter
+package br.com.metamorfose.metamorfose_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

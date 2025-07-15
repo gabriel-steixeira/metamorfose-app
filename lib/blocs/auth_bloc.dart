@@ -13,208 +13,213 @@
  * Squad: Metamorfose
  */
 
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:conversao_flutter/state/auth/auth_state.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
+import '../state/auth/auth_state.dart';
+import '../state/auth/auth_events.dart';
+import '../state/auth/login_state.dart';
+import '../state/auth/register_state.dart';
 
-import 'package:conversao_flutter/state/auth/validation_state.dart';
-import 'package:conversao_flutter/services/auth_service.dart';
-
-/// Eventos do AuthBloc
-abstract class AuthEvent {}
-
-/// Evento para alternar entre login e registro
-class AuthToggleModeEvent extends AuthEvent {
-  final AuthScreenMode mode;
-  AuthToggleModeEvent(this.mode);
-}
-
-/// Evento para atualizar campos de login
-class AuthUpdateLoginFieldEvent extends AuthEvent {
-  final String? email;
-  final String? password;
-  final bool? rememberMe;
-  final bool? isPasswordVisible;
-
-  AuthUpdateLoginFieldEvent({
-    this.email,
-    this.password,
-    this.rememberMe,
-    this.isPasswordVisible,
-  });
-}
-
-/// Evento para submeter login
-class AuthSubmitLoginEvent extends AuthEvent {
-  final String email;
-  final String password;
-  final bool rememberMe;
-
-  AuthSubmitLoginEvent({
-    required this.email,
-    required this.password,
-    required this.rememberMe,
-  });
-}
-
-/// Evento para logout
-class AuthLogoutEvent extends AuthEvent {}
-
-/// Evento para alternar visibilidade dos olhos do personagem
-class AuthToggleEyesEvent extends AuthEvent {
-  final bool eyesOpen;
-  AuthToggleEyesEvent(this.eyesOpen);
-}
-
-/// BLoC para gerenciamento de autenticação
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService _authService;
+  StreamSubscription<User?>? _authStateSubscription;
 
-  AuthBloc(this._authService) : super(AuthState()) {
-    on<AuthToggleModeEvent>(_onToggleMode);
-    on<AuthUpdateLoginFieldEvent>(_onUpdateLoginField);
-    on<AuthSubmitLoginEvent>(_onSubmitLogin);
-    on<AuthLogoutEvent>(_onLogout);
-    on<AuthToggleEyesEvent>(_onToggleEyes);
-  }
+  AuthBloc({required AuthService authService})
+      : _authService = authService,
+        super(const AuthState()) {
+    _setupAuthStateListener();
 
-  /// Handler para alternar entre modos
-  void _onToggleMode(AuthToggleModeEvent event, Emitter<AuthState> emit) {
-    emit(state.copyWith(mode: event.mode));
-  }
+    on<AuthToggleModeEvent>((event, emit) {
+      emit(state.copyWith(mode: event.mode));
+    });
 
-  /// Handler para atualizar campos de login
-  void _onUpdateLoginField(
-    AuthUpdateLoginFieldEvent event,
-    Emitter<AuthState> emit,
-  ) {
-    final currentLoginState = state.loginState;
-    
-    // Validações básicas
-    ValidationState? emailValidation;
-    ValidationState? passwordValidation;
+    on<AuthToggleEyesEvent>((event, emit) {
+      emit(state.copyWith(eyesOpen: event.isVisible));
+    });
 
-    if (event.email != null) {
-      emailValidation = _validateEmail(event.email!);
-    }
-
-    if (event.password != null) {
-      passwordValidation = _validatePassword(event.password!);
-    }
-
-    final newLoginState = currentLoginState.copyWith(
-      email: event.email,
-      password: event.password,
-      rememberMe: event.rememberMe,
-      isPasswordVisible: event.isPasswordVisible,
-      emailValidation: emailValidation,
-      passwordValidation: passwordValidation,
-      errorMessage: null, // Limpa erro ao editar campos
-    );
-
-    emit(state.copyWith(loginState: newLoginState));
-  }
-
-  /// Handler para submeter login
-  void _onSubmitLogin(AuthSubmitLoginEvent event, Emitter<AuthState> emit) async {
-    // Atualiza estado para loading
-    final loadingLoginState = state.loginState.copyWith(
-      isLoading: true,
-      errorMessage: null,
-    );
-    emit(state.copyWith(loginState: loadingLoginState));
-
-    try {
-      // Valida campos
-      final emailValidation = _validateEmail(event.email);
-      final passwordValidation = _validatePassword(event.password);
-
-      if (!emailValidation.isValid || !passwordValidation.isValid) {
-        final errorLoginState = state.loginState.copyWith(
-          isLoading: false,
-          emailValidation: emailValidation,
-          passwordValidation: passwordValidation,
-          errorMessage: 'Por favor, corrija os campos inválidos',
-        );
-        emit(state.copyWith(loginState: errorLoginState));
-        return;
-      }
-
-      // Tenta fazer login
-      final loginResult = await _authService.login(
-        email: event.email,
-        password: event.password,
-        rememberMe: event.rememberMe,
-      );
-
-      if (loginResult.success) {
-        final successLoginState = state.loginState.copyWith(
-          isLoading: false,
+    on<AuthUpdateLoginFieldEvent>((event, emit) {
+      final currentLogin = state.loginState;
+      emit(state.copyWith(
+        loginState: LoginState(
+          email: event.email ?? currentLogin.email,
+          password: event.password ?? currentLogin.password,
+          rememberMe: event.rememberMe ?? currentLogin.rememberMe,
+          emailError: '',
+          passwordError: '',
           errorMessage: null,
+        ),
+      ));
+    });
+
+    on<AuthSubmitLoginEvent>((event, emit) async {
+      try {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
+        ));
+
+        if (event.email.isEmpty) {
+          emit(state.copyWith(
+            loginState: state.loginState.copyWith(
+              emailError: 'Email é obrigatório',
+              isLoading: false,
+            ),
+          ));
+          return;
+        }
+
+        if (event.password.isEmpty) {
+          emit(state.copyWith(
+            loginState: state.loginState.copyWith(
+              passwordError: 'Senha é obrigatória',
+              isLoading: false,
+            ),
+          ));
+          return;
+        }
+
+        final user = await _authService.signInWithEmailAndPassword(
+          event.email,
+          event.password,
         );
-        emit(state.copyWith(loginState: successLoginState));
-      } else {
-        final errorLoginState = state.loginState.copyWith(
-          isLoading: false,
-          errorMessage: loginResult.errorMessage,
-        );
-        emit(state.copyWith(loginState: errorLoginState));
+
+        emit(state.copyWith(
+          user: user,
+          loginState: state.loginState.copyWith(isLoading: false),
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        ));
       }
-    } catch (e) {
-      final errorLoginState = state.loginState.copyWith(
-        isLoading: false,
-        errorMessage: 'Erro inesperado: $e',
-      );
-      emit(state.copyWith(loginState: errorLoginState));
-    }
+    });
+
+    on<AuthSubmitRegisterEvent>((event, emit) async {
+      try {
+        emit(state.copyWith(
+          registerState: state.registerState.copyWith(isLoading: true, errorMessage: null),
+        ));
+
+        // Basic validation
+        if (event.username.isEmpty) {
+          emit(state.copyWith(
+              registerState: state.registerState
+                  .copyWith(usernameError: 'Nome de usuário é obrigatório', isLoading: false)));
+          return;
+        }
+        if (event.phone.isEmpty) {
+          emit(state.copyWith(
+              registerState:
+                  state.registerState.copyWith(phoneError: 'Telefone é obrigatório', isLoading: false)));
+          return;
+        }
+        if (event.email.isEmpty) {
+          emit(state.copyWith(
+              registerState:
+                  state.registerState.copyWith(emailError: 'Email é obrigatório', isLoading: false)));
+          return;
+        }
+        if (event.password.isEmpty) {
+          emit(state.copyWith(
+              registerState:
+                  state.registerState.copyWith(passwordError: 'Senha é obrigatória', isLoading: false)));
+          return;
+        }
+
+        final user = await _authService.registerWithEmailAndPassword(
+          event.email,
+          event.password,
+          event.username,
+          event.phone,
+        );
+
+        emit(state.copyWith(
+          user: user,
+          registerState: state.registerState.copyWith(isLoading: false),
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          registerState: state.registerState.copyWith(
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        ));
+      }
+    });
+
+    on<AuthSignInWithGoogleEvent>((event, emit) async {
+      try {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
+        ));
+
+        final user = await _authService.signInWithGoogle();
+        emit(state.copyWith(
+          user: user,
+          loginState: state.loginState.copyWith(isLoading: false),
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        ));
+      }
+    });
+
+    on<AuthSignInWithFacebookEvent>((event, emit) async {
+      try {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
+        ));
+
+        final user = await _authService.signInWithFacebook();
+        emit(state.copyWith(
+          user: user,
+          loginState: state.loginState.copyWith(isLoading: false),
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        ));
+      }
+    });
   }
 
-  /// Handler para logout
-  void _onLogout(AuthLogoutEvent event, Emitter<AuthState> emit) async {
-    await _authService.logout();
-    emit(AuthState()); // Reset para estado inicial
+  void _setupAuthStateListener() {
+    _authStateSubscription?.cancel();
+    _authStateSubscription = _authService.authStateChanges.listen(
+      (user) async {
+        if (user == null) {
+          emit(state.copyWith(user: null));
+        } else {
+          try {
+            final userModel = await _authService.getUserData(user.uid);
+            emit(state.copyWith(user: userModel));
+          } catch (e) {
+            emit(state.copyWith(
+              loginState: state.loginState.copyWith(
+                errorMessage: e.toString(),
+              ),
+            ));
+          }
+        }
+      },
+    );
   }
 
-  /// Handler para alternar olhos do personagem
-  void _onToggleEyes(AuthToggleEyesEvent event, Emitter<AuthState> emit) {
-    emit(state.copyWith(eyesOpen: event.eyesOpen));
-  }
-
-  /// Valida email
-  ValidationState _validateEmail(String email) {
-    if (email.isEmpty) {
-      return const ValidationState(
-        isValid: false,
-        errorMessage: 'E-mail é obrigatório',
-      );
-    }
-
-    // Aceita email, username ou telefone para flexibilidade
-    if (email.length < 3) {
-      return const ValidationState(
-        isValid: false,
-        errorMessage: 'E-mail deve ter pelo menos 3 caracteres',
-      );
-    }
-
-    return const ValidationState(isValid: true);
-  }
-
-  /// Valida senha
-  ValidationState _validatePassword(String password) {
-    if (password.isEmpty) {
-      return const ValidationState(
-        isValid: false,
-        errorMessage: 'Senha é obrigatória',
-      );
-    }
-
-    if (password.length < 6) {
-      return const ValidationState(
-        isValid: false,
-        errorMessage: 'Senha deve ter pelo menos 6 caracteres',
-      );
-    }
-
-    return const ValidationState(isValid: true);
+  @override
+  Future<void> close() {
+    _authStateSubscription?.cancel();
+    return super.close();
   }
 } 

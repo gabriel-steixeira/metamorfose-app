@@ -19,8 +19,8 @@ import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dio/dio.dart';
-import 'package:conversao_flutter/config/environment.dart';
-import 'package:conversao_flutter/state/map/map_state.dart';
+import 'package:metamorfose_flutter/config/environment.dart';
+import 'package:metamorfose_flutter/state/map/map_state.dart';
 
 /// Resultado de uma operação de busca
 class SearchResult {

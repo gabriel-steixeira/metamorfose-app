@@ -16,14 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:conversao_flutter/blocs/map_bloc.dart';
-import 'package:conversao_flutter/state/map/map_state.dart';
-import 'package:conversao_flutter/services/map_service.dart';
+import 'package:metamorfose_flutter/blocs/map_bloc.dart';
+import 'package:metamorfose_flutter/state/map/map_state.dart';
+import 'package:metamorfose_flutter/services/map_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:conversao_flutter/components/bottom_navigation_menu.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/services/map_service.dart'; // Import MapService para usar Floricultura
+import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/services/map_service.dart'; // Import MapService para usar Floricultura
 
 class MapScreenBloc extends StatelessWidget {
   const MapScreenBloc({super.key});

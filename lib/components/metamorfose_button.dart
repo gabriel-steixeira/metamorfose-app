@@ -14,8 +14,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/theme/colors.dart';
-import 'package:conversao_flutter/components/custom_button.dart';
+import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:metamorfose_flutter/components/custom_button.dart';
 
 /// Botão padrão do aplicativo Metamorfose.
 /// 

@@ -16,8 +16,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:conversao_flutter/state/home/home_state.dart';
-import 'package:conversao_flutter/services/home_service.dart';
+import 'package:metamorfose_flutter/state/home/home_state.dart';
+import 'package:metamorfose_flutter/services/home_service.dart';
 
 /// Eventos do HomeBloc
 abstract class HomeEvent {}
