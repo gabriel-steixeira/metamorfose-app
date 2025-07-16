@@ -20,6 +20,7 @@ import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
 import 'package:metamorfose_flutter/services/auth_service.dart';
 import 'package:metamorfose_flutter/theme/theme.dart';
 import 'package:metamorfose_flutter/navigation/app_router.dart';
+import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
 
 class MetamorfoseApp extends StatelessWidget {
   const MetamorfoseApp({super.key});

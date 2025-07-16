@@ -9,8 +9,12 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 30-05-2025
- * Version: 2.0.0
+ * Last modified: 15-07-2025
+ * 
+ *Changes:
+ * - Adicionado Site24x7NavigatorObserver para o GoRouter. (Evelin Cordeiro)
+
+ * Version: 2.1.0
  * Squad: Metamorfose
  */
 
@@ -40,6 +44,7 @@ import 'package:metamorfose_flutter/screens/onboarding/onboarding_welcome_screen
 // Telas de Splash
 import 'package:metamorfose_flutter/screens/splash/brand_splash_screen.dart';
 import 'package:metamorfose_flutter/screens/splash/mascot_splash_screen.dart';
+import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
 
 /// Classe responsável pela configuração de rotas do aplicativo usando o GO Router.
 /// Define todos os caminhos de navegação disponíveis no app.
@@ -48,6 +53,9 @@ class AppRouter {
   static final router = GoRouter(
     initialLocation: Routes.brandSplash,
     debugLogDiagnostics: true,
+    observers: [
+      Site24x7NavigatorObserver(),
+    ],
     routes: [
       // Telas de Splash
       GoRoute(
