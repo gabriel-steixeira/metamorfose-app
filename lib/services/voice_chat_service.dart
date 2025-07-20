@@ -15,6 +15,10 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:metamorfose_flutter/models/chat_message.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 /// Resultado de uma operação de voz
 class VoiceResult {
@@ -155,5 +159,64 @@ class VoiceChatService {
     _isListening = false;
     _isInitialized = false;
     debugPrint('🎤 VoiceChatService finalizado');
+  }
+
+  /// Salva uma mensagem no Firestore
+  Future<void> saveMessage({
+    required String uid,
+    required ChatMessage message,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('chat_history')
+        .doc(message.id)
+        .set(message.toMap());
+  }
+
+  /// Busca o histórico de mensagens do usuário
+  Future<List<ChatMessage>> getChatHistory(String uid) async {
+    final query = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('chat_history')
+        .orderBy('timestamp', descending: false)
+        .get();
+    return query.docs.map((doc) => ChatMessage.fromFirestore(doc)).toList();
+  }
+
+  /// Chama a API Gemini gratuita para obter resposta automática
+  Future<String> getGeminiResponse(String prompt) async {
+    // Substitua pela sua API KEY do Gemini
+    const apiKey = 'AIzaSyCaR0u_wA8iSFsgAX3LTfvYOahUHtm6eIA';
+    final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey');
+
+    final body = jsonEncode({
+      'contents': [
+        {
+          'parts': [
+            {'text': prompt}
+          ]
+        }
+      ]
+    });
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final text = data['candidates']?[0]?['content']?['parts']?[0]?['text'];
+      if (text != null && text is String) {
+        return text;
+      } else {
+        throw Exception('Resposta inesperada da API Gemini');
+      }
+    } else {
+      throw Exception('Erro na API Gemini: ${response.body}');
+    }
   }
 } 

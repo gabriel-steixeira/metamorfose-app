@@ -93,6 +93,7 @@ class ColorOption {
 
 /// Estado da configuração da planta
 class PlantConfigState {
+  final String uid;
   final String plantName;
   final String selectedPlant;
   final Color selectedColor;
@@ -101,6 +102,7 @@ class PlantConfigState {
   final String? errorMessage;
 
   const PlantConfigState({
+    required this.uid,
     this.plantName = '',
     this.selectedPlant = 'suculenta',
     this.selectedColor = MetamorfoseColors.purpleNormal,
@@ -111,6 +113,7 @@ class PlantConfigState {
 
   /// Copia o estado com novos valores
   PlantConfigState copyWith({
+    String? uid,
     String? plantName,
     String? selectedPlant,
     Color? selectedColor,
@@ -119,6 +122,7 @@ class PlantConfigState {
     String? errorMessage,
   }) {
     return PlantConfigState(
+      uid: uid ?? this.uid,
       plantName: plantName ?? this.plantName,
       selectedPlant: selectedPlant ?? this.selectedPlant,
       selectedColor: selectedColor ?? this.selectedColor,
@@ -160,6 +164,7 @@ class PlantConfigState {
     if (identical(this, other)) return true;
 
     return other is PlantConfigState &&
+      other.uid == uid &&
       other.plantName == plantName &&
       other.selectedPlant == selectedPlant &&
       other.selectedColor == selectedColor &&
@@ -170,7 +175,8 @@ class PlantConfigState {
 
   @override
   int get hashCode {
-    return plantName.hashCode ^
+    return uid.hashCode ^
+      plantName.hashCode ^
       selectedPlant.hashCode ^
       selectedColor.hashCode ^
       validationState.hashCode ^
@@ -180,6 +186,6 @@ class PlantConfigState {
 
   @override
   String toString() {
-    return 'PlantConfigState(name: $plantName, plant: $selectedPlant, color: ${colorOption.label}, validation: $validationState, loading: $loadingState, error: $errorMessage)';
+    return 'PlantConfigState(uid: $uid, name: $plantName, plant: $selectedPlant, color: ${colorOption.label}, validation: $validationState, loading: $loadingState, error: $errorMessage)';
   }
 } 

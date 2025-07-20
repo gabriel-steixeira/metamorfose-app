@@ -23,6 +23,8 @@ import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 import 'package:metamorfose_flutter/state/voice_chat/voice_chat_state.dart';
+import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
+import 'package:metamorfose_flutter/models/chat_message.dart';
 
 /// Tela principal de chat por voz com o assistente usando BLoC.
 /// Permite ao usuário interagir por voz com o aplicativo.
@@ -54,6 +56,10 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
 
     // Inicializa o BLoC
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = context.read<AuthBloc>().state.user?.id;
+      if (uid != null) {
+        context.read<VoiceChatBloc>().add(LoadChatHistoryEvent(uid));
+      }
       context.read<VoiceChatBloc>().add(VoiceChatInitializeEvent());
     });
   }
@@ -73,6 +79,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final uid = context.read<AuthBloc>().state.user?.id;
     
     return BlocListener<VoiceChatBloc, VoiceChatState>(
       listener: (context, state) {
@@ -104,105 +111,55 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
                 // Espaçamento superior
                 SizedBox(height: screenHeight * 0.02),
                 
-                // Área do personagem com balão de fala e decorações
+                // Histórico de mensagens
                 Expanded(
-                  child: Stack(
-                    children: [
-                      // Círculos decorativos de fundo (chat_plant.svg)
-                      Positioned(
-                        top: -160,
-                        child: Center(
-                          child: SizedBox(
-                            width: screenWidth,
-                            height: screenHeight,
-                            child: SvgPicture.asset(
-                              'assets/images/chat/chat_plant.svg',
-                              fit: BoxFit.contain,
+                  child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
+                    buildWhen: (p, c) => p.messages != c.messages,
+                    builder: (context, state) {
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = state.messages[index];
+                          final isUser = msg.sender == 'user';
+                          return Align(
+                            alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isUser ? MetamorfoseColors.purpleLight : MetamorfoseColors.greenLight,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                msg.text,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'DinNext',
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      
-                      // Personagem da planta (plantsetup.svg)
-                      Positioned(
-                        top: screenHeight * 0.15,
-                        left: screenWidth * 0.2,
-                        right: screenWidth * 0.2,
-                        child: Center(
-                          child: SizedBox(
-                            width: screenWidth * 0.5,
-                            height: screenWidth * 0.65,
-                            child: SvgPicture.asset(
-                            'assets/images/plantsetup/plantsetup.svg',
-                            fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                      
-                        // Balão de fala usando SpeechBubble (reativo ao estado do BLoC)
-                      Positioned(
-                        top: screenHeight * 0.09,
-                        left: screenWidth * 0.3,
-                        right: screenWidth * 0.3,
-                          child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
-                            buildWhen: (previous, current) => 
-                                previous.currentMessage != current.currentMessage,
-                            builder: (context, state) {
-                              return SpeechBubble(
-                          width: 250,
-                          height: 38,
-                          color: MetamorfoseColors.greenLight,
-                          borderColor: MetamorfoseColors.purpleLight,
-                          triangleColor: MetamorfoseColors.greenLight,
-                                child: Text(
-                                  state.currentMessage,
-                                  style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: MetamorfoseColors.whiteLight,
-                              fontFamily: 'DinNext',
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                              );
-                            },
-                        ),
-                      ),
-                    ],
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
                 
-                  // Texto de convite (exatamente igual ao original)
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 40,
-                      height: 1.4,
-                      fontFamily: 'DinNext',
-                      fontWeight: FontWeight.w600,
+                // Input simulado para teste (botão para enviar mensagem fixa)
+                if (uid != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<VoiceChatBloc>().add(
+                          SendMessageEvent(uid: uid, text: 'Olá, planta!'),
+                        );
+                      },
+                      child: const Text('Enviar mensagem de teste'),
                     ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Sanji',
-                        style: TextStyle(
-                          color: MetamorfoseColors.greenLight,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ', vamos\nconversar?',
-                        style: TextStyle(
-                          color: MetamorfoseColors.greyMedium,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                
-                // Espaçamento inferior
-                SizedBox(height: screenHeight * 0.2),
               ],
             ),
             

@@ -13,7 +13,9 @@
  * Squad: Metamorfose
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:metamorfose_flutter/models/chat_message.dart';
 
 /// Estados de gravação de áudio
 enum VoiceRecordingState {
@@ -30,6 +32,7 @@ class VoiceChatState {
   final String? errorMessage;
   final String currentMessage;
   final bool animationsEnabled;
+  final List<ChatMessage> messages;
 
   const VoiceChatState({
     this.recordingState = VoiceRecordingState.idle,
@@ -37,6 +40,7 @@ class VoiceChatState {
     this.errorMessage,
     this.currentMessage = 'Oi, eu sou Perona',
     this.animationsEnabled = true,
+    this.messages = const [],
   });
 
   /// Cria uma cópia do estado com novos valores
@@ -46,6 +50,7 @@ class VoiceChatState {
     String? errorMessage,
     String? currentMessage,
     bool? animationsEnabled,
+    List<ChatMessage>? messages,
   }) {
     return VoiceChatState(
       recordingState: recordingState ?? this.recordingState,
@@ -53,6 +58,7 @@ class VoiceChatState {
       errorMessage: errorMessage,
       currentMessage: currentMessage ?? this.currentMessage,
       animationsEnabled: animationsEnabled ?? this.animationsEnabled,
+      messages: messages ?? this.messages,
     );
   }
 
@@ -69,7 +75,8 @@ class VoiceChatState {
         other.isListening == isListening &&
         other.errorMessage == errorMessage &&
         other.currentMessage == currentMessage &&
-        other.animationsEnabled == animationsEnabled;
+        other.animationsEnabled == animationsEnabled &&
+        listEquals(other.messages, messages);
   }
 
   @override
@@ -78,11 +85,12 @@ class VoiceChatState {
         isListening.hashCode ^
         errorMessage.hashCode ^
         currentMessage.hashCode ^
-        animationsEnabled.hashCode;
+        animationsEnabled.hashCode ^
+        messages.hashCode;
   }
 
   @override
   String toString() {
-    return 'VoiceChatState(recordingState: $recordingState, isListening: $isListening, currentMessage: $currentMessage)';
+    return 'VoiceChatState(recordingState: $recordingState, isListening: $isListening, currentMessage: $currentMessage, messages: ${messages.length})';
   }
 } 

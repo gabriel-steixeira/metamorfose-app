@@ -24,6 +24,7 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/index.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
 import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
+import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
 
 /// Tela de configuração da planta virtual com BLoC.
 /// Permite ao usuário personalizar sua planta para criar conexão emocional.
@@ -111,8 +112,8 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicializar o BLoC
-    context.read<PlantConfigBloc>().add(InitializePlantConfigEvent());
+    final uid = context.read<AuthBloc>().state.user?.id ?? '';
+    context.read<PlantConfigBloc>().add(InitializePlantConfigEvent(uid));
     
     // Adicionar listener ao controller para detectar mudanças manuais
     _nameController.addListener(_onControllerChanged);
@@ -156,6 +157,18 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   void _handleSkip() {
     print('Botão IGNORAR pressionado - navegando para home');
     context.go(Routes.home);
+  }
+
+  void _handleSavePlant() {
+    final uid = context.read<AuthBloc>().state.user?.id;
+    if (uid != null) {
+      context.read<PlantConfigBloc>().add(SavePlantConfigEvent(uid));
+    } else {
+      // Tratar erro de usuário não autenticado
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Usuário não autenticado!')),
+      );
+    }
   }
 
   @override

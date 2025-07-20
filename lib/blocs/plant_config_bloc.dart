@@ -24,7 +24,10 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 abstract class PlantConfigEvent {}
 
 /// Evento para inicializar o formulário
-class InitializePlantConfigEvent extends PlantConfigEvent {}
+class InitializePlantConfigEvent extends PlantConfigEvent {
+  final String uid;
+  InitializePlantConfigEvent(this.uid);
+}
 
 /// Evento para carregar configuração salva
 class LoadSavedConfigurationEvent extends PlantConfigEvent {}
@@ -59,13 +62,19 @@ class SkipPhotoEvent extends PlantConfigEvent {}
 /// Evento para limpar erros
 class ClearErrorEvent extends PlantConfigEvent {}
 
+/// Evento para salvar configuração da planta
+class SavePlantConfigEvent extends PlantConfigEvent {
+  final String uid;
+  SavePlantConfigEvent(this.uid);
+}
+
 /// BLoC para configuração da planta
 class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
   final PlantConfigService _service;
 
   PlantConfigBloc({PlantConfigService? service})
       : _service = service ?? PlantConfigService(),
-        super(const PlantConfigState()) {
+        super(const PlantConfigState(uid: '')) {
     
     on<InitializePlantConfigEvent>(_onInitialize);
     on<LoadSavedConfigurationEvent>(_onLoadSavedConfiguration);
@@ -76,6 +85,7 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
     on<TakeFirstPhotoEvent>(_onTakeFirstPhoto);
     on<SkipPhotoEvent>(_onSkipPhoto);
     on<ClearErrorEvent>(_onClearError);
+    on<SavePlantConfigEvent>(_onSavePlantConfig);
   }
 
   /// Inicializa o formulário com valores padrão
@@ -84,8 +94,9 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
     Emitter<PlantConfigState> emit,
   ) async {
     try {
-      // Inicializar com valores padrão
-      const initialState = PlantConfigState(
+      // Inicializar com valores padrão e uid
+      final initialState = PlantConfigState(
+        uid: event.uid,
         plantName: '',
         selectedPlant: 'suculenta',
         selectedColor: MetamorfoseColors.purpleNormal,
@@ -258,7 +269,7 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
       ));
 
       // Salvar configuração primeiro (validação incluída)
-      final saveResult = await _service.savePlantConfiguration(state);
+      final saveResult = await _service.savePlantConfiguration(state, uid: state.uid);
       
       if (!saveResult.success) {
         emit(state.copyWith(
@@ -339,5 +350,73 @@ class PlantConfigBloc extends Bloc<PlantConfigEvent, PlantConfigState> {
     Emitter<PlantConfigState> emit,
   ) async {
     emit(state.copyWith(errorMessage: null));
+  }
+
+  /// Salva a configuração da planta com o UID do usuário
+  Future<void> _onSavePlantConfig(
+    SavePlantConfigEvent event,
+    Emitter<PlantConfigState> emit,
+  ) async {
+    print('💾 BLoC recebeu SavePlantConfigEvent');
+    print('  - UID: ${event.uid}');
+
+    // Forçar validação antes de salvar
+    final validation = _service.validateForm(state);
+    print('  - Validação forçada: ${validation.isValid} (${validation.error})');
+
+    // Atualizar estado com validação
+    emit(state.copyWith(
+      validationState: validation.state,
+      errorMessage: validation.error,
+    ));
+
+    // Verificar se pode salvar após validação
+    if (!validation.isValid) {
+      print('❌ Formulário inválido: ${validation.error}');
+      return;
+    }
+
+    try {
+      // Iniciar processo de salvamento
+      emit(state.copyWith(
+        loadingState: LoadingState.saving,
+        errorMessage: null,
+      ));
+
+      // Salvar configuração primeiro (validação incluída)
+      final saveResult = await _service.savePlantConfiguration(state, uid: state.uid);
+      
+      if (!saveResult.success) {
+        emit(state.copyWith(
+          loadingState: LoadingState.idle,
+          errorMessage: saveResult.error,
+        ));
+        return;
+      }
+
+      // Processar captura de foto
+      emit(state.copyWith(
+        loadingState: LoadingState.navigating,
+      ));
+
+      final photoResult = await _service.captureFirstPhoto();
+      
+      if (photoResult.success) {
+        // Sucesso - a navegação será tratada pela UI
+        emit(state.copyWith(
+          loadingState: LoadingState.idle,
+        ));
+      } else {
+        emit(state.copyWith(
+          loadingState: LoadingState.idle,
+          errorMessage: photoResult.error,
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        loadingState: LoadingState.idle,
+        errorMessage: 'Erro ao salvar configuração da planta',
+      ));
+    }
   }
 } 

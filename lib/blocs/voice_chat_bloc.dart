@@ -15,7 +15,10 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/state/voice_chat/voice_chat_state.dart';
+import 'package:metamorfose_flutter/models/chat_message.dart';
 import 'package:metamorfose_flutter/services/voice_chat_service.dart';
+import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Eventos do VoiceChatBloc
 abstract class VoiceChatEvent {}
@@ -44,6 +47,17 @@ class VoiceChatUpdateMessageEvent extends VoiceChatEvent {
   VoiceChatUpdateMessageEvent(this.message);
 }
 
+class LoadChatHistoryEvent extends VoiceChatEvent {
+  final String uid;
+  LoadChatHistoryEvent(this.uid);
+}
+
+class SendMessageEvent extends VoiceChatEvent {
+  final String uid;
+  final String text;
+  SendMessageEvent({required this.uid, required this.text});
+}
+
 /// BLoC para gerenciamento de chat por voz
 class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   final VoiceChatService _voiceChatService;
@@ -59,6 +73,8 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     on<VoiceChatProcessAudioEvent>(_onProcessAudio);
     on<VoiceChatClearErrorEvent>(_onClearError);
     on<VoiceChatUpdateMessageEvent>(_onUpdateMessage);
+    on<LoadChatHistoryEvent>(_onLoadChatHistory);
+    on<SendMessageEvent>(_onSendMessage);
   }
 
   /// Inicializa o serviço de voz
@@ -195,6 +211,46 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     Emitter<VoiceChatState> emit,
   ) async {
     emit(state.copyWith(currentMessage: event.message));
+  }
+
+  Future<void> _onLoadChatHistory(
+    LoadChatHistoryEvent event,
+    Emitter<VoiceChatState> emit,
+  ) async {
+    final messages = await _voiceChatService.getChatHistory(event.uid);
+    emit(state.copyWith(messages: messages));
+  }
+
+  Future<void> _onSendMessage(
+    SendMessageEvent event,
+    Emitter<VoiceChatState> emit,
+  ) async {
+    final uuid = Uuid();
+    final userMsg = ChatMessage(
+      id: uuid.v4(),
+      text: event.text,
+      sender: 'user',
+      timestamp: Timestamp.now(),
+    );
+    // Salvar mensagem do usuário
+    await _voiceChatService.saveMessage(uid: event.uid, message: userMsg);
+    final updatedMessages = List<ChatMessage>.from(state.messages)..add(userMsg);
+    emit(state.copyWith(messages: updatedMessages, currentMessage: event.text));
+
+    // Chamar Gemini
+    try {
+      final response = await _voiceChatService.getGeminiResponse(event.text);
+      final llmMsg = ChatMessage(
+        id: uuid.v4(),
+        text: response,
+        sender: 'llm',
+        timestamp: Timestamp.now(),
+      );
+      await _voiceChatService.saveMessage(uid: event.uid, message: llmMsg);
+      emit(state.copyWith(messages: [...updatedMessages, llmMsg], currentMessage: response));
+    } catch (e) {
+      emit(state.copyWith(errorMessage: 'Erro ao obter resposta da IA: $e'));
+    }
   }
 
   @override

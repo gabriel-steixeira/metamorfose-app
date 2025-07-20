@@ -16,6 +16,8 @@
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:metamorfose_flutter/models/plant_info.dart';
 
 /// Resultado de validação
 class ValidationResult {
@@ -127,35 +129,40 @@ class PlantConfigService {
     return ValidationResult.valid;
   }
 
-  /// Simula salvamento da configuração da planta
-  /// Em uma implementação real, isso seria persistido em:
-  /// - SharedPreferences para dados locais
-  /// - Banco de dados local (SQLite/Hive)
-  /// - API backend para sincronização
-  Future<SaveResult> savePlantConfiguration(PlantConfigState state) async {
+  /// Salva a configuração da planta no Firestore
+  Future<SaveResult> savePlantConfiguration(PlantConfigState state, {required String uid}) async {
     try {
-      // Simular delay de salvamento
-      await Future.delayed(const Duration(milliseconds: 800));
-      
       // Validar antes de salvar
       final validation = validateForm(state);
       if (!validation.isValid) {
         return SaveResult.failure(validation.error ?? 'Dados inválidos');
       }
 
-      // Aqui seria feito o salvamento real dos dados
-      // Por exemplo:
-      // - await SharedPreferences.getInstance()
-      // - prefs.setString('plant_name', state.plantName)
-      // - prefs.setString('plant_type', state.selectedPlant)
-      // - prefs.setInt('plant_color', state.selectedColor.value)
-      
-      debugPrint('PlantConfig salva: ${state.toString()}');
-      
+      // Gerar um novo plant_id (pode ser customizado conforme regra de negócio)
+      final plantId = FirebaseFirestore.instance.collection('users').doc(uid).collection('plant_info').doc().id;
+
+      // Montar o modelo PlantInfo
+      final plantInfo = PlantInfo(
+        id: plantId,
+        name: state.plantName.trim(),
+        species: state.selectedPlant,
+        potColor: state.selectedColor.value.toRadixString(16),
+        startDate: Timestamp.now(),
+      );
+
+      // Salvar no Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('plant_info')
+          .doc(plantId)
+          .set(plantInfo.toMap());
+
+      debugPrint('🌱 PlantInfo salvo no Firestore: $plantInfo');
       return SaveResult.successful;
     } catch (e) {
-      debugPrint('Erro ao salvar configuração: $e');
-      return SaveResult.failure('Erro ao salvar configuração');
+      debugPrint('Erro ao salvar configuração no Firestore: $e');
+      return SaveResult.failure('Erro ao salvar configuração no Firestore');
     }
   }
 
