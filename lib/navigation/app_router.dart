@@ -9,11 +9,12 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 15-07-2025
+ * Last modified: 06-08-2025
  * 
- *Changes:
+ * Changes:
  * - Adicionado Site24x7NavigatorObserver para o GoRouter. (Evelin Cordeiro)
-
+ * - Adicionado Comunidade e Cuidados para o GoRouter. (Evelin Cordeiro)
+ * 
  * Version: 2.1.0
  * Squad: Metamorfose
  */
@@ -27,10 +28,14 @@ import 'package:metamorfose_flutter/screens/home/home.dart';
 import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
 import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
+import 'package:metamorfose_flutter/screens/community/community_screen.dart';
+import 'package:metamorfose_flutter/screens/plant/plant_care_screen.dart';
 // Adicionar imports necessários para BlocProvider e PlantConfigBloc
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
+import 'package:metamorfose_flutter/blocs/community_bloc.dart';
+import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
 
 // Telas de Onboarding
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
@@ -66,7 +71,7 @@ class AppRouter {
         path: Routes.mascotSplash,
         builder: (context, state) => const MascotSplashScreen(),
       ),
-      
+
       // Telas de Onboarding
       GoRoute(
         path: Routes.onboarding,
@@ -96,7 +101,7 @@ class AppRouter {
         path: Routes.onboardingFinal,
         builder: (context, state) => const OnboardingFinalScreen(),
       ),
-      
+
       // Telas principais da aplicação (BLoC)
       GoRoute(
         path: Routes.auth,
@@ -124,6 +129,20 @@ class AppRouter {
         path: Routes.map,
         builder: (context, state) => const MapScreenBloc(),
       ),
+      GoRoute(
+        path: Routes.community,
+        builder: (context, state) => BlocProvider(
+          create: (_) => CommunityBloc(),
+          child: const CommunityScreen(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.plantCare,
+        builder: (context, state) => BlocProvider(
+          create: (_) => PlantCareBloc(),
+          child: const PlantCareScreen(),
+        ),
+      ),
     ],
   );
-} 
+}

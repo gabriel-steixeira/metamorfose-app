@@ -74,17 +74,7 @@ class _BrandSplashScreenState extends State<BrandSplashScreen> {
                 fontFamily: 'DinNext',
               ),
             ),
-            const Spacer(),
-            // Indicador na parte inferior
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 8),
+            const Spacer(),          
           ],
         ),
       ),
