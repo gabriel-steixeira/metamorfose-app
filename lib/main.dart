@@ -27,6 +27,9 @@ import 'package:metamorfose_flutter/config/firebase_config.dart';
 import 'package:metamorfose_flutter/services/notification_service.dart';
 import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
 import 'dart:ui';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
 
 
 /// Ponto de entrada do aplicativo Flutter
@@ -62,5 +65,19 @@ void main() async {
   ApmMobileapmFlutterPlugin.instance.startMonitoring("US_300058d81ed3d79b702f7391fe0979d2", 20);
   
   // Inicia o aplicativo
-  runApp(const MetamorfoseApp());
-} 
+  runApp(const AIPrototype());
+}
+
+class AIPrototype extends StatelessWidget {
+  const AIPrototype({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: BlocProvider(
+        create: (context) => VoiceChatBloc(),
+        child: const VoiceChatScreen(),
+      ),
+    );
+  }
+}

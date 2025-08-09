@@ -11,7 +11,7 @@
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
  * Last modified: 29-05-2025
- * Version: 1.0.0
+ * Version: 1.0.1
  * Squad: Metamorfose
  */
 
@@ -21,11 +21,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/components/plant_personality_selector.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
-import 'package:metamorfose_flutter/state/voice_chat/voice_chat_state.dart';
 
 /// Tela principal de chat por voz com o assistente usando BLoC.
-/// Permite ao usuário interagir por voz com o aplicativo.
 class VoiceChatScreen extends StatefulWidget {
   const VoiceChatScreen({super.key});
 
@@ -41,7 +40,6 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   void initState() {
     super.initState();
     
-    // Inicializa controladores de animação (exatamente como na original)
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 20),
@@ -52,7 +50,6 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
 
-    // Inicializa o BLoC
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<VoiceChatBloc>().add(VoiceChatInitializeEvent());
     });
@@ -66,6 +63,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   }
 
   void _toggleListening() {
+    debugPrint("🎤 Toggle listening clicked");
     context.read<VoiceChatBloc>().add(VoiceChatToggleListeningEvent());
   }
 
@@ -73,11 +71,16 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final voiceChatBloc = context.read<VoiceChatBloc>();
     
     return BlocListener<VoiceChatBloc, VoiceChatState>(
+      bloc: voiceChatBloc,
       listener: (context, state) {
-        // Mostra erro se houver
+        debugPrint("🔄 State changed - isRecording: ${state.isRecording}");
+        debugPrint("💬 Current message: ${state.currentMessage}");
+        
         if (state.hasError) {
+          debugPrint("❌ Error: ${state.errorMessage}");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
@@ -94,143 +97,165 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
         }
       },
       child: Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-              // Conteúdo principal (exatamente igual ao original)
-            Column(
-              children: [
-                // Espaçamento superior
-                SizedBox(height: screenHeight * 0.02),
-                
-                // Área do personagem com balão de fala e decorações
-                Expanded(
-                  child: Stack(
-                    children: [
-                      // Círculos decorativos de fundo (chat_plant.svg)
-                      Positioned(
-                        top: -160,
-                        child: Center(
-                          child: SizedBox(
-                            width: screenWidth,
-                            height: screenHeight,
-                            child: SvgPicture.asset(
-                              'assets/images/chat/chat_plant.svg',
-                              fit: BoxFit.contain,
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
+                      buildWhen: (previous, current) =>
+                          previous.currentPersonality != current.currentPersonality,
+                      builder: (context, state) {
+                        return PersonalitySelector(
+                          currentPersonality: state.currentPersonality, 
+                          onPersonalityChanged: (personality) {
+                            debugPrint("🎭 Selecionando personalidade: ${personality.id}");
+                            context.read<VoiceChatBloc>().add(
+                              VoiceChatChangePersonalityEvent(personality),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: -160,
+                          child: Center(
+                            child: SizedBox(
+                              width: screenWidth,
+                              height: screenHeight,
+                              child: SvgPicture.asset(
+                                'assets/images/chat/chat_plant.svg',
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      
-                      // Personagem da planta (plantsetup.svg)
-                      Positioned(
-                        top: screenHeight * 0.15,
-                        left: screenWidth * 0.2,
-                        right: screenWidth * 0.2,
-                        child: Center(
-                          child: SizedBox(
-                            width: screenWidth * 0.5,
-                            height: screenWidth * 0.65,
-                            child: SvgPicture.asset(
-                            'assets/images/plantsetup/plantsetup.svg',
-                            fit: BoxFit.contain,
+                        
+                        // Personagem da planta
+                        Positioned(
+                          top: screenHeight * 0.15,
+                          left: screenWidth * 0.2,
+                          right: screenWidth * 0.2,
+                          child: Center(
+                            child: SizedBox(
+                              width: screenWidth * 0.5,
+                              height: screenWidth * 0.65,
+                              child: SvgPicture.asset(
+                                'assets/images/plantsetup/plantsetup.svg',
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      
-                        // Balão de fala usando SpeechBubble (reativo ao estado do BLoC)
-                      Positioned(
-                        top: screenHeight * 0.09,
-                        left: screenWidth * 0.3,
-                        right: screenWidth * 0.3,
+                        
+                        // Balão de fala usando SpeechBubble
+                        Positioned(
+                          top: screenHeight * 0.09,
+                          left: screenWidth * 0.3,
+                          right: screenWidth * 0.3,
                           child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
-                            buildWhen: (previous, current) => 
+                            buildWhen: (previous, current) =>
                                 previous.currentMessage != current.currentMessage,
                             builder: (context, state) {
                               return SpeechBubble(
-                          width: 250,
-                          height: 38,
-                          color: MetamorfoseColors.greenLight,
-                          borderColor: MetamorfoseColors.purpleLight,
-                          triangleColor: MetamorfoseColors.greenLight,
+                                width: 250,
+                                height: 38,
+                                color: MetamorfoseColors.greenLight,
+                                borderColor: MetamorfoseColors.purpleLight,
+                                triangleColor: MetamorfoseColors.greenLight,
                                 child: Text(
                                   state.currentMessage,
                                   style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: MetamorfoseColors.whiteLight,
-                              fontFamily: 'DinNext',
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: MetamorfoseColors.whiteLight,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               );
                             },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                  // Texto de convite (exatamente igual ao original)
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 40,
-                      height: 1.4,
-                      fontFamily: 'DinNext',
-                      fontWeight: FontWeight.w600,
+                      ],
                     ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Sanji',
-                        style: TextStyle(
-                          color: MetamorfoseColors.greenLight,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ', vamos\nconversar?',
-                        style: TextStyle(
-                          color: MetamorfoseColors.greyMedium,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                
-                // Espaçamento inferior
-                SizedBox(height: screenHeight * 0.2),
-              ],
-            ),
-            
-              // App bar inferior (com callback reativo ao BLoC)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
+                  
+                  // Texto de convite
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 40,
+                        height: 1.4,
+                        fontFamily: 'DinNext',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Sanji',
+                          style: TextStyle(
+                            color: MetamorfoseColors.greenLight,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ', vamos\nconversar?',
+                          style: TextStyle(
+                            color: MetamorfoseColors.greyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: screenHeight * 0.2),
+                ],
+              ),
+              
+              // App bar inferior
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
                 child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
-                  buildWhen: (previous, current) => 
-                      previous.isListening != current.isListening,
+                  buildWhen: (previous, current) =>
+                      previous.isRecording != current.isRecording,
                   builder: (context, state) {
                     return BottomNavigationMenu(
-                activeIndex: 1, // Voice icon ativo por padrão
-                onItemTapped: (index) {
-                  if (index == 1) {
-                          // Se clicou no ícone de voice, toggle listening via BLoC
-                    _toggleListening();
-                  }
-                },
+                      activeIndex: 2,
+                      onItemTapped: (index) {
+                        if (index == 2) {
+                          debugPrint("👆 Mic button tapped - isRecording: ${state.isRecording}");
+                          _toggleListening();
+                        }
+                      },
                     );
                   },
                 ),
               ),
             ],
-            ),
+          ),
         ),
       ),
     );
   }
-} 
+}
