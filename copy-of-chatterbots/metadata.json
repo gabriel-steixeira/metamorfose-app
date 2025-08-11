@@ -1,0 +1,7 @@
+{
+  "name": "Copy of ChatterBots",
+  "description": "An interactive tool that allows you to design, test, and banter with custom AI characters on the fly.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

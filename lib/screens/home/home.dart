@@ -17,6 +17,7 @@
 /// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
@@ -26,6 +27,17 @@ import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/state/home/home_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
+=======
+import 'package:conversao_flutter/theme/colors.dart';
+import 'package:conversao_flutter/theme/text_styles.dart';
+import 'package:conversao_flutter/components/speech_bubble.dart';
+import 'package:conversao_flutter/components/bottom_navigation_menu.dart';
+import 'package:conversao_flutter/models/weather.dart';
+import 'package:conversao_flutter/models/quote.dart';
+import 'package:conversao_flutter/services/notification_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:conversao_flutter/routes/routes.dart';
+>>>>>>> Stashed changes
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     context.read<HomeBloc>().add(InitializeHomeEvent());
 
+<<<<<<< Updated upstream
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -58,6 +71,61 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+=======
+  Future<void> _loadWeatherData() async {
+    setState(() => weatherState = AppState.loading);
+    
+    try {
+      final weatherData = await Weather.fetchWeatherWithLocation();
+      if (mounted) {
+        setState(() {
+          weather = weatherData;
+          weatherState = AppState.success;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          weatherState = AppState.error;
+          weatherError = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _loadQuoteData() async {
+    setState(() => quoteState = AppState.loading);
+    
+    try {
+      final quoteData = await Quote.fetchQuote();
+      if (mounted) {
+        setState(() {
+          quote = quoteData;
+          quoteState = AppState.success;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          quoteState = AppState.error;
+          quoteError = e.toString();
+        });
+      }
+    }
+  }
+
+  /// Mostra notificação de boas-vindas
+  Future<void> _showWelcomeNotification() async {
+    try {
+      // Aguardar um pouco para que a tela carregue completamente
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
+      // Mostrar notificação de boas-vindas
+      await NotificationService().showWelcomeNotification();
+    } catch (e) {
+      debugPrint('❌ Erro ao mostrar notificação de boas-vindas: $e');
+    }
+>>>>>>> Stashed changes
   }
 
   @override
@@ -142,6 +210,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               size: 28,
             ),
           ),
+<<<<<<< Updated upstream
           const SizedBox(width: 20),
           Expanded(
             child: Column(
@@ -152,6 +221,266 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   style: AppTypography.titleLarge.copyWith(
                     color: MetamorfoseColors.blackNormal,
                   ),
+=======
+          // Conteúdo principal com rolagem e espaçamento dinâmico
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: screenSize.height * 0.5 - 40, bottom: 100),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Seção Clima
+                    Padding(
+                      padding: EdgeInsets.only(left: (screenSize.width - bubbleWidth) / 2, bottom: 4, top: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Clima',
+                          style: AppTextStyles.titleLarge.copyWith(
+                            color: MetamorfoseColors.greyDark,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'DinNext',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SpeechBubble(
+                        width: bubbleWidth,
+                        showTriangle: false,
+                        showBorder: true,
+                        borderColor: MetamorfoseColors.purpleNormal,
+                        color: MetamorfoseColors.whiteLight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          child: Builder(
+                            builder: (_) {
+                              if (weatherState == AppState.loading) {
+                                return const Center(child: CircularProgressIndicator());
+                              } else if (weatherState == AppState.success && weather != null) {
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Emoticon à esquerda
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12, top: 2),
+                                      child: Text(
+                                        weather!.getWeatherIcon(),
+                                        style: const TextStyle(fontSize: 40),
+                                      ),
+                                    ),
+                                    // Informações do clima
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Primeira linha: Nome da cidade em negrito
+                                        Text(
+                                          weather!.location,
+                                          style: AppTextStyles.bodyLarge.copyWith(
+                                            color: MetamorfoseColors.greyDark,
+                                            fontFamily: 'DinNext',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        // Segunda linha: Temperatura
+                                        Text(
+                                          'Temperatura: ${weather!.temperature.toStringAsFixed(1)}°C',
+                                          style: AppTextStyles.bodyLarge.copyWith(
+                                            color: MetamorfoseColors.greyDark,
+                                            fontFamily: 'DinNext',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        // Terceira linha: Mínima e Máxima
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Mínima: ${weather!.tempMin.toStringAsFixed(1)}°C',
+                                              style: AppTextStyles.bodyLarge.copyWith(
+                                                color: MetamorfoseColors.blueNormal,
+                                                fontFamily: 'DinNext',
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Text(
+                                              'Máxima: ${weather!.tempMax.toStringAsFixed(1)}°C',
+                                              style: AppTextStyles.bodyLarge.copyWith(
+                                                color: MetamorfoseColors.redNormal,
+                                                fontFamily: 'DinNext',
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Text(
+                                  'Erro ao carregar clima: $weatherError',
+                                  style: AppTextStyles.bodyLarge.copyWith(
+                                    color: MetamorfoseColors.redNormal,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Seção Mensagem do dia
+                    Padding(
+                      padding: EdgeInsets.only(left: (screenSize.width - bubbleWidth) / 2, bottom: 4, top: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Mensagem do dia',
+                          style: AppTextStyles.titleLarge.copyWith(
+                            color: MetamorfoseColors.greyDark,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'DinNext',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SpeechBubble(
+                        width: bubbleWidth,
+                        showTriangle: false,
+                        showBorder: true,
+                        borderColor: MetamorfoseColors.greenLight,
+                        color: MetamorfoseColors.whiteLight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          child: Builder(
+                            builder: (_) {
+                              if (quoteState == AppState.loading) {
+                                return const Center(child: CircularProgressIndicator());
+                              } else if (quoteState == AppState.success && quote != null) {
+                                return Text(
+                                  quote!.text,
+                                  style: AppTextStyles.bodyLarge.copyWith(
+                                    color: MetamorfoseColors.greyDark,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                  textAlign: TextAlign.left,
+                                );
+                              } else {
+                                return Text(
+                                  'Erro ao carregar mensagem: $quoteError',
+                                  style: AppTextStyles.bodyLarge.copyWith(
+                                    color: MetamorfoseColors.redNormal,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    // Seção de teste das notificações (pode ser removida em produção)
+                    if (true) // Mantém apenas em desenvolvimento
+                      Padding(
+                        padding: EdgeInsets.only(left: (screenSize.width - bubbleWidth) / 2, bottom: 4, top: 8),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Teste de Notificações',
+                            style: AppTextStyles.titleLarge.copyWith(
+                              color: MetamorfoseColors.greyDark,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'DinNext',
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (true) // Mantém apenas em desenvolvimento
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SpeechBubble(
+                          width: bubbleWidth,
+                          showTriangle: false,
+                          showBorder: true,
+                          borderColor: MetamorfoseColors.purpleLight,
+                          color: MetamorfoseColors.whiteLight,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Teste as notificações do app:',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: MetamorfoseColors.greyDark,
+                                    fontFamily: 'DinNext',
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showWelcomeNotification(),
+                                      icon: const Icon(Icons.waving_hand, size: 16),
+                                      label: const Text('Boas-vindas'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.greenNormal,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showMotivationNotification(),
+                                      icon: const Icon(Icons.fitness_center, size: 16),
+                                      label: const Text('Motivação'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.purpleNormal,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () => NotificationService().showPlantCareNotification(),
+                                      icon: const Icon(Icons.local_florist, size: 16),
+                                      label: const Text('Cuidar da Planta'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.greenLight,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                      onPressed: () => context.go(Routes.memoryTest),
+                                      icon: const Icon(Icons.psychology, size: 16),
+                                      label: const Text('Teste Memória'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MetamorfoseColors.blueNormal,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        textStyle: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+>>>>>>> Stashed changes
                 ),
                 const SizedBox(height: 4),
                 Text(

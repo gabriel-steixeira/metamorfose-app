@@ -32,8 +32,24 @@ class Routes {
   static const register = '/register';
   static const plantConfig = '/plant-config';
   static const home = '/home';
-  static const voiceChat = '/voice-chat';
+
+  static const audioTest = '/audio-test';
+  static const liveApiTest = '/live-api-test';
+  static const simpleGeminiTest = '/simple-gemini-test';
+  static const plantConsciousnessChat = '/plant-consciousness-chat';
+  static const plantLiveChat = '/plant-live-chat';
   static const map = '/map';
+<<<<<<< Updated upstream
   static const community = '/community';
   static const plantCare = '/plant-care';
 }
+=======
+  static const memoryTest = '/memory-test';
+  
+  // Rotas temporárias para desenvolvimento/teste (serão removidas)
+  static const authBloc = '/auth-bloc';
+  static const plantConfigBloc = '/plant-config-bloc';
+  static const homeBloc = '/home-bloc';
+  static const mapBloc = '/map-bloc';
+} 
+>>>>>>> Stashed changes

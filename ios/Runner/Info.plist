@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Permissões para microfone -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Este app precisa acessar o microfone para permitir conversas por voz com o assistente.</string>
+	
+	<!-- Permissões para reconhecimento de fala -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Este app usa reconhecimento de fala para entender suas mensagens de voz.</string>
 </dict>
 </plist>

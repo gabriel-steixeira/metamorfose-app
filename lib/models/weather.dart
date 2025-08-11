@@ -175,22 +175,17 @@ class Weather {
         String? country = data['address']?['country'];
 
         // Monta o nome da localização
-        if (city != null) {
-          if (state != null && country == 'Brasil') {
-            // Se for no Brasil, mostra "Cidade, Estado"
-            return "$city, $state";
-          } else if (country != null) {
-            // Se for em outro país, mostra "Cidade, País"
-            return "$city, $country";
-          } else {
-            // Só a cidade
-            return city;
-          }
-        } else if (state != null) {
-          // Se não achou cidade, mas achou estado
-          return state;
+        if (state != null && country == 'Brasil') {
+          // Se for no Brasil, mostra "Cidade, Estado"
+          return "$city, $state";
+        } else if (country != null) {
+          // Se for em outro país, mostra "Cidade, País"
+          return "$city, $country";
+        } else {
+          // Só a cidade
+          return city ?? "Localização desconhecida";
         }
-      }
+            }
     } catch (e) {
       print('[Weather] Erro no geocoding: $e');
     }

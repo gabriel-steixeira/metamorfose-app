@@ -50,11 +50,16 @@ class BottomNavigationMenu extends StatelessWidget {
       case 0: // Home
         context.go(Routes.home);
         break;
+<<<<<<< Updated upstream
       case 1: // Perfil
         context.go(Routes.plantConfig);
         break;
       case 2: // Voice
         context.go(Routes.voiceChat);
+=======
+      case 1: // Voice icon - navegar para chat por texto
+        context.go(Routes.plantConsciousnessChat);
+>>>>>>> Stashed changes
         break;
       case 3: // Comunidade
         context.go(Routes.community);

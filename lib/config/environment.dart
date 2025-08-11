@@ -38,6 +38,8 @@ class Environment {
     defaultValue: '',
   );
 
+  static const String _geminiApiKey = 'AIzaSyCd1U0xTlsfnMb4BqEb6-EGWoOyrl1Q6zw';
+
   /// API Key para Google Maps
   static String get googleMapsApiKey {
     if (_googleMapsApiKey.isEmpty) {
@@ -60,6 +62,9 @@ class Environment {
 
   /// API Key para Open Meteo (se necessário) 
   static String get openMeteoApiKey => _openMeteoApiKey;
+
+  /// API Key para Google Gemini AI
+  static String get geminiApiKey => _geminiApiKey;
 
   /// Verifica se todas as keys obrigatórias estão configuradas
   static bool get areRequiredKeysConfigured {

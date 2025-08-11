@@ -20,6 +20,7 @@
  */
 
 import 'package:go_router/go_router.dart';
+<<<<<<< Updated upstream
 import 'package:metamorfose_flutter/routes/routes.dart';
 
 // Telas principais (padrão BLoC)
@@ -50,13 +51,41 @@ import 'package:metamorfose_flutter/screens/onboarding/onboarding_welcome_screen
 import 'package:metamorfose_flutter/screens/splash/brand_splash_screen.dart';
 import 'package:metamorfose_flutter/screens/splash/mascot_splash_screen.dart';
 import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
+=======
+import 'package:conversao_flutter/routes/routes.dart';
+ import 'package:conversao_flutter/screens/auth/auth_screen.dart';
+//import 'package:conversao_flutter/screens/auth/register_screen.dart';
+import 'package:conversao_flutter/screens/home/home.dart';
+//import 'package:conversao_flutter/screens/home/home_screen_bloc.dart';
+
+
+import 'package:conversao_flutter/screens/test/live_api_test_screen.dart';
+import 'package:conversao_flutter/screens/test/simple_gemini_test_screen.dart';
+import 'package:conversao_flutter/screens/chat/plant_consciousness_chat_screen.dart';
+import 'package:conversao_flutter/screens/chat/plant_live_chat_screen.dart';
+
+import 'package:conversao_flutter/screens/map/map_screen.dart';
+//import 'package:conversao_flutter/screens/map/map_screen_bloc.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_carousel_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_egg_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_final_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_plant_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_screen.dart';
+import 'package:conversao_flutter/screens/onboarding/onboarding_welcome_screen.dart';
+import 'package:conversao_flutter/screens/plant/plant_config_screen.dart';
+//import 'package:conversao_flutter/screens/plant/plant_config_screen_bloc.dart';
+import 'package:conversao_flutter/screens/splash/brand_splash_screen.dart';
+import 'package:conversao_flutter/screens/splash/mascot_splash_screen.dart';
+>>>>>>> Stashed changes
+
 
 /// Classe responsável pela configuração de rotas do aplicativo usando o GO Router.
 /// Define todos os caminhos de navegação disponíveis no app.
 class AppRouter {
   /// Router principal do aplicativo
   static final router = GoRouter(
-    initialLocation: Routes.brandSplash,
+    initialLocation: Routes.plantConsciousnessChat,
     debugLogDiagnostics: true,
     observers: [
       Site24x7NavigatorObserver(),
@@ -101,8 +130,74 @@ class AppRouter {
         path: Routes.onboardingFinal,
         builder: (context, state) => const OnboardingFinalScreen(),
       ),
+<<<<<<< Updated upstream
 
       // Telas principais da aplicação (BLoC)
+=======
+      
+      // Tela de autenticação (agora usando BLoC como padrão)
+      // GoRoute(
+      //   path: Routes.auth,
+      //   builder: (context, state) => const AuthScreenBloc(),
+      // ),
+      
+      // Tela de registro
+      // GoRoute(
+      //   path: Routes.register,
+      //   builder: (context, state) => const RegisterScreen(),
+      // ),
+      
+      // Tela de configuração da planta (agora usando BLoC como padrão)
+      GoRoute(
+        path: Routes.plantConfig,
+        builder: (context, state) => const PlantConfigScreen(),
+      ),
+      
+      // Tela inicial/home (agora usando BLoC como padrão)
+      GoRoute(
+        path: Routes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      
+
+      
+      // Tela de teste da Live API
+      GoRoute(
+        path: Routes.liveApiTest,
+        builder: (context, state) => const LiveApiTestScreen(),
+      ),
+      
+      // Tela de teste simples do Gemini
+      GoRoute(
+        path: Routes.simpleGeminiTest,
+        builder: (context, state) => const SimpleGeminiTestScreen(),
+      ),
+      
+      // Tela de chat completa com áudio
+      GoRoute(
+        path: Routes.plantConsciousnessChat,
+        builder: (context, state) => const PlantConsciousnessChatScreen(),
+      ),
+      
+      // Tela de chat Live API (modo streaming)
+      GoRoute(
+        path: Routes.plantLiveChat,
+        builder: (context, state) => const PlantLiveChatScreen(),
+      ),
+      
+      // Tela de mapa com floriculturas (agora usando BLoC como padrão)
+      GoRoute(
+        path: Routes.map,
+        builder: (context, state) => const MapScreen(), //Bloc(),
+      ),
+      
+
+      
+      // === ROTAS DE DESENVOLVIMENTO/TESTE ===
+      // Mantidas temporariamente para compatibilidade
+      
+      // Tela de autenticação original (deprecated)
+>>>>>>> Stashed changes
       GoRoute(
         path: Routes.auth,
         builder: (context, state) => const AuthScreen(),
