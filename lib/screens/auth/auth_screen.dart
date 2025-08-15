@@ -318,6 +318,20 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               
+              // Botão de Login Rápido (para desenvolvimento)
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MetamorfeseSecondaryButton(
+                  text: 'LOGIN RÁPIDO (DEV)',
+                  onPressed: state.loginState.isLoading 
+                      ? () {} 
+                      : () {
+                          context.read<AuthBloc>().add(AuthQuickLoginEvent());
+                        },
+                ),
+              ),
+              
               // Exibir erro se houver
               if (state.loginState.errorMessage != null) ...[
                 const SizedBox(height: 16),

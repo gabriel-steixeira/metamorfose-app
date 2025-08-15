@@ -29,6 +29,12 @@ mixin _$AuthEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -44,6 +50,12 @@ mixin _$AuthEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -59,6 +71,12 @@ mixin _$AuthEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -72,6 +90,11 @@ mixin _$AuthEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -83,6 +106,10 @@ mixin _$AuthEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -94,6 +121,10 @@ mixin _$AuthEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -199,6 +230,12 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return toggleMode(mode);
   }
@@ -217,6 +254,12 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return toggleMode?.call(mode);
   }
@@ -235,6 +278,12 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (toggleMode != null) {
@@ -254,6 +303,11 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return toggleMode(this);
   }
@@ -268,6 +322,10 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return toggleMode?.call(this);
   }
@@ -282,6 +340,10 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (toggleMode != null) {
@@ -385,6 +447,12 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return toggleEyes(isVisible);
   }
@@ -403,6 +471,12 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return toggleEyes?.call(isVisible);
   }
@@ -421,6 +495,12 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (toggleEyes != null) {
@@ -440,6 +520,11 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return toggleEyes(this);
   }
@@ -454,6 +539,10 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return toggleEyes?.call(this);
   }
@@ -468,6 +557,10 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (toggleEyes != null) {
@@ -591,6 +684,12 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return updateLoginField(email, password, rememberMe);
   }
@@ -609,6 +708,12 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return updateLoginField?.call(email, password, rememberMe);
   }
@@ -627,6 +732,12 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (updateLoginField != null) {
@@ -646,6 +757,11 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return updateLoginField(this);
   }
@@ -660,6 +776,10 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return updateLoginField?.call(this);
   }
@@ -674,6 +794,10 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (updateLoginField != null) {
@@ -800,6 +924,12 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return submitLogin(email, password, rememberMe);
   }
@@ -818,6 +948,12 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return submitLogin?.call(email, password, rememberMe);
   }
@@ -836,6 +972,12 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (submitLogin != null) {
@@ -855,6 +997,11 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return submitLogin(this);
   }
@@ -869,6 +1016,10 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return submitLogin?.call(this);
   }
@@ -883,6 +1034,10 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (submitLogin != null) {
@@ -964,6 +1119,12 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return signInWithGoogle();
   }
@@ -982,6 +1143,12 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return signInWithGoogle?.call();
   }
@@ -1000,6 +1167,12 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (signInWithGoogle != null) {
@@ -1019,6 +1192,11 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return signInWithGoogle(this);
   }
@@ -1033,6 +1211,10 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return signInWithGoogle?.call(this);
   }
@@ -1047,6 +1229,10 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (signInWithGoogle != null) {
@@ -1115,6 +1301,12 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return signInWithFacebook();
   }
@@ -1133,6 +1325,12 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return signInWithFacebook?.call();
   }
@@ -1151,6 +1349,12 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (signInWithFacebook != null) {
@@ -1170,6 +1374,11 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return signInWithFacebook(this);
   }
@@ -1184,6 +1393,10 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return signInWithFacebook?.call(this);
   }
@@ -1198,6 +1411,10 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (signInWithFacebook != null) {
@@ -1325,6 +1542,12 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     required TResult Function(
             String email, String password, String username, String phone)
         submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
   }) {
     return submitRegister(email, password, username, phone);
   }
@@ -1343,6 +1566,12 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     TResult? Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
   }) {
     return submitRegister?.call(email, password, username, phone);
   }
@@ -1361,6 +1590,12 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     TResult Function(
             String email, String password, String username, String phone)?
         submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
     required TResult orElse(),
   }) {
     if (submitRegister != null) {
@@ -1380,6 +1615,11 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     required TResult Function(AuthSignInWithFacebookEvent value)
         signInWithFacebook,
     required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
   }) {
     return submitRegister(this);
   }
@@ -1394,6 +1634,10 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
   }) {
     return submitRegister?.call(this);
   }
@@ -1408,6 +1652,10 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
     TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
     required TResult orElse(),
   }) {
     if (submitRegister != null) {
@@ -1434,4 +1682,836 @@ abstract class AuthSubmitRegisterEvent implements AuthEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthSubmitRegisterEventImplCopyWith<_$AuthSubmitRegisterEventImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthUpdateRegisterFieldEventImplCopyWith<$Res> {
+  factory _$$AuthUpdateRegisterFieldEventImplCopyWith(
+          _$AuthUpdateRegisterFieldEventImpl value,
+          $Res Function(_$AuthUpdateRegisterFieldEventImpl) then) =
+      __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? email, String? password, String? username, String? phone});
+}
+
+/// @nodoc
+class __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthUpdateRegisterFieldEventImpl>
+    implements _$$AuthUpdateRegisterFieldEventImplCopyWith<$Res> {
+  __$$AuthUpdateRegisterFieldEventImplCopyWithImpl(
+      _$AuthUpdateRegisterFieldEventImpl _value,
+      $Res Function(_$AuthUpdateRegisterFieldEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = freezed,
+    Object? password = freezed,
+    Object? username = freezed,
+    Object? phone = freezed,
+  }) {
+    return _then(_$AuthUpdateRegisterFieldEventImpl(
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
+      username: freezed == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AuthUpdateRegisterFieldEventImpl
+    implements AuthUpdateRegisterFieldEvent {
+  const _$AuthUpdateRegisterFieldEventImpl(
+      {this.email, this.password, this.username, this.phone});
+
+  @override
+  final String? email;
+  @override
+  final String? password;
+  @override
+  final String? username;
+  @override
+  final String? phone;
+
+  @override
+  String toString() {
+    return 'AuthEvent.updateRegisterField(email: $email, password: $password, username: $username, phone: $phone)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthUpdateRegisterFieldEventImpl &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.phone, phone) || other.phone == phone));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, email, password, username, phone);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthUpdateRegisterFieldEventImplCopyWith<
+          _$AuthUpdateRegisterFieldEventImpl>
+      get copyWith => __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<
+          _$AuthUpdateRegisterFieldEventImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(AuthScreenMode mode) toggleMode,
+    required TResult Function(bool isVisible) toggleEyes,
+    required TResult Function(String? email, String? password, bool? rememberMe)
+        updateLoginField,
+    required TResult Function(String email, String password, bool rememberMe)
+        submitLogin,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithFacebook,
+    required TResult Function(
+            String email, String password, String username, String phone)
+        submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
+  }) {
+    return updateRegisterField(email, password, username, phone);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(AuthScreenMode mode)? toggleMode,
+    TResult? Function(bool isVisible)? toggleEyes,
+    TResult? Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult? Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithFacebook,
+    TResult? Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
+  }) {
+    return updateRegisterField?.call(email, password, username, phone);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(AuthScreenMode mode)? toggleMode,
+    TResult Function(bool isVisible)? toggleEyes,
+    TResult Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithFacebook,
+    TResult Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (updateRegisterField != null) {
+      return updateRegisterField(email, password, username, phone);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthToggleModeEvent value) toggleMode,
+    required TResult Function(AuthToggleEyesEvent value) toggleEyes,
+    required TResult Function(AuthUpdateLoginFieldEvent value) updateLoginField,
+    required TResult Function(AuthSubmitLoginEvent value) submitLogin,
+    required TResult Function(AuthSignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(AuthSignInWithFacebookEvent value)
+        signInWithFacebook,
+    required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
+  }) {
+    return updateRegisterField(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthToggleModeEvent value)? toggleMode,
+    TResult? Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult? Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult? Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
+  }) {
+    return updateRegisterField?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthToggleModeEvent value)? toggleMode,
+    TResult Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (updateRegisterField != null) {
+      return updateRegisterField(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthUpdateRegisterFieldEvent implements AuthEvent {
+  const factory AuthUpdateRegisterFieldEvent(
+      {final String? email,
+      final String? password,
+      final String? username,
+      final String? phone}) = _$AuthUpdateRegisterFieldEventImpl;
+
+  String? get email;
+  String? get password;
+  String? get username;
+  String? get phone;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AuthUpdateRegisterFieldEventImplCopyWith<
+          _$AuthUpdateRegisterFieldEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthSignOutEventImplCopyWith<$Res> {
+  factory _$$AuthSignOutEventImplCopyWith(_$AuthSignOutEventImpl value,
+          $Res Function(_$AuthSignOutEventImpl) then) =
+      __$$AuthSignOutEventImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$AuthSignOutEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthSignOutEventImpl>
+    implements _$$AuthSignOutEventImplCopyWith<$Res> {
+  __$$AuthSignOutEventImplCopyWithImpl(_$AuthSignOutEventImpl _value,
+      $Res Function(_$AuthSignOutEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$AuthSignOutEventImpl implements AuthSignOutEvent {
+  const _$AuthSignOutEventImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.signOut()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$AuthSignOutEventImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(AuthScreenMode mode) toggleMode,
+    required TResult Function(bool isVisible) toggleEyes,
+    required TResult Function(String? email, String? password, bool? rememberMe)
+        updateLoginField,
+    required TResult Function(String email, String password, bool rememberMe)
+        submitLogin,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithFacebook,
+    required TResult Function(
+            String email, String password, String username, String phone)
+        submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
+  }) {
+    return signOut();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(AuthScreenMode mode)? toggleMode,
+    TResult? Function(bool isVisible)? toggleEyes,
+    TResult? Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult? Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithFacebook,
+    TResult? Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
+  }) {
+    return signOut?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(AuthScreenMode mode)? toggleMode,
+    TResult Function(bool isVisible)? toggleEyes,
+    TResult Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithFacebook,
+    TResult Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (signOut != null) {
+      return signOut();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthToggleModeEvent value) toggleMode,
+    required TResult Function(AuthToggleEyesEvent value) toggleEyes,
+    required TResult Function(AuthUpdateLoginFieldEvent value) updateLoginField,
+    required TResult Function(AuthSubmitLoginEvent value) submitLogin,
+    required TResult Function(AuthSignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(AuthSignInWithFacebookEvent value)
+        signInWithFacebook,
+    required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
+  }) {
+    return signOut(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthToggleModeEvent value)? toggleMode,
+    TResult? Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult? Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult? Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
+  }) {
+    return signOut?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthToggleModeEvent value)? toggleMode,
+    TResult Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (signOut != null) {
+      return signOut(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthSignOutEvent implements AuthEvent {
+  const factory AuthSignOutEvent() = _$AuthSignOutEventImpl;
+}
+
+/// @nodoc
+abstract class _$$AuthResetPasswordEventImplCopyWith<$Res> {
+  factory _$$AuthResetPasswordEventImplCopyWith(
+          _$AuthResetPasswordEventImpl value,
+          $Res Function(_$AuthResetPasswordEventImpl) then) =
+      __$$AuthResetPasswordEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String email});
+}
+
+/// @nodoc
+class __$$AuthResetPasswordEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthResetPasswordEventImpl>
+    implements _$$AuthResetPasswordEventImplCopyWith<$Res> {
+  __$$AuthResetPasswordEventImplCopyWithImpl(
+      _$AuthResetPasswordEventImpl _value,
+      $Res Function(_$AuthResetPasswordEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+  }) {
+    return _then(_$AuthResetPasswordEventImpl(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AuthResetPasswordEventImpl implements AuthResetPasswordEvent {
+  const _$AuthResetPasswordEventImpl({required this.email});
+
+  @override
+  final String email;
+
+  @override
+  String toString() {
+    return 'AuthEvent.resetPassword(email: $email)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthResetPasswordEventImpl &&
+            (identical(other.email, email) || other.email == email));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, email);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthResetPasswordEventImplCopyWith<_$AuthResetPasswordEventImpl>
+      get copyWith => __$$AuthResetPasswordEventImplCopyWithImpl<
+          _$AuthResetPasswordEventImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(AuthScreenMode mode) toggleMode,
+    required TResult Function(bool isVisible) toggleEyes,
+    required TResult Function(String? email, String? password, bool? rememberMe)
+        updateLoginField,
+    required TResult Function(String email, String password, bool rememberMe)
+        submitLogin,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithFacebook,
+    required TResult Function(
+            String email, String password, String username, String phone)
+        submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
+  }) {
+    return resetPassword(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(AuthScreenMode mode)? toggleMode,
+    TResult? Function(bool isVisible)? toggleEyes,
+    TResult? Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult? Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithFacebook,
+    TResult? Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
+  }) {
+    return resetPassword?.call(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(AuthScreenMode mode)? toggleMode,
+    TResult Function(bool isVisible)? toggleEyes,
+    TResult Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithFacebook,
+    TResult Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (resetPassword != null) {
+      return resetPassword(email);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthToggleModeEvent value) toggleMode,
+    required TResult Function(AuthToggleEyesEvent value) toggleEyes,
+    required TResult Function(AuthUpdateLoginFieldEvent value) updateLoginField,
+    required TResult Function(AuthSubmitLoginEvent value) submitLogin,
+    required TResult Function(AuthSignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(AuthSignInWithFacebookEvent value)
+        signInWithFacebook,
+    required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
+  }) {
+    return resetPassword(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthToggleModeEvent value)? toggleMode,
+    TResult? Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult? Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult? Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
+  }) {
+    return resetPassword?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthToggleModeEvent value)? toggleMode,
+    TResult Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (resetPassword != null) {
+      return resetPassword(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthResetPasswordEvent implements AuthEvent {
+  const factory AuthResetPasswordEvent({required final String email}) =
+      _$AuthResetPasswordEventImpl;
+
+  String get email;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AuthResetPasswordEventImplCopyWith<_$AuthResetPasswordEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthQuickLoginEventImplCopyWith<$Res> {
+  factory _$$AuthQuickLoginEventImplCopyWith(_$AuthQuickLoginEventImpl value,
+          $Res Function(_$AuthQuickLoginEventImpl) then) =
+      __$$AuthQuickLoginEventImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$AuthQuickLoginEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$AuthQuickLoginEventImpl>
+    implements _$$AuthQuickLoginEventImplCopyWith<$Res> {
+  __$$AuthQuickLoginEventImplCopyWithImpl(_$AuthQuickLoginEventImpl _value,
+      $Res Function(_$AuthQuickLoginEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$AuthQuickLoginEventImpl implements AuthQuickLoginEvent {
+  const _$AuthQuickLoginEventImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.quickLogin()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthQuickLoginEventImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(AuthScreenMode mode) toggleMode,
+    required TResult Function(bool isVisible) toggleEyes,
+    required TResult Function(String? email, String? password, bool? rememberMe)
+        updateLoginField,
+    required TResult Function(String email, String password, bool rememberMe)
+        submitLogin,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithFacebook,
+    required TResult Function(
+            String email, String password, String username, String phone)
+        submitRegister,
+    required TResult Function(
+            String? email, String? password, String? username, String? phone)
+        updateRegisterField,
+    required TResult Function() signOut,
+    required TResult Function(String email) resetPassword,
+    required TResult Function() quickLogin,
+  }) {
+    return quickLogin();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(AuthScreenMode mode)? toggleMode,
+    TResult? Function(bool isVisible)? toggleEyes,
+    TResult? Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult? Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithFacebook,
+    TResult? Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult? Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult? Function()? signOut,
+    TResult? Function(String email)? resetPassword,
+    TResult? Function()? quickLogin,
+  }) {
+    return quickLogin?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(AuthScreenMode mode)? toggleMode,
+    TResult Function(bool isVisible)? toggleEyes,
+    TResult Function(String? email, String? password, bool? rememberMe)?
+        updateLoginField,
+    TResult Function(String email, String password, bool rememberMe)?
+        submitLogin,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithFacebook,
+    TResult Function(
+            String email, String password, String username, String phone)?
+        submitRegister,
+    TResult Function(
+            String? email, String? password, String? username, String? phone)?
+        updateRegisterField,
+    TResult Function()? signOut,
+    TResult Function(String email)? resetPassword,
+    TResult Function()? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (quickLogin != null) {
+      return quickLogin();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthToggleModeEvent value) toggleMode,
+    required TResult Function(AuthToggleEyesEvent value) toggleEyes,
+    required TResult Function(AuthUpdateLoginFieldEvent value) updateLoginField,
+    required TResult Function(AuthSubmitLoginEvent value) submitLogin,
+    required TResult Function(AuthSignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(AuthSignInWithFacebookEvent value)
+        signInWithFacebook,
+    required TResult Function(AuthSubmitRegisterEvent value) submitRegister,
+    required TResult Function(AuthUpdateRegisterFieldEvent value)
+        updateRegisterField,
+    required TResult Function(AuthSignOutEvent value) signOut,
+    required TResult Function(AuthResetPasswordEvent value) resetPassword,
+    required TResult Function(AuthQuickLoginEvent value) quickLogin,
+  }) {
+    return quickLogin(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthToggleModeEvent value)? toggleMode,
+    TResult? Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult? Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult? Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult? Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult? Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult? Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult? Function(AuthSignOutEvent value)? signOut,
+    TResult? Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult? Function(AuthQuickLoginEvent value)? quickLogin,
+  }) {
+    return quickLogin?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthToggleModeEvent value)? toggleMode,
+    TResult Function(AuthToggleEyesEvent value)? toggleEyes,
+    TResult Function(AuthUpdateLoginFieldEvent value)? updateLoginField,
+    TResult Function(AuthSubmitLoginEvent value)? submitLogin,
+    TResult Function(AuthSignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(AuthSignInWithFacebookEvent value)? signInWithFacebook,
+    TResult Function(AuthSubmitRegisterEvent value)? submitRegister,
+    TResult Function(AuthUpdateRegisterFieldEvent value)? updateRegisterField,
+    TResult Function(AuthSignOutEvent value)? signOut,
+    TResult Function(AuthResetPasswordEvent value)? resetPassword,
+    TResult Function(AuthQuickLoginEvent value)? quickLogin,
+    required TResult orElse(),
+  }) {
+    if (quickLogin != null) {
+      return quickLogin(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AuthQuickLoginEvent implements AuthEvent {
+  const factory AuthQuickLoginEvent() = _$AuthQuickLoginEventImpl;
 }

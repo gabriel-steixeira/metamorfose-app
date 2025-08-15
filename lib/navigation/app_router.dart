@@ -26,16 +26,20 @@ import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/screens/auth/auth_screen.dart';
 import 'package:metamorfose_flutter/screens/home/home.dart';
 import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
+import 'package:metamorfose_flutter/screens/chat/text_chat_screen.dart';
 import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
 import 'package:metamorfose_flutter/screens/community/community_screen.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_care_screen.dart';
-// Adicionar imports necessários para BlocProvider e PlantConfigBloc
+// Adicionar imports necessários para BlocProvider e BLoCs
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/blocs/community_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
+import 'package:metamorfose_flutter/blocs/text_chat_bloc.dart';
+import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+import 'package:metamorfose_flutter/services/gemini_service.dart';
 
 // Telas de Onboarding
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
@@ -123,7 +127,17 @@ class AppRouter {
       ),
       GoRoute(
         path: Routes.voiceChat,
-        builder: (context, state) => const VoiceChatScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => VoiceChatBloc(),
+          child: const VoiceChatScreen(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.textChat,
+        builder: (context, state) => BlocProvider(
+          create: (context) => TextChatBloc(GeminiService()),
+          child: const TextChatScreen(),
+        ),
       ),
       GoRoute(
         path: Routes.map,

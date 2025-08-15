@@ -32,6 +32,31 @@ class UserModel {
     );
   }
 
+  // Conversões para armazenamento local (JSON simples)
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] as String,
+      email: json['email'] as String,
+      name: json['name'] as String?,
+      photoUrl: json['photoUrl'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'photoUrl': photoUrl,
+      'phoneNumber': phoneNumber,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'email': email,

@@ -33,6 +33,7 @@ class Routes {
   static const plantConfig = '/plant-config';
   static const home = '/home';
   static const voiceChat = '/voice-chat';
+  static const textChat = '/text-chat';
   static const map = '/map';
   static const community = '/community';
   static const plantCare = '/plant-care';

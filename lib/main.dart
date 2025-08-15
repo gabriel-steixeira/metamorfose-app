@@ -27,9 +27,9 @@ import 'package:metamorfose_flutter/config/firebase_config.dart';
 import 'package:metamorfose_flutter/services/notification_service.dart';
 import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
 import 'dart:ui';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
-import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+// import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
 
 
 /// Ponto de entrada do aplicativo Flutter
@@ -56,28 +56,16 @@ void main() async {
     ),
   );
   
-  // Inicializa o Site24x7 APM
-  FlutterError.onError = ApmMobileapmFlutterPlugin.instance.captureFlutterError;
-  PlatformDispatcher.instance.onError = (error, stack) {
-    ApmMobileapmFlutterPlugin.instance.captureException(error, stack);
-    return true;
-  };
-  ApmMobileapmFlutterPlugin.instance.startMonitoring("US_300058d81ed3d79b702f7391fe0979d2", 20);
+  // Inicializa o Site24x7 APM (Temporariamente comentado para evitar crash)
+  // FlutterError.onError = ApmMobileapmFlutterPlugin.instance.captureFlutterError;
+  // PlatformDispatcher.instance.onError = (error, stack) {
+  //   ApmMobileapmFlutterPlugin.instance.captureException(error, stack);
+  //   return true;
+  // };
+  // ApmMobileapmFlutterPlugin.instance.startMonitoring("US_300058d81ed3d79b702f7391fe0979d2", 20);
   
-  // Inicia o aplicativo
-  runApp(const AIPrototype());
+  // Inicia o aplicativo com GoRouter
+  runApp(const MetamorfoseApp());
 }
 
-class AIPrototype extends StatelessWidget {
-  const AIPrototype({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BlocProvider(
-        create: (context) => VoiceChatBloc(),
-        child: const VoiceChatScreen(),
-      ),
-    );
-  }
-}
+// Classe antiga substituída por `MetamorfoseApp` (MaterialApp.router com GoRouter)

@@ -38,8 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   site24x7_flutter_plugin: ^1.0.0
   flutter_tts: ^3.8.5
-  speech_to_text: ^6.5.1
+  speech_to_text: ^6.6.0
   google_generative_ai: ^0.3.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

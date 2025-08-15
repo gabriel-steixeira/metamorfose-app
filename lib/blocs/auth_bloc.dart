@@ -4,30 +4,30 @@
  *
  * Responsabilidades:
  * - Gerenciar login e logout do usuário
- * - Validar credenciais simuladas
+ * - Validar credenciais (Firebase + Local)
  * - Manter estado de autenticação
  *
  * Author: Gabriel Teixeira
  * Created on: 29-05-2025
- * Version: 1.0.0
+ * Last modified: 15-08-2025
+ * Version: 1.1.0
  * Squad: Metamorfose
  */
 
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/user_model.dart';
-import '../services/auth_service.dart';
+import '../services/hybrid_auth_service.dart';
 import '../state/auth/auth_state.dart';
 import '../state/auth/auth_events.dart';
 import '../state/auth/login_state.dart';
 import '../state/auth/register_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthService _authService;
-  StreamSubscription<User?>? _authStateSubscription;
+  final HybridAuthService _authService;
+  StreamSubscription<UserModel?>? _authStateSubscription;
 
-  AuthBloc({required AuthService authService})
+  AuthBloc({required HybridAuthService authService})
       : _authService = authService,
         super(const AuthState()) {
     _setupAuthStateListener();
@@ -105,29 +105,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           registerState: state.registerState.copyWith(isLoading: true, errorMessage: null),
         ));
 
-        // Basic validation
-        if (event.username.isEmpty) {
-          emit(state.copyWith(
-              registerState: state.registerState
-                  .copyWith(usernameError: 'Nome de usuário é obrigatório', isLoading: false)));
-          return;
-        }
-        if (event.phone.isEmpty) {
-          emit(state.copyWith(
-              registerState:
-                  state.registerState.copyWith(phoneError: 'Telefone é obrigatório', isLoading: false)));
-          return;
-        }
         if (event.email.isEmpty) {
           emit(state.copyWith(
-              registerState:
-                  state.registerState.copyWith(emailError: 'Email é obrigatório', isLoading: false)));
+            registerState: state.registerState.copyWith(
+              emailError: 'Email é obrigatório',
+              isLoading: false,
+            ),
+          ));
           return;
         }
+
         if (event.password.isEmpty) {
           emit(state.copyWith(
-              registerState:
-                  state.registerState.copyWith(passwordError: 'Senha é obrigatória', isLoading: false)));
+            registerState: state.registerState.copyWith(
+              passwordError: 'Senha é obrigatória',
+              isLoading: false,
+            ),
+          ));
+          return;
+        }
+
+        if (event.username.isEmpty) {
+          emit(state.copyWith(
+            registerState: state.registerState.copyWith(
+              usernameError: 'Nome é obrigatório',
+              isLoading: false,
+            ),
+          ));
+          return;
+        }
+
+        if (event.phone.isEmpty) {
+          emit(state.copyWith(
+            registerState: state.registerState.copyWith(
+              phoneError: 'Telefone é obrigatório',
+              isLoading: false,
+            ),
+          ));
           return;
         }
 
@@ -159,6 +173,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
 
         final user = await _authService.signInWithGoogle();
+
         emit(state.copyWith(
           user: user,
           loginState: state.loginState.copyWith(isLoading: false),
@@ -180,6 +195,65 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
 
         final user = await _authService.signInWithFacebook();
+
+        emit(state.copyWith(
+          user: user,
+          loginState: state.loginState.copyWith(isLoading: false),
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        ));
+      }
+    });
+
+    on<AuthSignOutEvent>((event, emit) async {
+      try {
+        await _authService.signOut();
+        emit(state.copyWith(user: null));
+      } catch (e) {
+        // Ignora erros no logout
+        emit(state.copyWith(user: null));
+      }
+    });
+
+    on<AuthUpdateRegisterFieldEvent>((event, emit) {
+      final currentRegister = state.registerState;
+      emit(state.copyWith(
+        registerState: RegisterState(
+          email: event.email ?? currentRegister.email,
+          password: event.password ?? currentRegister.password,
+          username: event.username ?? currentRegister.username,
+          phone: event.phone ?? currentRegister.phone,
+          emailError: '',
+          passwordError: '',
+          usernameError: '',
+          phoneError: '',
+          errorMessage: null,
+        ),
+      ));
+    });
+
+    on<AuthResetPasswordEvent>((event, emit) async {
+      try {
+        await _authService.resetPassword(event.email);
+        // Pode emitir um estado de sucesso se necessário
+      } catch (e) {
+        // Pode emitir um estado de erro se necessário
+      }
+    });
+
+    on<AuthQuickLoginEvent>((event, emit) async {
+      try {
+        emit(state.copyWith(
+          loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
+        ));
+
+        final user = await _authService.signInWithDefaultCredentials();
+
         emit(state.copyWith(
           user: user,
           loginState: state.loginState.copyWith(isLoading: false),
@@ -196,25 +270,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _setupAuthStateListener() {
-    _authStateSubscription?.cancel();
-    _authStateSubscription = _authService.authStateChanges.listen(
-      (user) async {
-        if (user == null) {
-          emit(state.copyWith(user: null));
-        } else {
-          try {
-            final userModel = await _authService.getUserData(user.uid);
-            emit(state.copyWith(user: userModel));
-          } catch (e) {
-            emit(state.copyWith(
-              loginState: state.loginState.copyWith(
-                errorMessage: e.toString(),
-              ),
-            ));
-          }
-        }
-      },
-    );
+    _authStateSubscription = _authService.authStateChanges.listen((user) {
+      if (user != null) {
+        emit(state.copyWith(user: user));
+      } else {
+        emit(state.copyWith(user: null));
+      }
+    });
   }
 
   @override

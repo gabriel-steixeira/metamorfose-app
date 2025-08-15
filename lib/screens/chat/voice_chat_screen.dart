@@ -18,11 +18,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/components/plant_personality_selector.dart';
+import 'package:metamorfose_flutter/components/mode_switcher.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+import 'package:metamorfose_flutter/routes/routes.dart';
 
 /// Tela principal de chat por voz com o assistente usando BLoC.
 class VoiceChatScreen extends StatefulWidget {
@@ -35,6 +38,7 @@ class VoiceChatScreen extends StatefulWidget {
 class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _pulseController;
+  ChatMode _currentMode = ChatMode.voice;
 
   @override
   void initState() {
@@ -65,6 +69,23 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   void _toggleListening() {
     debugPrint("🎤 Toggle listening clicked");
     context.read<VoiceChatBloc>().add(VoiceChatToggleListeningEvent());
+  }
+
+  void _onModeChanged(ChatMode mode) {
+    setState(() {
+      _currentMode = mode;
+    });
+    
+    if (mode == ChatMode.text) {
+      debugPrint("🔄 Mudando para modo de chat de texto");
+      // Aguarda a animação do ModeSwitcher concluir antes de navegar
+      Future.delayed(const Duration(milliseconds: 330), () {
+        if (!mounted) return;
+        context.go(Routes.textChat);
+      });
+    } else {
+      debugPrint("🎤 Mantendo modo de voz");
+    }
   }
 
   @override
@@ -105,6 +126,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
                 children: [
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 8),
+                    height: 56,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [
@@ -131,6 +153,16 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
                       },
                     ),
                   ),
+
+                  const SizedBox(height: 20),
+
+                  // Seletor de modo (Voz ↔️ Chat)
+                  ModeSwitcher(
+                    currentMode: _currentMode,
+                    onModeChanged: _onModeChanged,
+                  ),
+
+                  const SizedBox(height: 20),
 
                   Expanded(
                     child: Stack(
