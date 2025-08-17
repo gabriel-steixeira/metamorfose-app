@@ -167,13 +167,11 @@ class _TextChatScreenState extends State<TextChatScreen> {
                         child: CircleAvatar(
                           radius: 50,
                           backgroundColor: MetamorfoseColors.whiteLight,
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/onboarding/ivy_happy.png',
-                              width: 90,
-                              height: 90,
-                              fit: BoxFit.cover,
-                            ),
+                          child: SvgPicture.asset(
+                            'assets/images/plantsetup/plantsetup.svg',
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -278,13 +276,11 @@ class _TextChatScreenState extends State<TextChatScreen> {
                                     CircleAvatar(
                                       radius: 18,
                                       backgroundColor: MetamorfoseColors.greenLight,
-                                      child: ClipOval(
-                                        child: Image.asset(
-                                          'assets/images/onboarding/ivy_happy.png',
-                                          width: 32,
-                                          height: 32,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      child: SvgPicture.asset(
+                                        'assets/images/plantsetup/plantsetup.svg',
+                                        width: 32,
+                                        height: 32,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   const SizedBox(width: 12),
