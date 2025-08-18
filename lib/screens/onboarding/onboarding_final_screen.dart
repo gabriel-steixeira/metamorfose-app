@@ -138,7 +138,7 @@ class OnboardingFinalScreen extends StatelessWidget {
                       height: _LayoutConstants.buttonHeight,
                       child: MetamorfosePrimaryButton(
                         text: 'SIM!',
-                        onPressed: () => context.go(Routes.auth),
+                        onPressed: () => context.go(Routes.selectionActivityWelcome),
                       ),
                     ),
                   ),

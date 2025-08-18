@@ -50,6 +50,10 @@ import 'package:metamorfose_flutter/screens/onboarding/onboarding_plant_screen.d
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_welcome_screen.dart';
 
+// Telas de SelectionActivity
+import 'package:metamorfose_flutter/screens/selectionactivity/selectionactivity_welcome_screen.dart';
+import 'package:metamorfose_flutter/screens/selectionactivity/selectionactivity_questions_screen.dart';
+
 // Telas de Splash
 import 'package:metamorfose_flutter/screens/splash/brand_splash_screen.dart';
 import 'package:metamorfose_flutter/screens/splash/mascot_splash_screen.dart';
@@ -105,11 +109,22 @@ class AppRouter {
         path: Routes.onboardingFinal,
         builder: (context, state) => const OnboardingFinalScreen(),
       ),
+      GoRoute(
+        path: Routes.selectionActivityWelcome,
+        builder: (context, state) => const SelectionActivityWelcomeScreen(),
+      ),
+      GoRoute(
+        path: Routes.selectionActivityQuestions,
+        builder: (context, state) => const SelectionActivityQuestionsScreen(),
+      ),
 
       // Telas principais da aplicação (BLoC)
       GoRoute(
         path: Routes.auth,
-        builder: (context, state) => const AuthScreen(),
+        builder: (context, state) {
+          final mode = state.uri.queryParameters['mode'];
+          return AuthScreen(initialMode: mode);
+        },
       ),
       GoRoute(
         path: Routes.plantConfig,

@@ -12,8 +12,9 @@
  * 
  * Changes:
  * - Adicionado Comunidade e Cuidados em routes. (Evelin Cordeiro)
+ * - Adicionado SelectionActivityWelcome em routes. (Lana)
  * 
- * Version: 1.0.0
+ * Version: 1.0.1
  * Squad: Metamorfose
  */
 
@@ -28,6 +29,8 @@ class Routes {
   static const onboardingEgg = '/onboarding-egg';
   static const onboardingButterfly = '/onboarding-butterfly';
   static const onboardingFinal = '/onboarding-final';
+  static const selectionActivityWelcome = '/selection-activity-welcome';
+  static const selectionActivityQuestions = '/selection-activity-questions';
   static const auth = '/auth';
   static const register = '/register';
   static const plantConfig = '/plant-config';

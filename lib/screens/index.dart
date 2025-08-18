@@ -38,6 +38,10 @@ export 'onboarding/onboarding_egg_screen.dart';
 export 'onboarding/onboarding_butterfly_screen.dart';
 export 'onboarding/onboarding_final_screen.dart';
 
+// SelectionActivity
+export 'selectionactivity/selectionactivity_welcome_screen.dart';
+export 'selectionactivity/selectionactivity_questions_screen.dart';
+
 // Plant
 export 'plant/plant_care_screen.dart';
 export 'plant/plant_config_screen.dart';

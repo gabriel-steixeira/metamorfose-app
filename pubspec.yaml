@@ -62,6 +62,7 @@ flutter:
     - assets/animations/
     - assets/images/chat/
     - assets/images/home/
+    - assets/images/selectionactivity/
   
   fonts:
     - family: DinNext

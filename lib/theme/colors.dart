@@ -81,7 +81,18 @@ class MetamorfoseGradients {
     ],
   );
 
+  static const softPurpleGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.center,
+    colors: [
+      Color(0xFF9D68FF),   // 0%
+      Color(0xFFFFFFFF)  // 100%
+    ],
+  );
+
   static const greenGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: [
       Color(0xFF57C785),  // 0%
       Color(0xFF6EF575)   // 100%
@@ -89,6 +100,8 @@ class MetamorfoseGradients {
   );
 
   static const darkPurpleGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: [
       Color(0xFF4E347F),  // 0%
       Color(0xFF9D68FF)   // 100%
@@ -96,6 +109,8 @@ class MetamorfoseGradients {
   );
 
   static const lightPurple33Gradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: [
       Color(0xFFAF8CF2),  // 0%
       Color(0xFFD8C7FA)   // 33%

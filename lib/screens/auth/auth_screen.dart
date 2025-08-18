@@ -28,7 +28,9 @@ import 'package:metamorfose_flutter/state/auth/auth_events.dart';
 
 /// Tela de autenticação com opções de login e cadastro usando BLoC
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  final String? initialMode;
+  
+  const AuthScreen({super.key, this.initialMode});
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -47,7 +49,11 @@ class _AuthScreenState extends State<AuthScreen> {
     // Inicializar BLoC sem listeners pesados nos controllers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<AuthBloc>().add(const AuthToggleModeEvent(AuthScreenMode.login));
+        // Determinar modo inicial baseado no parâmetro
+        final mode = widget.initialMode == 'register' 
+            ? AuthScreenMode.register 
+            : AuthScreenMode.login;
+        context.read<AuthBloc>().add(AuthToggleModeEvent(mode));
       }
     });
   }
