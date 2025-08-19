@@ -16,6 +16,8 @@
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Resultado de validação
 class ValidationResult {
@@ -127,37 +129,65 @@ class PlantConfigService {
     return ValidationResult.valid;
   }
 
-  /// Simula salvamento da configuração da planta
-  /// Em uma implementação real, isso seria persistido em:
-  /// - SharedPreferences para dados locais
-  /// - Banco de dados local (SQLite/Hive)
-  /// - API backend para sincronização
+  /// Salva a configuração da planta no Firestore
+  /// Agora salva apenas as informações básicas: nome, espécie e cor do vaso
   Future<SaveResult> savePlantConfiguration(PlantConfigState state) async {
     try {
-      // Simular delay de salvamento
-      await Future.delayed(const Duration(milliseconds: 800));
-      
       // Validar antes de salvar
       final validation = validateForm(state);
       if (!validation.isValid) {
         return SaveResult.failure(validation.error ?? 'Dados inválidos');
       }
+  
+      // Obter usuário atual
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return SaveResult.failure('Usuário não autenticado');
+      }
+  
+      // Preparar dados da planta conforme estrutura do Firestore
+      final plantData = {
+        'name': state.plantName,
+        'species': state.selectedPlant,
+        'pot_color': state.selectedColor.value,
+        'start_date': FieldValue.serverTimestamp(),
+      };
 
-      // Aqui seria feito o salvamento real dos dados
-      // Por exemplo:
-      // - await SharedPreferences.getInstance()
-      // - prefs.setString('plant_name', state.plantName)
-      // - prefs.setString('plant_type', state.selectedPlant)
-      // - prefs.setInt('plant_color', state.selectedColor.value)
+      final firestore = FirebaseFirestore.instance;
       
-      debugPrint('PlantConfig salva: ${state.toString()}');
+      // Criar documento da planta
+      final plantRef = await firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('plant_info')
+          .add(plantData);
+      
+      debugPrint('Planta criada com sucesso! ID: ${plantRef.id}');
+      debugPrint('Dados salvos: $plantData');
       
       return SaveResult.successful;
     } catch (e) {
       debugPrint('Erro ao salvar configuração: $e');
-      return SaveResult.failure('Erro ao salvar configuração');
+      return SaveResult.failure('Erro ao salvar no Firebase: $e');
     }
   }
+
+Future<bool> hasExistingPlant() async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('plant_info') // Mudança: 'plants' -> 'plant_info' conforme documentação
+        .limit(1)
+        .get();
+    return snapshot.docs.isNotEmpty;
+  } catch (e) {
+    debugPrint('Erro ao verificar plantas existentes: $e');
+    return false;
+  }
+}
 
   /// Carrega configuração salva (se existir)
   Future<PlantConfigState?> loadSavedConfiguration() async {
@@ -180,38 +210,5 @@ class PlantConfigService {
     }
   }
 
-  /// Simula captura de primeira foto da planta
-  Future<SaveResult> captureFirstPhoto() async {
-    try {
-      // Simular processo de captura
-      await Future.delayed(const Duration(milliseconds: 1000));
-      
-      // Aqui seria integrado com:
-      // - camera package para captura
-      // - image_picker para seleção
-      // - Processamento e salvamento da imagem
-      
-      debugPrint('Primeira foto capturada com sucesso');
-      
-      return SaveResult.successful;
-    } catch (e) {
-      debugPrint('Erro ao capturar foto: $e');
-      return SaveResult.failure('Erro ao capturar foto');
-    }
-  }
 
-  /// Simula ignorar captura de foto
-  Future<SaveResult> skipPhotoCapture() async {
-    try {
-      // Simular delay de navegação
-      await Future.delayed(const Duration(milliseconds: 300));
-      
-      debugPrint('Captura de foto ignorada');
-      
-      return SaveResult.successful;
-    } catch (e) {
-      debugPrint('Erro ao pular foto: $e');
-      return SaveResult.failure('Erro ao pular captura');
-    }
-  }
-} 
+}

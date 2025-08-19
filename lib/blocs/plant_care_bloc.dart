@@ -28,14 +28,8 @@ class InitializePlantCareEvent extends PlantCareEvent {}
 /// Evento para carregar informações da planta
 class LoadPlantInfoEvent extends PlantCareEvent {}
 
-/// Evento para carregar fotos do diário visual
-class LoadVisualDiaryEvent extends PlantCareEvent {}
-
 /// Evento para carregar tarefas do dia
 class LoadTodayTasksEvent extends PlantCareEvent {}
-
-/// Evento para tirar nova foto
-class TakeNewPhotoEvent extends PlantCareEvent {}
 
 /// Evento para compartilhar progresso
 class ShareProgressEvent extends PlantCareEvent {}
@@ -52,9 +46,7 @@ class PlantCareBloc extends Bloc<PlantCareEvent, PlantCareState> {
         super(const PlantCareState()) {
     on<InitializePlantCareEvent>(_onInitialize);
     on<LoadPlantInfoEvent>(_onLoadPlantInfo);
-    on<LoadVisualDiaryEvent>(_onLoadVisualDiary);
     on<LoadTodayTasksEvent>(_onLoadTodayTasks);
-    on<TakeNewPhotoEvent>(_onTakeNewPhoto);
     on<ShareProgressEvent>(_onShareProgress);
     on<ClearErrorEvent>(_onClearError);
   }
@@ -67,7 +59,6 @@ class PlantCareBloc extends Bloc<PlantCareEvent, PlantCareState> {
     try {
       // Carregar dados em paralelo
       add(LoadPlantInfoEvent());
-      add(LoadVisualDiaryEvent());
       add(LoadTodayTasksEvent());
     } catch (e) {
       emit(state.copyWith(
@@ -102,31 +93,7 @@ class PlantCareBloc extends Bloc<PlantCareEvent, PlantCareState> {
     }
   }
 
-  /// Carrega fotos do diário visual
-  Future<void> _onLoadVisualDiary(
-    LoadVisualDiaryEvent event,
-    Emitter<PlantCareState> emit,
-  ) async {
-    try {
-      emit(state.copyWith(
-        visualDiaryLoadingState: LoadingState.loading,
-        visualDiaryError: null,
-      ));
 
-      final photos = await _service.loadVisualDiary();
-
-      emit(state.copyWith(
-        visualDiaryLoadingState: LoadingState.success,
-        visualDiaryPhotos: photos,
-        visualDiaryError: null,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        visualDiaryLoadingState: LoadingState.error,
-        visualDiaryError: e.toString(),
-      ));
-    }
-  }
 
   /// Carrega tarefas do dia
   Future<void> _onLoadTodayTasks(
@@ -154,29 +121,7 @@ class PlantCareBloc extends Bloc<PlantCareEvent, PlantCareState> {
     }
   }
 
-  /// Tira nova foto
-  Future<void> _onTakeNewPhoto(
-    TakeNewPhotoEvent event,
-    Emitter<PlantCareState> emit,
-  ) async {
-    try {
-      emit(state.copyWith(isTakingPhoto: true));
 
-      final success = await _service.takeNewPhoto();
-
-      if (success) {
-        // Recarregar fotos do diário visual
-        add(LoadVisualDiaryEvent());
-      }
-
-      emit(state.copyWith(isTakingPhoto: false));
-    } catch (e) {
-      emit(state.copyWith(
-        isTakingPhoto: false,
-        errorMessage: 'Erro ao tirar foto: ${e.toString()}',
-      ));
-    }
-  }
 
   /// Compartilha progresso
   Future<void> _onShareProgress(

@@ -27,7 +27,10 @@ import 'package:metamorfose_flutter/components/custom_button.dart';
 /// - Texto em maiúsculas com fonte DinNext
 class MetamorfeseButton extends StatelessWidget {
   /// Texto a ser exibido no botão
-  final String text;
+  final String? text;
+  
+  /// Widget alternativo para o conteúdo do botão (ex: loading indicator)
+  final Widget? child;
   
   /// Ação a ser executada ao pressionar o botão
   final VoidCallback onPressed;
@@ -35,19 +38,24 @@ class MetamorfeseButton extends StatelessWidget {
   /// Construtor do botão padrão Metamorfose
   const MetamorfeseButton({
     Key? key,
-    required this.text,
+    this.text,
+    this.child,
     required this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CustomButton(
-      text: text,
-            onPressed: onPressed,
-      backgroundColor: MetamorfoseColors.purpleLight,
-      textColor: MetamorfoseColors.whiteLight,
-      shadowColor: MetamorfoseColors.purpleDark,
-      strokeColor: MetamorfoseColors.purpleLight,
+    return GestureDetector(
+      onTap: onPressed,
+      child: CustomButton(
+        text: text ?? '',
+        child: child,
+        onPressed: onPressed,
+        backgroundColor: MetamorfoseColors.purpleLight,
+        textColor: MetamorfoseColors.whiteLight,
+        shadowColor: MetamorfoseColors.purpleDark,
+        strokeColor: MetamorfoseColors.purpleLight,
+      ),
     );
   }
-} 
+}
