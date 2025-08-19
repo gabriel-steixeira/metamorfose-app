@@ -6,22 +6,25 @@
  * - Gerenciar login e logout do usuário
  * - Validar credenciais (Firebase + Local)
  * - Manter estado de autenticação
+ * - Validar campos de entrada
  *
  * Author: Gabriel Teixeira
  * Created on: 29-05-2025
- * Last modified: 15-08-2025
- * Version: 1.1.0
+ * Last modified: 29-05-2025
+ * Version: 1.2.0
  * Squad: Metamorfose
  */
 
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 import '../services/hybrid_auth_service.dart';
 import '../state/auth/auth_state.dart';
 import '../state/auth/auth_events.dart';
 import '../state/auth/login_state.dart';
 import '../state/auth/register_state.dart';
+import '../utils/auth_validators.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final HybridAuthService _authService;
@@ -42,14 +45,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthUpdateLoginFieldEvent>((event, emit) {
       final currentLogin = state.loginState;
+      
+      // Validar campos apenas se foram fornecidos
+      String emailError = currentLogin.emailError;
+      String passwordError = currentLogin.passwordError;
+      
+      if (event.email != null) {
+        final validation = AuthValidators.validateEmail(event.email!);
+        emailError = validation ?? '';
+      }
+      
+      if (event.password != null) {
+        final validation = AuthValidators.validatePassword(event.password!);
+        passwordError = validation ?? '';
+      }
+      
       emit(state.copyWith(
         loginState: LoginState(
           email: event.email ?? currentLogin.email,
           password: event.password ?? currentLogin.password,
           rememberMe: event.rememberMe ?? currentLogin.rememberMe,
-          emailError: '',
-          passwordError: '',
-          errorMessage: null,
+          emailError: emailError,
+          passwordError: passwordError,
+          errorMessage: currentLogin.errorMessage,
+          isLoading: currentLogin.isLoading,
         ),
       ));
     });
@@ -60,20 +79,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
         ));
 
-        if (event.email.isEmpty) {
+        // Validar email
+        final emailError = AuthValidators.validateEmail(event.email);
+        if (emailError != null) {
           emit(state.copyWith(
             loginState: state.loginState.copyWith(
-              emailError: 'Email é obrigatório',
+              emailError: emailError,
               isLoading: false,
             ),
           ));
           return;
         }
 
-        if (event.password.isEmpty) {
+        // Validar senha
+        final passwordError = AuthValidators.validatePassword(event.password);
+        if (passwordError != null) {
           emit(state.copyWith(
             loginState: state.loginState.copyWith(
-              passwordError: 'Senha é obrigatória',
+              passwordError: passwordError,
               isLoading: false,
             ),
           ));
@@ -90,10 +113,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loginState: state.loginState.copyWith(isLoading: false),
         ));
       } catch (e) {
+        String errorMessage = _getFirebaseErrorMessage(e);
         emit(state.copyWith(
           loginState: state.loginState.copyWith(
             isLoading: false,
-            errorMessage: e.toString(),
+            errorMessage: errorMessage,
           ),
         ));
       }
@@ -105,40 +129,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           registerState: state.registerState.copyWith(isLoading: true, errorMessage: null),
         ));
 
-        if (event.email.isEmpty) {
-          emit(state.copyWith(
-            registerState: state.registerState.copyWith(
-              emailError: 'Email é obrigatório',
-              isLoading: false,
-            ),
-          ));
-          return;
-        }
+        // Validar todos os campos
+        final emailError = AuthValidators.validateEmail(event.email);
+        final passwordError = AuthValidators.validatePassword(event.password);
+        final usernameError = AuthValidators.validateUsername(event.username);
+        final phoneError = AuthValidators.validatePhone(event.phone);
 
-        if (event.password.isEmpty) {
+        // Se há algum erro de validação, exibir todos
+        if (emailError != null || passwordError != null || usernameError != null || phoneError != null) {
           emit(state.copyWith(
             registerState: state.registerState.copyWith(
-              passwordError: 'Senha é obrigatória',
-              isLoading: false,
-            ),
-          ));
-          return;
-        }
-
-        if (event.username.isEmpty) {
-          emit(state.copyWith(
-            registerState: state.registerState.copyWith(
-              usernameError: 'Nome é obrigatório',
-              isLoading: false,
-            ),
-          ));
-          return;
-        }
-
-        if (event.phone.isEmpty) {
-          emit(state.copyWith(
-            registerState: state.registerState.copyWith(
-              phoneError: 'Telefone é obrigatório',
+              emailError: emailError ?? '',
+              passwordError: passwordError ?? '',
+              usernameError: usernameError ?? '',
+              phoneError: phoneError ?? '',
               isLoading: false,
             ),
           ));
@@ -149,7 +153,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.email,
           event.password,
           event.username,
-          event.phone,
+          AuthValidators.cleanPhone(event.phone), // Limpa formatação do telefone
         );
 
         emit(state.copyWith(
@@ -157,10 +161,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           registerState: state.registerState.copyWith(isLoading: false),
         ));
       } catch (e) {
+        String errorMessage = _getFirebaseErrorMessage(e);
         emit(state.copyWith(
           registerState: state.registerState.copyWith(
             isLoading: false,
-            errorMessage: e.toString(),
+            errorMessage: errorMessage,
           ),
         ));
       }
@@ -179,10 +184,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loginState: state.loginState.copyWith(isLoading: false),
         ));
       } catch (e) {
+        String errorMessage = _getFirebaseErrorMessage(e);
         emit(state.copyWith(
           loginState: state.loginState.copyWith(
             isLoading: false,
-            errorMessage: e.toString(),
+            errorMessage: errorMessage,
           ),
         ));
       }
@@ -201,10 +207,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loginState: state.loginState.copyWith(isLoading: false),
         ));
       } catch (e) {
+        String errorMessage = _getFirebaseErrorMessage(e);
         emit(state.copyWith(
           loginState: state.loginState.copyWith(
             isLoading: false,
-            errorMessage: e.toString(),
+            errorMessage: errorMessage,
           ),
         ));
       }
@@ -222,17 +229,45 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthUpdateRegisterFieldEvent>((event, emit) {
       final currentRegister = state.registerState;
+      
+      // Validar campos apenas se foram fornecidos
+      String emailError = currentRegister.emailError;
+      String passwordError = currentRegister.passwordError;
+      String usernameError = currentRegister.usernameError;
+      String phoneError = currentRegister.phoneError;
+      
+      if (event.email != null) {
+        final validation = AuthValidators.validateEmail(event.email!);
+        emailError = validation ?? '';
+      }
+      
+      if (event.password != null) {
+        final validation = AuthValidators.validatePassword(event.password!);
+        passwordError = validation ?? '';
+      }
+      
+      if (event.username != null) {
+        final validation = AuthValidators.validateUsername(event.username!);
+        usernameError = validation ?? '';
+      }
+      
+      if (event.phone != null) {
+        final validation = AuthValidators.validatePhone(event.phone!);
+        phoneError = validation ?? '';
+      }
+      
       emit(state.copyWith(
         registerState: RegisterState(
           email: event.email ?? currentRegister.email,
           password: event.password ?? currentRegister.password,
           username: event.username ?? currentRegister.username,
           phone: event.phone ?? currentRegister.phone,
-          emailError: '',
-          passwordError: '',
-          usernameError: '',
-          phoneError: '',
-          errorMessage: null,
+          emailError: emailError,
+          passwordError: passwordError,
+          usernameError: usernameError,
+          phoneError: phoneError,
+          errorMessage: currentRegister.errorMessage,
+          isLoading: currentRegister.isLoading,
         ),
       ));
     });
@@ -284,4 +319,47 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _authStateSubscription?.cancel();
     return super.close();
   }
-} 
+
+  /// Converte erros do Firebase em mensagens amigáveis ao usuário
+  String _getFirebaseErrorMessage(dynamic error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-not-found':
+          return 'Usuário não encontrado. Verifique o email digitado.';
+        case 'wrong-password':
+          return 'Senha incorreta. Tente novamente.';
+        case 'email-already-in-use':
+          return 'Este email já está sendo usado por outra conta.';
+        case 'weak-password':
+          return 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+        case 'invalid-email':
+          return 'Email inválido. Verifique o formato digitado.';
+        case 'user-disabled':
+          return 'Esta conta foi desabilitada. Entre em contato com o suporte.';
+        case 'too-many-requests':
+          return 'Muitas tentativas de login. Tente novamente mais tarde.';
+        case 'operation-not-allowed':
+          return 'Operação não permitida. Entre em contato com o suporte.';
+        case 'invalid-credential':
+          return 'Credenciais inválidas. Verifique email e senha.';
+        case 'network-request-failed':
+          return 'Erro de conexão. Verifique sua internet e tente novamente.';
+        case 'requires-recent-login':
+          return 'Por segurança, faça login novamente para continuar.';
+        default:
+          return 'Erro de autenticação: ${error.message ?? 'Erro desconhecido'}';
+      }
+    }
+    
+    // Para outros tipos de erro
+    String errorString = error.toString();
+    
+    // Verifica se é erro de credenciais padrão (do serviço local)
+    if (errorString.contains('Use: ')) {
+      return errorString;
+    }
+    
+    // Erro genérico
+    return 'Erro inesperado. Tente novamente.';
+  }
+}
