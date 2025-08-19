@@ -4,16 +4,18 @@
 /// Responsabilidades:
 /// - Exibir cards de clima, cuidados e mensagem de inspiração
 /// - Mostrar notificação de boas-vindas
+/// - Exibir funcionalidades em breve organizadas em carrosseis
 /// - Usar BLoC pattern para gerenciamento de estado
 ///
 /// Author: Gabriel Teixeira e Vitoria Lana
 /// Created on: 30-05-2025
-/// Last modified: 06-08-2025
+/// Last modified: 19-08-2025
 ///
 /// Changes:
-/// - UI Refatorado e Adicionado Card para Cuidados. (Evelin Cordeiro)
+/// - UI Refatorado e Adicionado Card para Cuidados (Evelin Cordeiro)
+/// - Adicionadas cards de funcionalidade 'Em breve' (Evelin Cordeiro)
 ///
-/// Version: 3.0.0 (Modern Sophisticated UI)
+/// Version: 4.0.0
 /// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/components/carousel.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/state/home/home_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
@@ -150,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   greeting,
                   style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.blackNormal,
+                    color: MetamorfoseColors.blackLight,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -173,14 +176,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MetamorfoseColors.greenLight.withOpacity(0.8),
-            MetamorfoseColors.purpleDark.withOpacity(0.7),
-          ],
-        ),
+        gradient: MetamorfoseGradients.darkPurpleGradient,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
@@ -248,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Text(
                         'Clima',
                         style: AppTypography.titleLarge.copyWith(
-                          color: MetamorfoseColors.whiteLight,
+                          color: MetamorfoseColors.whiteDark,
                         ),
                       ),
                     ],
@@ -295,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             state.weather!.location,
-                            style: AppTypography.bodyMedium.copyWith(
+                            style: AppTypography.bodyLarge.copyWith(
                               color:
                                   MetamorfoseColors.whiteLight.withOpacity(0.9),
                               fontWeight: FontWeight.w500,
@@ -486,7 +482,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         height: 180,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: MetamorfoseGradients.greenGradient,
+          gradient: MetamorfoseGradients.darkGreenGradient,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -529,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   'Planta',
                   style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.whiteLight,
+                    color: MetamorfoseColors.whiteDark,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -537,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   'Cuidar agora',
                   style: AppTypography.bodyMedium.copyWith(
-                    color: MetamorfoseColors.whiteLight.withOpacity(0.9),
+                    color: MetamorfoseColors.whiteDark.withOpacity(0.9),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -566,6 +562,156 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+// Carrossel de funcionalidades organizadas por categoria
+  List<Widget> get _personalFeatures => [
+        CarouselItem(
+          title: 'Daily Check-in',
+          image: 'assets/images/features/daily_checkin.png',
+          icon: _getIconForFeature('Daily Check-in'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Modo Noturno',
+          image: 'assets/images/features/night_mode.png',
+          icon: _getIconForFeature('Modo Noturno'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Configurações',
+          image: 'assets/images/features/settings.png',
+          icon: _getIconForFeature('Configurações'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  List<Widget> get _supportFeatures => [
+        CarouselItem(
+          title: 'Psicólogos',
+          image: 'assets/images/features/psychologists.png',
+          icon: _getIconForFeature('Psicólogos'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Suporte de Emergência',
+          image: 'assets/images/features/emergency_support.png',
+          icon: _getIconForFeature('Suporte de Emergência'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Hub Educacional',
+          image: 'assets/images/features/education_hub.png',
+          icon: _getIconForFeature('Hub Educacional'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  List<Widget> get _progressFeatures => [
+        CarouselItem(
+          title: 'Relatórios',
+          image: 'assets/images/features/progress_report.png',
+          icon: _getIconForFeature('Relatórios'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Centro de Missões',
+          image: 'assets/images/features/mission_center.png',
+          icon: _getIconForFeature('Centro de Missões'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Conquistas',
+          image: 'assets/images/features/achievements.png',
+          icon: _getIconForFeature('Conquistas'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Feedback',
+          image: 'assets/images/features/feedback.png',
+          icon: _getIconForFeature('Feedback'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  LinearGradient _getGradientForFeature(String title) {
+    switch (title.toLowerCase()) {
+      case 'daily check-in':
+      case 'modo noturno':
+      case 'configurações':
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.purpleNormal,
+            MetamorfoseColors.purpleDark,
+          ],
+        );
+      case 'psicólogos':
+      case 'suporte de emergência':
+      case 'hub educacional':
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.greenNormal,
+            MetamorfoseColors.greenDark,
+          ],
+        );
+      default:
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.purpleLight,
+            MetamorfoseColors.greenLight,
+          ],
+        );
+    }
+  }
+
+  IconData _getIconForFeature(String title) {
+    switch (title.toLowerCase()) {
+      case 'daily check-in':
+        return Icons.fact_check;
+      case 'modo noturno':
+        return Icons.dark_mode;
+      case 'psicólogos':
+        return Icons.person_outline;
+      case 'configurações':
+        return Icons.settings;
+      case 'relatórios':
+        return Icons.assessment;
+      case 'centro de missões':
+        return Icons.flag;
+      case 'hub educacional':
+        return Icons.school;
+      case 'suporte de emergência':
+        return Icons.emergency;
+      case 'conquistas':
+        return Icons.emoji_events;
+      case 'feedback':
+        return Icons.feedback;
+      default:
+        return Icons.circle;
+    }
+  }
+
+  Color _getShadowColorForFeature(String title, bool isComingSoon) {
+    if (isComingSoon) {
+      return MetamorfoseColors.greyLight.withOpacity(0.3);
+    }
+    return MetamorfoseColors.purpleNormal.withOpacity(0.3);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -589,7 +735,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: MetamorfoseColors.purpleDark,
+          backgroundColor: (Color(0xFF7753CD)),
           body: Stack(
             children: [
               Positioned(
@@ -610,7 +756,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 builder: (context, child) {
                   return Positioned(
                     top: screenSize.height *
-                        (1 - _heightAnimation.value), // Posição dinâmica
+                        (1 - _heightAnimation.value),
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -620,15 +766,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       onPanEnd: _onPanEnd,
                       child: Container(
                         decoration: BoxDecoration(
-                          color:
-                              MetamorfoseColors.whiteNormal.withOpacity(0.85),
+                          color: const Color.fromARGB(255, 255, 255, 255)
+                              .withOpacity(0.20),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(40),
                             topRight: Radius.circular(40),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: MetamorfoseColors.shadowText,
+                              color: MetamorfoseColors.shadowText
+                                  .withOpacity(0.15),
                               offset: const Offset(0, -8),
                               blurRadius: 32,
                               spreadRadius: 0,
@@ -643,7 +790,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ],
                           border: Border.all(
                             color:
-                                MetamorfoseColors.whiteLight.withOpacity(0.2),
+                                MetamorfoseColors.whiteLight.withOpacity(0.3),
                             width: 1.5,
                           ),
                         ),
@@ -665,25 +812,50 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             // Conteúdo do card
                             Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
-                                child: Column(
-                                  children: [
-                                    // Header stats
-                                    _buildHeaderStats(),
-                                    const SizedBox(height: 28),
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildHeaderStats(),
+                                      const SizedBox(height: 28),
 
-                                    // Weather card
-                                    _buildWeatherCard(state),
-                                    const SizedBox(height: 24),
+                                      _buildWeatherCard(state),
+                                      const SizedBox(height: 24),
 
-                                    // Content cards (quote + plant)
-                                    _buildContentCards(state),
+                                      _buildContentCards(state),
+                                      const SizedBox(height: 40),
 
-                                    // Espaço para o bottom navigation
-                                    const SizedBox(height: 120),
-                                  ],
+                                      Carousel(
+                                        title: 'Pessoal',
+                                        items: _personalFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      Carousel(
+                                        title: 'Suporte & Cuidado',
+                                        items: _supportFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      Carousel(
+                                        title: 'Progresso & Conquistas',
+                                        items: _progressFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      const SizedBox(height: 120),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
