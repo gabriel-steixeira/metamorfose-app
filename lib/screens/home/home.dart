@@ -4,16 +4,18 @@
 /// Responsabilidades:
 /// - Exibir cards de clima, cuidados e mensagem de inspiração
 /// - Mostrar notificação de boas-vindas
+/// - Exibir funcionalidades em breve organizadas em carrosseis
 /// - Usar BLoC pattern para gerenciamento de estado
 ///
 /// Author: Gabriel Teixeira e Vitoria Lana
 /// Created on: 30-05-2025
-/// Last modified: 06-08-2025
+/// Last modified: 19-08-2025
 ///
 /// Changes:
-/// - UI Refatorado e Adicionado Card para Cuidados. (Evelin Cordeiro)
+/// - UI Refatorado e Adicionado Card para Cuidados (Evelin Cordeiro)
+/// - Adicionadas cards de funcionalidade 'Em breve' (Evelin Cordeiro)
 ///
-/// Version: 3.0.0 (Modern Sophisticated UI)
+/// Version: 4.0.0
 /// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/components/carousel.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/state/home/home_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
@@ -559,6 +562,156 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+// Carrossel de funcionalidades organizadas por categoria
+  List<Widget> get _personalFeatures => [
+        CarouselItem(
+          title: 'Daily Check-in',
+          image: 'assets/images/features/daily_checkin.png',
+          icon: _getIconForFeature('Daily Check-in'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Modo Noturno',
+          image: 'assets/images/features/night_mode.png',
+          icon: _getIconForFeature('Modo Noturno'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Configurações',
+          image: 'assets/images/features/settings.png',
+          icon: _getIconForFeature('Configurações'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  List<Widget> get _supportFeatures => [
+        CarouselItem(
+          title: 'Psicólogos',
+          image: 'assets/images/features/psychologists.png',
+          icon: _getIconForFeature('Psicólogos'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Suporte de Emergência',
+          image: 'assets/images/features/emergency_support.png',
+          icon: _getIconForFeature('Suporte de Emergência'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Hub Educacional',
+          image: 'assets/images/features/education_hub.png',
+          icon: _getIconForFeature('Hub Educacional'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  List<Widget> get _progressFeatures => [
+        CarouselItem(
+          title: 'Relatórios',
+          image: 'assets/images/features/progress_report.png',
+          icon: _getIconForFeature('Relatórios'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Centro de Missões',
+          image: 'assets/images/features/mission_center.png',
+          icon: _getIconForFeature('Centro de Missões'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Conquistas',
+          image: 'assets/images/features/achievements.png',
+          icon: _getIconForFeature('Conquistas'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+        CarouselItem(
+          title: 'Feedback',
+          image: 'assets/images/features/feedback.png',
+          icon: _getIconForFeature('Feedback'),
+          isComingSoon: true,
+          onTap: null,
+        ),
+      ];
+
+  LinearGradient _getGradientForFeature(String title) {
+    switch (title.toLowerCase()) {
+      case 'daily check-in':
+      case 'modo noturno':
+      case 'configurações':
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.purpleNormal,
+            MetamorfoseColors.purpleDark,
+          ],
+        );
+      case 'psicólogos':
+      case 'suporte de emergência':
+      case 'hub educacional':
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.greenNormal,
+            MetamorfoseColors.greenDark,
+          ],
+        );
+      default:
+        return LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MetamorfoseColors.purpleLight,
+            MetamorfoseColors.greenLight,
+          ],
+        );
+    }
+  }
+
+  IconData _getIconForFeature(String title) {
+    switch (title.toLowerCase()) {
+      case 'daily check-in':
+        return Icons.fact_check;
+      case 'modo noturno':
+        return Icons.dark_mode;
+      case 'psicólogos':
+        return Icons.person_outline;
+      case 'configurações':
+        return Icons.settings;
+      case 'relatórios':
+        return Icons.assessment;
+      case 'centro de missões':
+        return Icons.flag;
+      case 'hub educacional':
+        return Icons.school;
+      case 'suporte de emergência':
+        return Icons.emergency;
+      case 'conquistas':
+        return Icons.emoji_events;
+      case 'feedback':
+        return Icons.feedback;
+      default:
+        return Icons.circle;
+    }
+  }
+
+  Color _getShadowColorForFeature(String title, bool isComingSoon) {
+    if (isComingSoon) {
+      return MetamorfoseColors.greyLight.withOpacity(0.3);
+    }
+    return MetamorfoseColors.purpleNormal.withOpacity(0.3);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -603,7 +756,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 builder: (context, child) {
                   return Positioned(
                     top: screenSize.height *
-                        (1 - _heightAnimation.value), // Posição dinâmica
+                        (1 - _heightAnimation.value),
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -659,25 +812,50 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             // Conteúdo do card
                             Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
-                                child: Column(
-                                  children: [
-                                    // Header stats
-                                    _buildHeaderStats(),
-                                    const SizedBox(height: 28),
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildHeaderStats(),
+                                      const SizedBox(height: 28),
 
-                                    // Weather card
-                                    _buildWeatherCard(state),
-                                    const SizedBox(height: 24),
+                                      _buildWeatherCard(state),
+                                      const SizedBox(height: 24),
 
-                                    // Content cards (quote + plant)
-                                    _buildContentCards(state),
+                                      _buildContentCards(state),
+                                      const SizedBox(height: 40),
 
-                                    // Espaço para o bottom navigation
-                                    const SizedBox(height: 120),
-                                  ],
+                                      Carousel(
+                                        title: 'Pessoal',
+                                        items: _personalFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      Carousel(
+                                        title: 'Suporte & Cuidado',
+                                        items: _supportFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      Carousel(
+                                        title: 'Progresso & Conquistas',
+                                        items: _progressFeatures,
+                                        height: 200,
+                                        itemExtent: 164,
+                                      ),
+                                      const SizedBox(height: 32),
+
+                                      const SizedBox(height: 120),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
