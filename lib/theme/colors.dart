@@ -14,7 +14,7 @@
 import 'package:flutter/material.dart';
 
 /// Definições de cores e gradientes do tema do app Metamorfose.
-/// Contém cores personalizadas para o design do app e gradientes lineares 
+/// Contém cores personalizadas para o design do app e gradientes lineares
 /// usados em diversos elementos.
 class MetamorfoseColors {
   // Purple
@@ -63,10 +63,10 @@ class MetamorfoseColors {
 
   // Shadow
   static const defaultButtonShadow = Color(0xFFE5E5E5);
-  
+
   // Transparent shadows
   static const shadowLight = Color(0x0C000000); // 5% de opacidade do preto
-  static const shadowText = Color(0x40000000);  // 25% de opacidade do preto
+  static const shadowText = Color(0x40000000); // 25% de opacidade do preto
   static const transparent = Color(0x00000000); // Transparente
 }
 
@@ -76,29 +76,36 @@ class MetamorfoseGradients {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFFB18EF2),   // 0%
-      Color(0xFFFAEAFF)  // 100%
+      Color(0xFFB18EF2), // 0%
+      Color(0xFFFAEAFF) // 100%
     ],
   );
 
   static const greenGradient = LinearGradient(
     colors: [
-      Color(0xFF57C785),  // 0%
-      Color(0xFF6EF575)   // 100%
+      Color(0xFF57C785), // 0%
+      Color(0xFF6EF575) // 100%
+    ],
+  );
+
+  static const darkGreenGradient = LinearGradient(
+    colors: [
+      Color(0xFF2C622E), // 0%
+      Color(0xFF43BD43) // 100%
     ],
   );
 
   static const darkPurpleGradient = LinearGradient(
     colors: [
-      Color(0xFF4E347F),  // 0%
-      Color(0xFF9D68FF)   // 100%
+      Color(0xFF4E347F), // 0%
+      Color(0xFF9D68FF) // 100%
     ],
   );
 
   static const lightPurple33Gradient = LinearGradient(
     colors: [
-      Color(0xFFAF8CF2),  // 0%
-      Color(0xFFD8C7FA)   // 33%
+      Color(0xFFAF8CF2), // 0%
+      Color(0xFFD8C7FA) // 33%
     ],
   );
-} 
+}

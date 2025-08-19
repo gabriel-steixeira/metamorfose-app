@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   greeting,
                   style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.blackNormal,
+                    color: MetamorfoseColors.blackLight,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -173,14 +173,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MetamorfoseColors.greenLight.withOpacity(0.8),
-            MetamorfoseColors.purpleDark.withOpacity(0.7),
-          ],
-        ),
+        gradient: MetamorfoseGradients.darkPurpleGradient,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
@@ -248,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Text(
                         'Clima',
                         style: AppTypography.titleLarge.copyWith(
-                          color: MetamorfoseColors.whiteLight,
+                          color: MetamorfoseColors.whiteDark,
                         ),
                       ),
                     ],
@@ -295,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             state.weather!.location,
-                            style: AppTypography.bodyMedium.copyWith(
+                            style: AppTypography.bodyLarge.copyWith(
                               color:
                                   MetamorfoseColors.whiteLight.withOpacity(0.9),
                               fontWeight: FontWeight.w500,
@@ -486,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         height: 180,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: MetamorfoseGradients.greenGradient,
+          gradient: MetamorfoseGradients.darkGreenGradient,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -529,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   'Planta',
                   style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.whiteLight,
+                    color: MetamorfoseColors.whiteDark,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -537,7 +530,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Text(
                   'Cuidar agora',
                   style: AppTypography.bodyMedium.copyWith(
-                    color: MetamorfoseColors.whiteLight.withOpacity(0.9),
+                    color: MetamorfoseColors.whiteDark.withOpacity(0.9),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -589,7 +582,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: MetamorfoseColors.purpleDark,
+          backgroundColor: (Color(0xFF7753CD)),
           body: Stack(
             children: [
               Positioned(
@@ -620,15 +613,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       onPanEnd: _onPanEnd,
                       child: Container(
                         decoration: BoxDecoration(
-                          color:
-                              MetamorfoseColors.whiteNormal.withOpacity(0.85),
+                          color: const Color.fromARGB(255, 255, 255, 255)
+                              .withOpacity(0.20),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(40),
                             topRight: Radius.circular(40),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: MetamorfoseColors.shadowText,
+                              color: MetamorfoseColors.shadowText
+                                  .withOpacity(0.15),
                               offset: const Offset(0, -8),
                               blurRadius: 32,
                               spreadRadius: 0,
@@ -643,7 +637,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ],
                           border: Border.all(
                             color:
-                                MetamorfoseColors.whiteLight.withOpacity(0.2),
+                                MetamorfoseColors.whiteLight.withOpacity(0.3),
                             width: 1.5,
                           ),
                         ),
