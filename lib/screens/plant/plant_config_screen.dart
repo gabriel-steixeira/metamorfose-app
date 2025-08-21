@@ -25,6 +25,7 @@ import 'package:metamorfose_flutter/components/index.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
 import 'package:metamorfose_flutter/state/plant_config/plant_config_state.dart';
 
+
 /// Tela de configuração da planta virtual com BLoC.
 /// Permite ao usuário personalizar sua planta para criar conexão emocional.
 class PlantConfigScreen extends StatefulWidget {
@@ -38,6 +39,20 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   final _nameController = TextEditingController();
   bool _isUpdatingController = false;
   String _lastKnownText = '';
+  
+  String _getPlantSvgAsset(Color color) {
+    if (color == MetamorfoseColors.blueNormal) return 'assets/images/plantsetup/plantsetup_blue.svg';
+    if (color == MetamorfoseColors.greenNormal) return 'assets/images/plantsetup/plantsetup_green.svg';
+    if (color == MetamorfoseColors.pinkNormal) return 'assets/images/plantsetup/plantsetup_pink.svg';
+    return 'assets/images/plantsetup/plantsetup.svg';
+  }
+
+  Widget _buildFramedPlant(Color color) {
+    return SvgPicture.asset(
+      _getPlantSvgAsset(color),
+      fit: BoxFit.contain,
+    );
+  }
   
   final List<SelectOption<String>> _plantOptions = [
     const SelectOption(
@@ -148,15 +163,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
     }
   }
 
-  void _handleTakePhoto() {
-    print('Botão TIRAR FOTO pressionado - navegando para home');
-    context.go(Routes.home);
-  }
 
-  void _handleSkip() {
-    print('Botão IGNORAR pressionado - navegando para home');
-    context.go(Routes.home);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,16 +184,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
         }
         
         // Mostrar erros se houver
-        if (state.hasError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: MetamorfoseColors.redNormal,
-            ),
-          );
-          // Limpar erro após mostrar
-          context.read<PlantConfigBloc>().add(ClearErrorEvent());
-        }
+        
       },
       builder: (context, state) {
         // Debug do estado atual
@@ -231,10 +229,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                       child: SizedBox(
                         width: screenWidth * 0.6,
                         height: screenHeight * 0.3,
-                        child: SvgPicture.asset(
-                          'assets/images/plantsetup/plantsetup.svg',
-                          fit: BoxFit.contain,
-                        ),
+                        child: _buildFramedPlant(state.selectedColor),
                       ),
                     ),
                   ),
@@ -279,6 +274,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                                   color: MetamorfoseColors.purpleNormal,
                                   size: 20,
                                 ),
+                                errorText: state.nameError,
                               ),
                               
                               const SizedBox(height: 16),
@@ -318,25 +314,36 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                               
                               const SizedBox(height: 32),
                               
-                              // Botões
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    width: double.infinity,
+                              // Botão para finalizar configuração
+                              SizedBox(
+                                width: double.infinity,
+                                child: IgnorePointer(
+                                  ignoring: !state.canSave || state.loadingState == LoadingState.saving,
+                                  child: Opacity(
+                                    opacity: (state.canSave && state.loadingState != LoadingState.saving) ? 1.0 : 0.5,
                                     child: MetamorfeseButton(
-                                      text: 'TIRAR A PRIMEIRA FOTO DE SUA PLANTA',
-                                      onPressed: _handleTakePhoto,
+                                      text: state.loadingState == LoadingState.saving ? null : 'FINALIZAR CONFIGURAÇÃO',
+                                      child: state.loadingState == LoadingState.saving
+                                          ? const SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : null,
+                                      onPressed: () {
+                                        if (!state.canSave) return;
+                                        if (state.loadingState == LoadingState.saving) return;
+                                        
+                                        context.read<PlantConfigBloc>().add(
+                                          FinishConfigurationEvent(),
+                                        );
+                                      },
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: MetamorfeseSecondaryButton(
-                                      text: 'IGNORAR ESSA ETAPA POR ENQUANTO',
-                                      onPressed: _handleSkip,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                               
                               const SizedBox(height: 24),
@@ -376,6 +383,19 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                                   ),
                                 ),
                               ),
+                              if (state.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    state.errorMessage ?? 'Erro desconhecido. Tente novamente mais tarde.',
+                                    style: TextStyle(
+                                      color: MetamorfoseColors.redNormal,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -390,4 +410,4 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
       },
     );
   }
-} 
+}

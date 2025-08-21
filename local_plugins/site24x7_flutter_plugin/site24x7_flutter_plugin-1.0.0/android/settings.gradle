@@ -1,0 +1,3 @@
+rootProject.name = 'apm_mobileapm_flutter_plugin'
+//include ':tmplibs'
+//include ':androidapmsdk'

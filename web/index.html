@@ -35,29 +35,29 @@
 </head>
 <body>
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"></script>
-
-  <!-- Firebase Inicialização -->
   <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBIU8eVLfB1n7E9FeBgNzYAkHHKZsx5_wc",
-      authDomain: "metamorfose-d7aa5.firebaseapp.com",
-      projectId: "metamorfose-d7aa5",
-      storageBucket: "metamorfose-d7aa5.firebasestorage.app",
-      messagingSenderId: "163566256556",
-      appId: "1:163566256556:web:32310d68653ef365dfba09"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-  </script>
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBIU8eVLfB1n7E9FeBgNzYAkHHKZsx5_wc",
+    authDomain: "metamorfose-d7aa5.firebaseapp.com",
+    projectId: "metamorfose-d7aa5",
+    storageBucket: "metamorfose-d7aa5.firebasestorage.app",
+    messagingSenderId: "163566256556",
+    appId: "1:163566256556:web:32310d68653ef365dfba09"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Exportar para uso global se necessário
+  window.firebase = { auth, db, storage };
+</script>
 
   <script src="flutter_bootstrap.js" async></script>
 </body>

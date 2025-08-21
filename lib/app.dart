@@ -9,15 +9,15 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
- * Version: 1.0.0
+ * Last modified: 15-08-2025
+ * Version: 1.2.0
  * Squad: Metamorfose
  */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
-import 'package:metamorfose_flutter/services/auth_service.dart';
+import 'package:metamorfose_flutter/services/hybrid_auth_service.dart';
 import 'package:metamorfose_flutter/theme/theme.dart';
 import 'package:metamorfose_flutter/navigation/app_router.dart';
 import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
@@ -30,7 +30,7 @@ class MetamorfoseApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(authService: AuthService()),
+          create: (context) => AuthBloc(authService: HybridAuthService()),
         ),
       ],
       child: MaterialApp.router(

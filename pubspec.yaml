@@ -10,10 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   # Firebase
-  firebase_core: ^2.27.1
-  firebase_auth: ^4.17.9
-  cloud_firestore: ^4.15.9
-  firebase_messaging: ^14.7.20
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  firebase_messaging: ^15.1.1
   # Authentication
   google_sign_in: ^6.2.1
   flutter_facebook_auth: ^6.0.4
@@ -30,12 +30,20 @@ dependencies:
   geolocator: ^10.1.0
   # Networking
   dio: ^5.4.1
+  http: ^1.1.0
   # Code Generation
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   # UI
   cupertino_icons: ^1.0.2
-  site24x7_flutter_plugin: ^1.0.0
+  site24x7_flutter_plugin:
+    path: local_plugins/site24x7_flutter_plugin/site24x7_flutter_plugin-1.0.0
+  flutter_tts: ^3.8.5
+  speech_to_text: ^7.0.0
+  google_generative_ai: ^0.3.0
+  shared_preferences: ^2.2.2
+  firebase_storage: ^12.3.3
+  screenshot: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +65,7 @@ flutter:
     - assets/animations/
     - assets/images/chat/
     - assets/images/home/
+    - assets/images/selectionactivity/
   
   fonts:
     - family: DinNext

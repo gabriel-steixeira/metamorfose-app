@@ -61,23 +61,34 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
         ],
       );
 
+  /// Retorna o caminho do SVG baseado na cor da planta
+  String _getPlantSvgAsset(int? colorValue) {
+    if (colorValue == MetamorfoseColors.blueNormal.value) {
+      return 'assets/images/plantsetup/plantsetup_blue.svg';
+    }
+    if (colorValue == MetamorfoseColors.greenNormal.value) {
+      return 'assets/images/plantsetup/plantsetup_green.svg';
+    }
+    if (colorValue == MetamorfoseColors.pinkNormal.value) {
+      return 'assets/images/plantsetup/plantsetup_pink.svg';
+    }
+    return 'assets/images/plantsetup/plantsetup.svg'; // Roxo padrão
+  }
+
   /// Header
   Widget _buildPlantInfo(PlantCareState state) {
     if (state.isPlantInfoLoading) {
       return _buildLoadingCard();
     }
 
-    // Dados mockados para teste
-    final plantInfo = state.plantInfo ??
-        {
-          'name': 'Minha Planta',
-          'species': 'Monstera Deliciosa',
-          'startDate': '15/07/2025',
-          'location': 'Sala',
-          'sunlight': 'Luz indireta',
-          'difficulty': 'Fácil',
-          'humidity': '60-70%',
-        };
+    if (state.plantInfoError != null) {
+      return _buildErrorCard(state.plantInfoError!);
+    }
+
+    final plantInfo = state.plantInfo;
+    if (plantInfo == null) {
+      return _buildErrorCard('Nenhuma planta encontrada');
+    }
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -85,7 +96,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Seção superior: Foto + Botão
+          // Seção superior: Ícone da planta + Nome
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -93,37 +104,41 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: MetamorfoseColors.purpleDark,
+                  color: Colors.transparent,
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    'assets/images/plantsetup/plantsetup.svg',
-                    fit: BoxFit.contain,
-                  ),
+                child: SvgPicture.asset(
+                  _getPlantSvgAsset(plantInfo['potColorValue']),
+                  width: 56,
+                  height: 56,
+                  fit: BoxFit.contain,
                 ),
               ),
-
               const SizedBox(width: 16),
-
-              // Botão de tirar nova foto
               Expanded(
-                child: MetamorfosePrimaryButton(
-                  text: '+ TIRAR NOVA FOTO',
-                  onPressed: state.isTakingPhoto
-                      ? () {}
-                      : () => context
-                          .read<PlantCareBloc>()
-                          .add(TakeNewPhotoEvent()),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      plantInfo['name'] ?? 'Minha Planta',
+                      style: const TextStyle(
+                        fontFamily: 'DinNext',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: MetamorfoseColors.greyMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      plantInfo['species'] ?? 'Planta',
+                      style: const TextStyle(
+                        fontFamily: 'DinNext',
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: MetamorfoseColors.greyMedium,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -143,21 +158,15 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
           Column(
             children: [
               _buildInfoRow(
-                icon: Icons.eco,
-                label: 'Nome da Planta',
-                value: plantInfo['name'] ?? 'N/A',
-              ),
-              const SizedBox(height: 12),
-              _buildInfoRow(
-                icon: Icons.category,
-                label: 'Espécie',
-                value: plantInfo['species'] ?? 'N/A',
-              ),
-              const SizedBox(height: 12),
-              _buildInfoRow(
                 icon: Icons.calendar_today,
                 label: 'Data de início',
                 value: plantInfo['startDate'] ?? 'N/A',
+              ),
+              const SizedBox(height: 12),
+              _buildInfoRow(
+                icon: Icons.palette,
+                label: 'Cor do vaso',
+                value: plantInfo['potColor'] ?? 'N/A',
               ),
             ],
           ),
@@ -168,14 +177,10 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Informações de cuidados
   Widget _buildCareInfo(PlantCareState state) {
-    // Dados mockados para teste
-    final plantInfo = state.plantInfo ??
-        {
-          'location': 'Sala',
-          'sunlight': 'Luz indireta',
-          'difficulty': 'Fácil',
-          'humidity': '60-70%',
-        };
+    final plantInfo = state.plantInfo;
+    if (plantInfo == null) {
+      return const SizedBox.shrink();
+    }
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -275,17 +280,6 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          if (state.isVisualDiaryLoading)
-            const Center(
-              child: CircularProgressIndicator(
-                color: MetamorfoseColors.purpleNormal,
-              ),
-            )
-          else if (!state.hasVisualDiaryPhotos)
-            _buildEmptyDiary()
-          else
-            // TODO: Implementar grid de fotos
-            const SizedBox.shrink(),
         ],
       ),
     );
@@ -411,45 +405,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
     );
   }
 
-  /// Estado vazio do diário
-  Widget _buildEmptyDiary() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(
-              Icons.camera_alt_outlined,
-              size: 48,
-              color: MetamorfoseColors.greyLight,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Nenhuma foto ainda!',
-              style: const TextStyle(
-                fontFamily: 'DinNext',
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: MetamorfoseColors.greyMedium,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Tire a primeira foto do seu progresso! 📸🌱',
-              style: const TextStyle(
-                fontFamily: 'DinNext',
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: MetamorfoseColors.greyMedium,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   /// Constrói lista de tarefas
   Widget _buildTasksList(List<dynamic> tasks) {

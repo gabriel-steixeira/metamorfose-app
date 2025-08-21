@@ -28,7 +28,9 @@ import 'package:metamorfose_flutter/state/auth/auth_events.dart';
 
 /// Tela de autenticação com opções de login e cadastro usando BLoC
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  final String? initialMode;
+  
+  const AuthScreen({super.key, this.initialMode});
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -44,12 +46,104 @@ class _AuthScreenState extends State<AuthScreen> {
   void initState() {
     super.initState();
     
-    // Inicializar BLoC sem listeners pesados nos controllers
+    // Adicionar listeners para validação em tempo real
+    _emailController.addListener(_onEmailChanged);
+    _passwordController.addListener(_onPasswordChanged);
+    _usernameController.addListener(_onUsernameChanged);
+    _phoneController.addListener(_onPhoneChanged);
+    
+    // Inicializar BLoC
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<AuthBloc>().add(const AuthToggleModeEvent(AuthScreenMode.login));
+        // Determinar modo inicial baseado no parâmetro
+        final mode = widget.initialMode == 'register' 
+            ? AuthScreenMode.register 
+            : AuthScreenMode.login;
+        context.read<AuthBloc>().add(AuthToggleModeEvent(mode));
       }
     });
+  }
+
+  void _onEmailChanged() {
+    if (mounted) {
+      final currentState = context.read<AuthBloc>().state;
+      if (currentState.mode == AuthScreenMode.login) {
+        context.read<AuthBloc>().add(AuthUpdateLoginFieldEvent(
+          email: _emailController.text,
+        ));
+      } else {
+        context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+          email: _emailController.text,
+        ));
+      }
+    }
+  }
+
+  void _onPasswordChanged() {
+    if (mounted) {
+      final currentState = context.read<AuthBloc>().state;
+      if (currentState.mode == AuthScreenMode.login) {
+        context.read<AuthBloc>().add(AuthUpdateLoginFieldEvent(
+          password: _passwordController.text,
+        ));
+      } else {
+        context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+          password: _passwordController.text,
+        ));
+      }
+    }
+  }
+
+  void _onUsernameChanged() {
+    if (mounted) {
+      final currentState = context.read<AuthBloc>().state;
+      if (currentState.mode == AuthScreenMode.register) {
+        context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+          username: _usernameController.text,
+        ));
+      }
+    }
+  }
+
+  void _onPhoneChanged() {
+    if (mounted) {
+      final currentState = context.read<AuthBloc>().state;
+      if (currentState.mode == AuthScreenMode.register) {
+        // Formatar telefone automaticamente
+        final formattedPhone = _formatPhoneNumber(_phoneController.text);
+        if (formattedPhone != _phoneController.text) {
+          _phoneController.value = _phoneController.value.copyWith(
+            text: formattedPhone,
+            selection: TextSelection.collapsed(offset: formattedPhone.length),
+          );
+        }
+        
+        context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+          phone: _phoneController.text,
+        ));
+      }
+    }
+  }
+
+  String _formatPhoneNumber(String phone) {
+    // Remove todos os caracteres não numéricos
+    String numbers = phone.replaceAll(RegExp(r'[^\d]'), '');
+    
+    // Limita a 11 dígitos (DDD + 9 dígitos)
+    if (numbers.length > 11) {
+      numbers = numbers.substring(0, 11);
+    }
+    
+    // Aplica formatação baseada no comprimento
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return '(${numbers.substring(0, 2)}) ${numbers.substring(2)}';
+    } else if (numbers.length <= 11) {
+      return '(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7)}';
+    }
+    
+    return numbers;
   }
 
   @override
@@ -186,8 +280,11 @@ class _AuthScreenState extends State<AuthScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: MetamorfeseInput(
-              hintText: 'E-mail, telefone ou nome de usuário',
+              hintText: 'Digite seu e-mail',
               controller: _emailController,
+              errorText: state.loginState.emailError.isNotEmpty
+                  ? state.loginState.emailError
+                  : null,
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12),
                 child: SvgPicture.asset(
@@ -211,6 +308,9 @@ class _AuthScreenState extends State<AuthScreen> {
             child: MetamorfesePasswordInput(
               hintText: 'Senha',
               controller: _passwordController,
+              errorText: state.loginState.passwordError.isNotEmpty
+                  ? state.loginState.passwordError
+                  : null,
               onVisibilityChanged: (isVisible) {
                      context.read<AuthBloc>().add(AuthToggleEyesEvent(!isVisible));
               },
@@ -868,4 +968,4 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-} 
+}

@@ -25,4 +25,15 @@ class AuthEvent with _$AuthEvent {
     required String username,
     required String phone,
   }) = AuthSubmitRegisterEvent;
+  const factory AuthEvent.updateRegisterField({
+    String? email,
+    String? password,
+    String? username,
+    String? phone,
+  }) = AuthUpdateRegisterFieldEvent;
+  const factory AuthEvent.signOut() = AuthSignOutEvent;
+  const factory AuthEvent.resetPassword({
+    required String email,
+  }) = AuthResetPasswordEvent;
+  const factory AuthEvent.quickLogin() = AuthQuickLoginEvent;
 } 

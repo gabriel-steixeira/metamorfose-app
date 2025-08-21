@@ -22,4 +22,7 @@ export 'metamorfose_input.dart';
 
 export 'metamorfose_select.dart';
 export 'metamorfose_password_input.dart';
-export 'bottom_navigation_menu.dart'; 
+export 'bottom_navigation_menu.dart';
+export 'mode_switcher.dart';
+export 'speech_bubble.dart';
+export 'plant_personality_selector.dart'; 

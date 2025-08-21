@@ -99,6 +99,7 @@ class PlantConfigState {
   final ValidationState validationState;
   final LoadingState loadingState;
   final String? errorMessage;
+  final String? nameError;
 
   const PlantConfigState({
     this.plantName = '',
@@ -107,9 +108,9 @@ class PlantConfigState {
     this.validationState = ValidationState.initial,
     this.loadingState = LoadingState.idle,
     this.errorMessage,
+    this.nameError,
   });
 
-  /// Copia o estado com novos valores
   PlantConfigState copyWith({
     String? plantName,
     String? selectedPlant,
@@ -117,6 +118,7 @@ class PlantConfigState {
     ValidationState? validationState,
     LoadingState? loadingState,
     String? errorMessage,
+    String? nameError,
   }) {
     return PlantConfigState(
       plantName: plantName ?? this.plantName,
@@ -125,6 +127,7 @@ class PlantConfigState {
       validationState: validationState ?? this.validationState,
       loadingState: loadingState ?? this.loadingState,
       errorMessage: errorMessage ?? this.errorMessage,
+      nameError: nameError ?? this.nameError,
     );
   }
 
@@ -182,4 +185,4 @@ class PlantConfigState {
   String toString() {
     return 'PlantConfigState(name: $plantName, plant: $selectedPlant, color: ${colorOption.label}, validation: $validationState, loading: $loadingState, error: $errorMessage)';
   }
-} 
+}

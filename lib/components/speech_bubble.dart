@@ -28,6 +28,8 @@ class SpeechBubble extends StatelessWidget {
   final Color borderColor;
   final Color color;
   final Color triangleColor;
+  final String arrowDirection; // 'left', 'right', 'bottom'
+  
   const SpeechBubble({
     Key? key,
     required this.child,
@@ -38,6 +40,7 @@ class SpeechBubble extends StatelessWidget {
     this.triangleColor = MetamorfoseColors.whiteLight,
     this.color = MetamorfoseColors.whiteLight,
     this.borderColor = MetamorfoseColors.greenLight,
+    this.arrowDirection = 'bottom', // padrão apontando para baixo
   }) : super(key: key);
 
   @override
@@ -78,15 +81,33 @@ class SpeechBubble extends StatelessWidget {
         // Triângulo do balão
         if (showTriangle)
           Positioned(
-            bottom: -18,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: CustomPaint(
-                size: const Size(22.47, 18.72),
-                painter: TrianglePainter(borderColor: borderColor, triangleColor: triangleColor),
-              ),
-            ),
+            bottom: arrowDirection == 'bottom' ? -18 : null,
+            top: arrowDirection == 'top' ? -18 : null,
+            left: arrowDirection == 'left' ? -22.5 : null,
+            right: arrowDirection == 'right' ? -18 : null,
+            child: arrowDirection == 'left' || arrowDirection == 'right'
+                ? Transform.translate(
+                    offset: Offset(0, height / 2 - 9.36), // Centraliza verticalmente (18.72 / 2)
+                    child: CustomPaint(
+                      size: const Size(22.47, 18.72),
+                      painter: TrianglePainter(
+                        borderColor: borderColor, 
+                        triangleColor: triangleColor,
+                        direction: arrowDirection,
+                      ),
+                    ),
+                  )
+                : Transform.translate(
+                    offset: Offset(width / 2 - 11.235, 0), // Centraliza horizontalmente (22.47 / 2)
+                    child: CustomPaint(
+                      size: const Size(22.47, 18.72),
+                      painter: TrianglePainter(
+                        borderColor: borderColor, 
+                        triangleColor: triangleColor,
+                        direction: arrowDirection,
+                      ),
+                    ),
+                  ),
           ),
       ],
     );
@@ -97,7 +118,9 @@ class SpeechBubble extends StatelessWidget {
 class TrianglePainter extends CustomPainter {
   final Color borderColor;
   final Color triangleColor;
-  TrianglePainter({required this.borderColor, required this.triangleColor});
+  final String direction; // 'left', 'right', 'bottom'
+  
+  TrianglePainter({required this.borderColor, required this.triangleColor, required this.direction});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -105,24 +128,82 @@ class TrianglePainter extends CustomPainter {
       ..color = triangleColor
       ..style = PaintingStyle.fill;
 
-    final path = Path()
-      ..moveTo(size.width / 2, size.height)
-      ..lineTo(0, 0)
-      ..lineTo(size.width, 0)
-      ..close();
-
-    // Desenha a sombra
     final shadowPaint = Paint()
       ..color = borderColor
       ..style = PaintingStyle.fill;
 
-    final shadowPath = Path()
-      ..moveTo(size.width / 2 + 2.5, size.height + 2.5)
-      ..lineTo(2.5, 2.5)
-      ..lineTo(size.width + 2.5, 2.5)
-      ..close();
+    Path path;
+    Path shadowPath;
 
+    switch (direction) {
+      case 'left':
+        // Triângulo apontando para a esquerda (em direção ao Ivy)
+        path = Path()
+          ..moveTo(0, size.height / 2)
+          ..lineTo(size.width, size.height / 2 - 10)
+          ..lineTo(size.width, size.height / 2 + 10)
+          ..close();
+        
+        // Contorno apenas ao redor, sem embaixo
+        shadowPath = Path()
+          ..moveTo(0, size.height / 2)
+          ..lineTo(size.width, size.height / 2 - 10)
+          ..lineTo(size.width + 2.5, size.height / 2 - 10)
+          ..lineTo(2.5, size.height / 2)
+          ..lineTo(size.width + 2.5, size.height / 2 + 10)
+          ..lineTo(size.width, size.height / 2 + 10)
+          ..close();
+        break;
+        
+      case 'right':
+        // Triângulo apontando para a direita
+        path = Path()
+          ..moveTo(size.width, size.height / 2)
+          ..lineTo(0, size.height / 2 - 10)
+          ..lineTo(0, size.height / 2 + 10)
+          ..close();
+        
+        shadowPath = Path()
+          ..moveTo(size.width + 2.5, size.height / 2)
+          ..lineTo(2.5, size.height / 2 - 10)
+          ..lineTo(2.5, size.height / 2 + 10)
+          ..close();
+        break;
+        
+      case 'top':
+        // Triângulo apontando para cima
+        path = Path()
+          ..moveTo(size.width / 2, size.height)
+          ..lineTo(size.width / 2 - 10, 0)
+          ..lineTo(size.width / 2 + 10, 0)
+          ..close();
+        
+        shadowPath = Path()
+          ..moveTo(size.width / 2 + 2.5, size.height + 2.5)
+          ..lineTo(size.width / 2 - 10, 2.5)
+          ..lineTo(size.width / 2 + 10, 2.5)
+          ..close();
+        break;
+        
+      default: // 'bottom'
+        // Triângulo apontando para baixo (padrão)
+        path = Path()
+          ..moveTo(size.width / 2, size.height)
+          ..lineTo(0, 0)
+          ..lineTo(size.width, 0)
+          ..close();
+        
+        shadowPath = Path()
+          ..moveTo(size.width / 2 + 2.5, size.height + 2.5)
+          ..lineTo(2.5, 2.5)
+          ..lineTo(size.width + 2.5, 2.5)
+          ..close();
+        break;
+    }
+
+    // Desenha a sombra primeiro
     canvas.drawPath(shadowPath, shadowPaint);
+    // Desenha o triângulo principal
     canvas.drawPath(path, paint);
   }
 

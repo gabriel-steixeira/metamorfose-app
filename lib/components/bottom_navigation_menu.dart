@@ -27,6 +27,7 @@ import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
+import 'package:metamorfose_flutter/services/plant_config_service.dart';
 
 class BottomNavigationMenu extends StatelessWidget {
   final int activeIndex;
@@ -41,7 +42,7 @@ class BottomNavigationMenu extends StatelessWidget {
   });
 
   /// Lida com o toque nos itens de navegação
-  void _onNavTap(BuildContext context, int index) {
+  void _onNavTap(BuildContext context, int index) async {
     // Executa callback se fornecido
     onItemTapped?.call(index);
 
@@ -51,7 +52,17 @@ class BottomNavigationMenu extends StatelessWidget {
         context.go(Routes.home);
         break;
       case 1: // Perfil
-        context.go(Routes.plantConfig);
+        // Verificar se usuário já tem planta configurada
+        final plantConfigService = PlantConfigService();
+        final hasPlant = await plantConfigService.hasExistingPlant();
+        
+        if (hasPlant) {
+          // Se tem planta, vai para tela de cuidados
+          context.go(Routes.plantCare);
+        } else {
+          // Se não tem planta, vai para tela de configuração
+          context.go(Routes.plantConfig);
+        }
         break;
       case 2: // Voice
         context.go(Routes.voiceChat);

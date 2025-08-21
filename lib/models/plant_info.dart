@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'plant_photo.dart';
-import 'current_photo.dart';
 
 class PlantInfo {
   final String id;
@@ -8,8 +6,6 @@ class PlantInfo {
   final String species;
   final String potColor;
   final Timestamp startDate;
-  final CurrentPhoto? currentPhoto;
-  final List<PlantPhoto> plantPhotos;
 
   PlantInfo({
     required this.id,
@@ -17,14 +13,9 @@ class PlantInfo {
     required this.species,
     required this.potColor,
     required this.startDate,
-    this.currentPhoto,
-    this.plantPhotos = const [],
   });
 
-  factory PlantInfo.fromFirestore(DocumentSnapshot doc, {
-    CurrentPhoto? currentPhoto,
-    List<PlantPhoto>? plantPhotos,
-  }) {
+  factory PlantInfo.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return PlantInfo(
       id: doc.id,
@@ -32,8 +23,6 @@ class PlantInfo {
       species: data['species'] ?? '',
       potColor: data['pot_color'] ?? '',
       startDate: data['start_date'] ?? Timestamp.now(),
-      currentPhoto: currentPhoto,
-      plantPhotos: plantPhotos ?? [],
     );
   }
 
@@ -45,4 +34,4 @@ class PlantInfo {
       'start_date': startDate,
     };
   }
-} 
+}
