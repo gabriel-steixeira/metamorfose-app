@@ -280,28 +280,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // Pode emitir um estado de erro se necessário
       }
     });
-
-    on<AuthQuickLoginEvent>((event, emit) async {
-      try {
-        emit(state.copyWith(
-          loginState: state.loginState.copyWith(isLoading: true, errorMessage: null),
-        ));
-
-        final user = await _authService.signInWithDefaultCredentials();
-
-        emit(state.copyWith(
-          user: user,
-          loginState: state.loginState.copyWith(isLoading: false),
-        ));
-      } catch (e) {
-        emit(state.copyWith(
-          loginState: state.loginState.copyWith(
-            isLoading: false,
-            errorMessage: e.toString(),
-          ),
-        ));
-      }
-    });
   }
 
   void _setupAuthStateListener() {
