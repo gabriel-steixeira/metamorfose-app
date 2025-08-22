@@ -16,11 +16,13 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:metamorfose_flutter/config/environment.dart';
 import 'package:metamorfose_flutter/state/map/map_state.dart';
+import 'package:metamorfose_flutter/services/map_service_web.dart' if (dart.library.io) 'package:metamorfose_flutter/services/map_service_stub.dart';
 
 /// Resultado de uma operação de busca
 class SearchResult {
@@ -84,8 +86,9 @@ class LocationResult {
 /// Serviço para gerenciamento de mapa e localização
 class MapService {
   final Dio _dio;
+  final MapServiceWeb? _webService;
 
-  MapService() : _dio = Dio();
+  MapService() : _dio = Dio(), _webService = kIsWeb ? MapServiceWeb() : null;
 
   /// Obtém a localização atual do usuário
   Future<LocationResult> getCurrentLocation() async {
@@ -128,6 +131,11 @@ class MapService {
 
   /// Busca floriculturas próximas automaticamente
   Future<SearchResult> searchNearbyFloriculturas(Position position) async {
+    // Se estiver na web, usa o serviço web para evitar CORS
+    if (kIsWeb && _webService != null) {
+      return _webService!.searchNearbyFloriculturas(position);
+    }
+    
     try {
       final String apiKey = Environment.googlePlacesApiKey;
       if (apiKey.isEmpty) {
@@ -197,6 +205,11 @@ class MapService {
 
   /// Busca floriculturas com termo específico
   Future<SearchResult> searchFloriculturas(Position position, String query) async {
+    // Se estiver na web, usa o serviço web para evitar CORS
+    if (kIsWeb && _webService != null) {
+      return _webService!.searchFloriculturas(position, query);
+    }
+    
     try {
       if (query.isEmpty) {
         return SearchResult.success([]);
@@ -311,4 +324,4 @@ class MapService {
   void dispose() {
     _dio.close();
   }
-} 
+}
