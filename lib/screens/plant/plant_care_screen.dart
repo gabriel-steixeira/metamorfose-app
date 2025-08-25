@@ -280,6 +280,46 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
             ],
           ),
           const SizedBox(height: 12),
+
+          // Estado vazio
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.camera_alt_outlined,
+                    size: 48,
+                    color: MetamorfoseColors.greyLight,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Nenhuma foto ainda!',
+                    style: const TextStyle(
+                      fontFamily: 'DinNext',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: MetamorfoseColors.greyMedium,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tire a primeira foto do seu progresso! 📸🌱',
+                    style: const TextStyle(
+                      fontFamily: 'DinNext',
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: MetamorfoseColors.greyMedium,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

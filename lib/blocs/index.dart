@@ -16,9 +16,6 @@
 
 export 'auth_bloc.dart';
 export 'community_bloc.dart';
-export 'home_bloc.dart';
 export 'map_bloc.dart';
-export 'plant_care_bloc.dart';
-export 'plant_config_bloc.dart';
 export 'voice_chat_bloc.dart';
 export 'text_chat_bloc.dart';
