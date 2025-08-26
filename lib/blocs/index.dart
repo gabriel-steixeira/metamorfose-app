@@ -15,10 +15,11 @@
  */
 
 export 'auth_bloc.dart';
-export 'community_bloc.dart';
-export 'home_bloc.dart';
+export 'community_bloc.dart' hide ClearErrorEvent;
+export 'home_bloc.dart' hide ClearErrorEvent;
 export 'map_bloc.dart';
-export 'plant_care_bloc.dart';
-export 'plant_config_bloc.dart';
+export 'plant_care_bloc.dart' hide ClearErrorEvent;
+export 'plant_config_bloc.dart' hide ClearErrorEvent;
 export 'voice_chat_bloc.dart';
 export 'text_chat_bloc.dart';
+export 'sos_bloc.dart';
