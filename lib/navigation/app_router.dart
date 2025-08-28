@@ -31,6 +31,9 @@ import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
 import 'package:metamorfose_flutter/screens/community/community_screen.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_care_screen.dart';
+import 'package:metamorfose_flutter/screens/profile/user_profile_screen.dart';
+import 'package:metamorfose_flutter/screens/profile/update_profile_form.dart';
+import 'package:metamorfose_flutter/screens/profile/change_password_screen.dart';
 // Adicionar imports necessários para BlocProvider e BLoCs
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
@@ -171,6 +174,20 @@ class AppRouter {
           create: (_) => PlantCareBloc(),
           child: const PlantCareScreen(),
         ),
+      ),
+      
+      // Telas de Perfil
+      GoRoute(
+        path: Routes.userProfile,
+        builder: (context, state) => const UserProfileScreen(),
+      ),
+      GoRoute(
+        path: Routes.updateProfile,
+        builder: (context, state) => const UpdateProfileForm(),
+      ),
+      GoRoute(
+        path: Routes.changePassword,
+        builder: (context, state) => const ChangePasswordScreen(),
       ),
     ],
   );

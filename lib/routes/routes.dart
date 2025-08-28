@@ -40,4 +40,7 @@ class Routes {
   static const map = '/map';
   static const community = '/community';
   static const plantCare = '/plant-care';
+  static const userProfile = '/user-profile';
+  static const updateProfile = '/update-profile';
+  static const changePassword = '/change-password';
 }

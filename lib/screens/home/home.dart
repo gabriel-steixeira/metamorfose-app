@@ -29,6 +29,7 @@ import 'package:metamorfose_flutter/components/carousel.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/state/home/home_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
+import 'package:metamorfose_flutter/services/plant_config_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -477,7 +478,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildPlantCareCard() {
     return GestureDetector(
-      onTap: () => context.go('/plant-care'),
+      onTap: () async {
+        final plantService = PlantConfigService();
+        final hasPlant = await plantService.hasExistingPlant();
+        
+        if (hasPlant) {
+          context.go('/plant-care');
+        } else {
+          context.go('/plant-config');
+        }
+      },
       child: Container(
         height: 180,
         padding: const EdgeInsets.all(20),
