@@ -157,13 +157,27 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           
           const SizedBox(height: 16),
           
-          // Nome do usuário
+          // Nome completo do usuário
           Text(
-            _userModel?.name ?? 'Nome não informado',
+            _userModel?.completeName ?? 'Nome não informado',
             style: const TextStyle(
               fontFamily: 'DinNext',
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: MetamorfoseColors.greyMedium,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          
+          const SizedBox(height: 8),
+          
+          // Username do usuário
+          Text(
+            _userModel?.name ?? 'Username não informado',
+            style: const TextStyle(
+              fontFamily: 'DinNext',
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
               color: MetamorfoseColors.greyMedium,
             ),
             textAlign: TextAlign.center,
@@ -230,7 +244,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _buildInfoRow(
             icon: Icons.cake,
             label: 'Data de Nascimento',
-            value: '${_formatDate(_userModel?.createdAt)} (${_calculateAge(_userModel?.createdAt)?.toString() ?? 'Idade não calculada'} anos)',
+            value: _userModel?.birthDate != null 
+                ? '${_formatDate(_userModel?.birthDate)} (${_calculateAge(_userModel?.birthDate)?.toString() ?? 'Idade não calculada'} anos)'
+                : 'Não informado',
           ),
           
           const SizedBox(height: 16),

@@ -18,10 +18,14 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$RegisterState {
   String get username => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
+  String get completeName => throw _privateConstructorUsedError;
+  String get birthDate => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
   String get usernameError => throw _privateConstructorUsedError;
   String get phoneError => throw _privateConstructorUsedError;
+  String get completeNameError => throw _privateConstructorUsedError;
+  String get birthDateError => throw _privateConstructorUsedError;
   String get emailError => throw _privateConstructorUsedError;
   String get passwordError => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
@@ -43,10 +47,14 @@ abstract class $RegisterStateCopyWith<$Res> {
   $Res call(
       {String username,
       String phone,
+      String completeName,
+      String birthDate,
       String email,
       String password,
       String usernameError,
       String phoneError,
+      String completeNameError,
+      String birthDateError,
       String emailError,
       String passwordError,
       bool isLoading,
@@ -70,10 +78,14 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
   $Res call({
     Object? username = null,
     Object? phone = null,
+    Object? completeName = null,
+    Object? birthDate = null,
     Object? email = null,
     Object? password = null,
     Object? usernameError = null,
     Object? phoneError = null,
+    Object? completeNameError = null,
+    Object? birthDateError = null,
     Object? emailError = null,
     Object? passwordError = null,
     Object? isLoading = null,
@@ -87,6 +99,14 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
       phone: null == phone
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      completeName: null == completeName
+          ? _value.completeName
+          : completeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthDate: null == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
           ? _value.email
@@ -103,6 +123,14 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
       phoneError: null == phoneError
           ? _value.phoneError
           : phoneError // ignore: cast_nullable_to_non_nullable
+              as String,
+      completeNameError: null == completeNameError
+          ? _value.completeNameError
+          : completeNameError // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthDateError: null == birthDateError
+          ? _value.birthDateError
+          : birthDateError // ignore: cast_nullable_to_non_nullable
               as String,
       emailError: null == emailError
           ? _value.emailError
@@ -135,10 +163,14 @@ abstract class _$$RegisterStateImplCopyWith<$Res>
   $Res call(
       {String username,
       String phone,
+      String completeName,
+      String birthDate,
       String email,
       String password,
       String usernameError,
       String phoneError,
+      String completeNameError,
+      String birthDateError,
       String emailError,
       String passwordError,
       bool isLoading,
@@ -160,10 +192,14 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
   $Res call({
     Object? username = null,
     Object? phone = null,
+    Object? completeName = null,
+    Object? birthDate = null,
     Object? email = null,
     Object? password = null,
     Object? usernameError = null,
     Object? phoneError = null,
+    Object? completeNameError = null,
+    Object? birthDateError = null,
     Object? emailError = null,
     Object? passwordError = null,
     Object? isLoading = null,
@@ -177,6 +213,14 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
       phone: null == phone
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      completeName: null == completeName
+          ? _value.completeName
+          : completeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthDate: null == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
           ? _value.email
@@ -193,6 +237,14 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
       phoneError: null == phoneError
           ? _value.phoneError
           : phoneError // ignore: cast_nullable_to_non_nullable
+              as String,
+      completeNameError: null == completeNameError
+          ? _value.completeNameError
+          : completeNameError // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthDateError: null == birthDateError
+          ? _value.birthDateError
+          : birthDateError // ignore: cast_nullable_to_non_nullable
               as String,
       emailError: null == emailError
           ? _value.emailError
@@ -220,10 +272,14 @@ class _$RegisterStateImpl implements _RegisterState {
   const _$RegisterStateImpl(
       {this.username = '',
       this.phone = '',
+      this.completeName = '',
+      this.birthDate = '',
       this.email = '',
       this.password = '',
       this.usernameError = '',
       this.phoneError = '',
+      this.completeNameError = '',
+      this.birthDateError = '',
       this.emailError = '',
       this.passwordError = '',
       this.isLoading = false,
@@ -235,6 +291,12 @@ class _$RegisterStateImpl implements _RegisterState {
   @override
   @JsonKey()
   final String phone;
+  @override
+  @JsonKey()
+  final String completeName;
+  @override
+  @JsonKey()
+  final String birthDate;
   @override
   @JsonKey()
   final String email;
@@ -249,6 +311,12 @@ class _$RegisterStateImpl implements _RegisterState {
   final String phoneError;
   @override
   @JsonKey()
+  final String completeNameError;
+  @override
+  @JsonKey()
+  final String birthDateError;
+  @override
+  @JsonKey()
   final String emailError;
   @override
   @JsonKey()
@@ -261,7 +329,7 @@ class _$RegisterStateImpl implements _RegisterState {
 
   @override
   String toString() {
-    return 'RegisterState(username: $username, phone: $phone, email: $email, password: $password, usernameError: $usernameError, phoneError: $phoneError, emailError: $emailError, passwordError: $passwordError, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'RegisterState(username: $username, phone: $phone, completeName: $completeName, birthDate: $birthDate, email: $email, password: $password, usernameError: $usernameError, phoneError: $phoneError, completeNameError: $completeNameError, birthDateError: $birthDateError, emailError: $emailError, passwordError: $passwordError, isLoading: $isLoading, errorMessage: $errorMessage)';
   }
 
   @override
@@ -272,6 +340,10 @@ class _$RegisterStateImpl implements _RegisterState {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.completeName, completeName) ||
+                other.completeName == completeName) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
@@ -279,6 +351,10 @@ class _$RegisterStateImpl implements _RegisterState {
                 other.usernameError == usernameError) &&
             (identical(other.phoneError, phoneError) ||
                 other.phoneError == phoneError) &&
+            (identical(other.completeNameError, completeNameError) ||
+                other.completeNameError == completeNameError) &&
+            (identical(other.birthDateError, birthDateError) ||
+                other.birthDateError == birthDateError) &&
             (identical(other.emailError, emailError) ||
                 other.emailError == emailError) &&
             (identical(other.passwordError, passwordError) ||
@@ -294,10 +370,14 @@ class _$RegisterStateImpl implements _RegisterState {
       runtimeType,
       username,
       phone,
+      completeName,
+      birthDate,
       email,
       password,
       usernameError,
       phoneError,
+      completeNameError,
+      birthDateError,
       emailError,
       passwordError,
       isLoading,
@@ -316,10 +396,14 @@ abstract class _RegisterState implements RegisterState {
   const factory _RegisterState(
       {final String username,
       final String phone,
+      final String completeName,
+      final String birthDate,
       final String email,
       final String password,
       final String usernameError,
       final String phoneError,
+      final String completeNameError,
+      final String birthDateError,
       final String emailError,
       final String passwordError,
       final bool isLoading,
@@ -330,6 +414,10 @@ abstract class _RegisterState implements RegisterState {
   @override
   String get phone;
   @override
+  String get completeName;
+  @override
+  String get birthDate;
+  @override
   String get email;
   @override
   String get password;
@@ -337,6 +425,10 @@ abstract class _RegisterState implements RegisterState {
   String get usernameError;
   @override
   String get phoneError;
+  @override
+  String get completeNameError;
+  @override
+  String get birthDateError;
   @override
   String get emailError;
   @override

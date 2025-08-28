@@ -26,11 +26,11 @@ mixin _$AuthEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -47,11 +47,11 @@ mixin _$AuthEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -68,11 +68,11 @@ mixin _$AuthEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -227,11 +227,11 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -251,11 +251,11 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -275,11 +275,11 @@ class _$AuthToggleModeEventImpl implements AuthToggleModeEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -444,11 +444,11 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -468,11 +468,11 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -492,11 +492,11 @@ class _$AuthToggleEyesEventImpl implements AuthToggleEyesEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -681,11 +681,11 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -705,11 +705,11 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -729,11 +729,11 @@ class _$AuthUpdateLoginFieldEventImpl implements AuthUpdateLoginFieldEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -921,11 +921,11 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -945,11 +945,11 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -969,11 +969,11 @@ class _$AuthSubmitLoginEventImpl implements AuthSubmitLoginEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -1116,11 +1116,11 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -1140,11 +1140,11 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -1164,11 +1164,11 @@ class _$AuthSignInWithGoogleEventImpl implements AuthSignInWithGoogleEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -1298,11 +1298,11 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -1322,11 +1322,11 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -1346,11 +1346,11 @@ class _$AuthSignInWithFacebookEventImpl implements AuthSignInWithFacebookEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -1436,7 +1436,13 @@ abstract class _$$AuthSubmitRegisterEventImplCopyWith<$Res> {
           $Res Function(_$AuthSubmitRegisterEventImpl) then) =
       __$$AuthSubmitRegisterEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String email, String password, String username, String phone});
+  $Res call(
+      {String email,
+      String password,
+      String username,
+      String phone,
+      String completeName,
+      String birthDate});
 }
 
 /// @nodoc
@@ -1457,6 +1463,8 @@ class __$$AuthSubmitRegisterEventImplCopyWithImpl<$Res>
     Object? password = null,
     Object? username = null,
     Object? phone = null,
+    Object? completeName = null,
+    Object? birthDate = null,
   }) {
     return _then(_$AuthSubmitRegisterEventImpl(
       email: null == email
@@ -1475,6 +1483,14 @@ class __$$AuthSubmitRegisterEventImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
+      completeName: null == completeName
+          ? _value.completeName
+          : completeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthDate: null == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -1486,7 +1502,9 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
       {required this.email,
       required this.password,
       required this.username,
-      required this.phone});
+      required this.phone,
+      required this.completeName,
+      required this.birthDate});
 
   @override
   final String email;
@@ -1496,10 +1514,14 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
   final String username;
   @override
   final String phone;
+  @override
+  final String completeName;
+  @override
+  final String birthDate;
 
   @override
   String toString() {
-    return 'AuthEvent.submitRegister(email: $email, password: $password, username: $username, phone: $phone)';
+    return 'AuthEvent.submitRegister(email: $email, password: $password, username: $username, phone: $phone, completeName: $completeName, birthDate: $birthDate)';
   }
 
   @override
@@ -1512,12 +1534,16 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
                 other.password == password) &&
             (identical(other.username, username) ||
                 other.username == username) &&
-            (identical(other.phone, phone) || other.phone == phone));
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.completeName, completeName) ||
+                other.completeName == completeName) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, email, password, username, phone);
+  int get hashCode => Object.hash(
+      runtimeType, email, password, username, phone, completeName, birthDate);
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1539,17 +1565,18 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
     required TResult Function() quickLogin,
   }) {
-    return submitRegister(email, password, username, phone);
+    return submitRegister(
+        email, password, username, phone, completeName, birthDate);
   }
 
   @override
@@ -1563,17 +1590,18 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
     TResult? Function()? quickLogin,
   }) {
-    return submitRegister?.call(email, password, username, phone);
+    return submitRegister?.call(
+        email, password, username, phone, completeName, birthDate);
   }
 
   @override
@@ -1587,11 +1615,11 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -1599,7 +1627,8 @@ class _$AuthSubmitRegisterEventImpl implements AuthSubmitRegisterEvent {
     required TResult orElse(),
   }) {
     if (submitRegister != null) {
-      return submitRegister(email, password, username, phone);
+      return submitRegister(
+          email, password, username, phone, completeName, birthDate);
     }
     return orElse();
   }
@@ -1670,12 +1699,16 @@ abstract class AuthSubmitRegisterEvent implements AuthEvent {
       {required final String email,
       required final String password,
       required final String username,
-      required final String phone}) = _$AuthSubmitRegisterEventImpl;
+      required final String phone,
+      required final String completeName,
+      required final String birthDate}) = _$AuthSubmitRegisterEventImpl;
 
   String get email;
   String get password;
   String get username;
   String get phone;
+  String get completeName;
+  String get birthDate;
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1691,7 +1724,13 @@ abstract class _$$AuthUpdateRegisterFieldEventImplCopyWith<$Res> {
           $Res Function(_$AuthUpdateRegisterFieldEventImpl) then) =
       __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? email, String? password, String? username, String? phone});
+  $Res call(
+      {String? email,
+      String? password,
+      String? username,
+      String? phone,
+      String? completeName,
+      String? birthDate});
 }
 
 /// @nodoc
@@ -1712,6 +1751,8 @@ class __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>
     Object? password = freezed,
     Object? username = freezed,
     Object? phone = freezed,
+    Object? completeName = freezed,
+    Object? birthDate = freezed,
   }) {
     return _then(_$AuthUpdateRegisterFieldEventImpl(
       email: freezed == email
@@ -1730,6 +1771,14 @@ class __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String?,
+      completeName: freezed == completeName
+          ? _value.completeName
+          : completeName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      birthDate: freezed == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -1739,7 +1788,12 @@ class __$$AuthUpdateRegisterFieldEventImplCopyWithImpl<$Res>
 class _$AuthUpdateRegisterFieldEventImpl
     implements AuthUpdateRegisterFieldEvent {
   const _$AuthUpdateRegisterFieldEventImpl(
-      {this.email, this.password, this.username, this.phone});
+      {this.email,
+      this.password,
+      this.username,
+      this.phone,
+      this.completeName,
+      this.birthDate});
 
   @override
   final String? email;
@@ -1749,10 +1803,14 @@ class _$AuthUpdateRegisterFieldEventImpl
   final String? username;
   @override
   final String? phone;
+  @override
+  final String? completeName;
+  @override
+  final String? birthDate;
 
   @override
   String toString() {
-    return 'AuthEvent.updateRegisterField(email: $email, password: $password, username: $username, phone: $phone)';
+    return 'AuthEvent.updateRegisterField(email: $email, password: $password, username: $username, phone: $phone, completeName: $completeName, birthDate: $birthDate)';
   }
 
   @override
@@ -1765,12 +1823,16 @@ class _$AuthUpdateRegisterFieldEventImpl
                 other.password == password) &&
             (identical(other.username, username) ||
                 other.username == username) &&
-            (identical(other.phone, phone) || other.phone == phone));
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.completeName, completeName) ||
+                other.completeName == completeName) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, email, password, username, phone);
+  int get hashCode => Object.hash(
+      runtimeType, email, password, username, phone, completeName, birthDate);
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1793,17 +1855,18 @@ class _$AuthUpdateRegisterFieldEventImpl
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
     required TResult Function() quickLogin,
   }) {
-    return updateRegisterField(email, password, username, phone);
+    return updateRegisterField(
+        email, password, username, phone, completeName, birthDate);
   }
 
   @override
@@ -1817,17 +1880,18 @@ class _$AuthUpdateRegisterFieldEventImpl
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
     TResult? Function()? quickLogin,
   }) {
-    return updateRegisterField?.call(email, password, username, phone);
+    return updateRegisterField?.call(
+        email, password, username, phone, completeName, birthDate);
   }
 
   @override
@@ -1841,11 +1905,11 @@ class _$AuthUpdateRegisterFieldEventImpl
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -1853,7 +1917,8 @@ class _$AuthUpdateRegisterFieldEventImpl
     required TResult orElse(),
   }) {
     if (updateRegisterField != null) {
-      return updateRegisterField(email, password, username, phone);
+      return updateRegisterField(
+          email, password, username, phone, completeName, birthDate);
     }
     return orElse();
   }
@@ -1924,12 +1989,16 @@ abstract class AuthUpdateRegisterFieldEvent implements AuthEvent {
       {final String? email,
       final String? password,
       final String? username,
-      final String? phone}) = _$AuthUpdateRegisterFieldEventImpl;
+      final String? phone,
+      final String? completeName,
+      final String? birthDate}) = _$AuthUpdateRegisterFieldEventImpl;
 
   String? get email;
   String? get password;
   String? get username;
   String? get phone;
+  String? get completeName;
+  String? get birthDate;
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1988,11 +2057,11 @@ class _$AuthSignOutEventImpl implements AuthSignOutEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -2012,11 +2081,11 @@ class _$AuthSignOutEventImpl implements AuthSignOutEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -2036,11 +2105,11 @@ class _$AuthSignOutEventImpl implements AuthSignOutEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -2197,11 +2266,11 @@ class _$AuthResetPasswordEventImpl implements AuthResetPasswordEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -2221,11 +2290,11 @@ class _$AuthResetPasswordEventImpl implements AuthResetPasswordEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -2245,11 +2314,11 @@ class _$AuthResetPasswordEventImpl implements AuthResetPasswordEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,
@@ -2386,11 +2455,11 @@ class _$AuthQuickLoginEventImpl implements AuthQuickLoginEvent {
         submitLogin,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithFacebook,
-    required TResult Function(
-            String email, String password, String username, String phone)
+    required TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)
         submitRegister,
-    required TResult Function(
-            String? email, String? password, String? username, String? phone)
+    required TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)
         updateRegisterField,
     required TResult Function() signOut,
     required TResult Function(String email) resetPassword,
@@ -2410,11 +2479,11 @@ class _$AuthQuickLoginEventImpl implements AuthQuickLoginEvent {
         submitLogin,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithFacebook,
-    TResult? Function(
-            String email, String password, String username, String phone)?
+    TResult? Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult? Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult? Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult? Function()? signOut,
     TResult? Function(String email)? resetPassword,
@@ -2434,11 +2503,11 @@ class _$AuthQuickLoginEventImpl implements AuthQuickLoginEvent {
         submitLogin,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithFacebook,
-    TResult Function(
-            String email, String password, String username, String phone)?
+    TResult Function(String email, String password, String username,
+            String phone, String completeName, String birthDate)?
         submitRegister,
-    TResult Function(
-            String? email, String? password, String? username, String? phone)?
+    TResult Function(String? email, String? password, String? username,
+            String? phone, String? completeName, String? birthDate)?
         updateRegisterField,
     TResult Function()? signOut,
     TResult Function(String email)? resetPassword,

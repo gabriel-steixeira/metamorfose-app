@@ -90,8 +90,18 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           _userModel = userData;
           _usernameController.text = userData.name ?? '';
           _completeNameController.text = userDocData?['completeName'] ?? '';
-          _phoneController.text = userData.phoneNumber ?? '';
-          // Para data de nascimento, usaremos um campo separado no futuro
+          
+          // Aplicar máscara no telefone
+          final phone = userData.phoneNumber ?? '';
+          _phoneController.text = phone.isNotEmpty ? _formatPhone(phone) : '';
+          
+          // Carregar data de nascimento do Firestore
+          if (userDocData?['birthDate'] != null) {
+            final birthDateTimestamp = userDocData!['birthDate'] as Timestamp;
+            _selectedBirthDate = birthDateTimestamp.toDate();
+            _birthDateController.text = _formatDate(_selectedBirthDate!);
+          }
+          
           _isLoading = false;
         });
       }

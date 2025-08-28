@@ -41,7 +41,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
+  final TextEditingController _completeNameController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
+  
   @override
   void initState() {
     super.initState();
@@ -152,6 +154,8 @@ class _AuthScreenState extends State<AuthScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _phoneController.dispose();
+    _completeNameController.dispose();
+    _birthDateController.dispose();
     super.dispose();
   }
 
@@ -629,6 +633,53 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 16),
 
+              // Campo de nome completo
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MetamorfeseInput(
+                  hintText: 'Nome Completo',
+                  controller: _completeNameController,
+                  errorText: state.registerState.completeNameError.isNotEmpty
+                      ? state.registerState.completeNameError
+                      : null,
+                  onChanged: (value) => _onCompleteNameChanged(),
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.person_outline,
+                      size: 22,
+                      color: MetamorfoseColors.purpleNormal,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de data de nascimento
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MetamorfeseInput(
+                  hintText: 'Data de Nascimento',
+                  controller: _birthDateController,
+                  errorText: state.registerState.birthDateError.isNotEmpty
+                      ? state.registerState.birthDateError
+                      : null,
+                  readOnly: true,
+                  onTap: () => _selectBirthDate(),
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      size: 22,
+                      color: MetamorfoseColors.purpleNormal,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
               // Campo de email
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -699,6 +750,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 password: _passwordController.text,
                                 username: _usernameController.text,
                                 phone: _phoneController.text,
+                                completeName: _completeNameController.text,
+                                birthDate: _birthDateController.text,
                               ));
                         },
                 ),
@@ -967,5 +1020,35 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+  }
+
+  void _onCompleteNameChanged() {
+    if (mounted) {
+      context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+        completeName: _completeNameController.text,
+      ));
+    }
+  }
+
+  void _onBirthDateChanged() {
+    if (mounted) {
+      context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+        birthDate: _birthDateController.text,
+      ));
+    }
+  }
+
+  Future<void> _selectBirthDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('pt', 'BR'),
+    );
+    if (picked != null) {
+      _birthDateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+      _onBirthDateChanged();
+    }
   }
 }
