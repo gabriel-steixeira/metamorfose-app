@@ -26,10 +26,17 @@ import 'package:metamorfose_flutter/components/plant_personality_selector.dart';
 import 'package:metamorfose_flutter/components/mode_switcher.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
+import 'package:metamorfose_flutter/services/gemini_service.dart';
 
 /// Tela principal de chat por voz com o assistente usando BLoC.
 class VoiceChatScreen extends StatefulWidget {
-  const VoiceChatScreen({super.key});
+  /// Personalidade específica para iniciar a conversa (opcional)
+  final PersonalityType? initialPersonality;
+  
+  const VoiceChatScreen({
+    super.key,
+    this.initialPersonality,
+  });
 
   @override
   State<VoiceChatScreen> createState() => _VoiceChatScreenState();
@@ -44,6 +51,9 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
   void initState() {
     super.initState();
     
+    debugPrint("🎭 VoiceChat - initState iniciado");
+    debugPrint("🎭 VoiceChat - initialPersonality: ${widget.initialPersonality?.id}");
+    
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 20),
@@ -55,7 +65,22 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
     )..repeat(reverse: true);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint("🎭 VoiceChat - PostFrameCallback executado");
+      
+      // Inicializar o BLoC
       context.read<VoiceChatBloc>().add(VoiceChatInitializeEvent());
+      
+      // Se houver personalidade inicial, aplicar silenciosamente (apenas para direcionar)
+      if (widget.initialPersonality != null) {
+        debugPrint("🎭 VoiceChat - Aplicando personalidade inicial silenciosamente: ${widget.initialPersonality!.id}");
+        
+        // Aplicar a personalidade inicial silenciosamente (apenas para direcionar)
+        context.read<VoiceChatBloc>().add(
+          VoiceChatChangePersonalityEvent(widget.initialPersonality!, silent: true),
+        );
+      }
+      
+      debugPrint("🎭 VoiceChat - BLoC inicializado com personalidade: ${widget.initialPersonality?.id ?? 'padrao'}");
     });
   }
 
@@ -99,6 +124,13 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
       listener: (context, state) {
         debugPrint("🔄 State changed - isRecording: ${state.isRecording}");
         debugPrint("💬 Current message: ${state.currentMessage}");
+        debugPrint("🎭 Current personality: ${state.currentPersonality.id}");
+        
+        // Verificar se a personalidade foi alterada para a inicial
+        if (widget.initialPersonality != null && 
+            state.currentPersonality == widget.initialPersonality) {
+          debugPrint("🎭 Personalidade inicial aplicada com sucesso: ${state.currentPersonality.id}");
+        }
         
         if (state.hasError) {
           debugPrint("❌ Error: ${state.errorMessage}");
@@ -137,16 +169,19 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
                         ),
                       ],
                     ),
-                    child: BlocBuilder<VoiceChatBloc, VoiceChatState>(
+                    child:                     BlocBuilder<VoiceChatBloc, VoiceChatState>(
                       buildWhen: (previous, current) =>
                           previous.currentPersonality != current.currentPersonality,
                       builder: (context, state) {
+                        debugPrint("🎭 Rebuild PersonalitySelector - current: ${state.currentPersonality.id}, initial: ${widget.initialPersonality?.id}");
+                        
                         return PersonalitySelector(
-                          currentPersonality: state.currentPersonality, 
+                          currentPersonality: state.currentPersonality,
+                          // Não usar initialPersonality aqui para permitir mudanças visuais
                           onPersonalityChanged: (personality) {
                             debugPrint("🎭 Selecionando personalidade: ${personality.id}");
                             context.read<VoiceChatBloc>().add(
-                              VoiceChatChangePersonalityEvent(personality),
+                              VoiceChatChangePersonalityEvent(personality, silent: false),
                             );
                           },
                         );
@@ -208,8 +243,8 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> with TickerProviderSt
                                 previous.currentMessage != current.currentMessage,
                             builder: (context, state) {
                               return SpeechBubble(
-                                width: 250,
-                                height: 38,
+                                width: 300,
+                                height: 150,
                                 color: MetamorfoseColors.greenLight,
                                 borderColor: MetamorfoseColors.purpleLight,
                                 triangleColor: MetamorfoseColors.greenLight,

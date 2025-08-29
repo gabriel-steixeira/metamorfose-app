@@ -100,8 +100,10 @@ class VoiceChatStopAllEvent extends VoiceChatEvent {}
 
 /// Evento para trocar a personalidade da IA.
 class VoiceChatChangePersonalityEvent extends VoiceChatEvent {
-  final PersonalityType personality; 
-  VoiceChatChangePersonalityEvent(this.personality);
+  final PersonalityType personality;
+  final bool silent; // Se true, não emite mensagem de confirmação
+  
+  VoiceChatChangePersonalityEvent(this.personality, {this.silent = false});
 }
 
 /// Evento para atualizar estado do reconhecimento/fala.
@@ -117,7 +119,9 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   bool _isInitialized = false;
 
   /// Construtor que configura os handlers para os eventos e callbacks dos serviços.
-  VoiceChatBloc() : super(const VoiceChatState()) {
+  VoiceChatBloc({PersonalityType? initialPersonality}) : super(VoiceChatState(
+    currentPersonality: initialPersonality ?? PersonalityType.padrao,
+  )) {
     on<VoiceChatInitializeEvent>(_onInitialize);
     on<VoiceChatToggleListeningEvent>(_onToggleListening);
     on<VoiceChatClearErrorEvent>(_onClearError);
@@ -168,7 +172,7 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
       
       emit(state.copyWith(
         isProcessing: false,
-        currentPersonality: _geminiService.getCurrentPersonalityType(),
+        // Não sobrescrever a personalidade atual se já foi definida
         currentMessage: 'Oi, eu sou Perona! Como está hoje?',
         speechState: SpeechState.idle
       ));
@@ -343,12 +347,25 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
       
       _geminiService.setPersonalityByType(newPersonality);
       
+      // Se for uma mudança silenciosa (personalidade inicial), não emitir mensagem
+      if (event.silent) {
+        emit(state.copyWith(
+          currentPersonality: newPersonality,
+        ));
+        debugPrint('✅ Personalidade inicial aplicada silenciosamente');
+        return;
+      }
+      
+      // Mensagem para mudança manual de personalidade
+      final displayMessage = 'Personalidade alterada para ${newPersonality.label}!';
+      final speakMessage = 'Mudei para ${newPersonality.label.substring(2)}!';
+      
       emit(state.copyWith(
         currentPersonality: newPersonality,
-        currentMessage: 'Agora sou ${newPersonality.label}! E aí?'
+        currentMessage: displayMessage
       ));
       
-      await _speechServices.speak('Mudei para ${newPersonality.label.substring(2)}!');
+      await _speechServices.speak(speakMessage);
       
       debugPrint('✅ Personalidade alterada com sucesso');
       

@@ -8,12 +8,13 @@
  * - Emitir callback ao usuário selecionar uma personalidade diferente
  * - Usar enum PersonalityType para listar e identificar personalidades
  * - Aplicar cores, ícones e labels específicos para cada personalidade
+ * - Permitir definição de personalidade inicial específica via parâmetro
  *
  * Author: Evelin Cordeiro
  * Created on: 08-08-2025
  * Last modified: 08-08-2025
  * 
- * Version: 1.0.0
+ * Version: 1.1.0
  * Squad: Metamorfose
  */
 
@@ -26,6 +27,9 @@ class PersonalitySelector extends StatelessWidget {
   /// Personalidade atualmente selecionada
   final PersonalityType currentPersonality;
 
+  /// Personalidade inicial específica (opcional) - sobrescreve currentPersonality quando fornecido
+  final PersonalityType? initialPersonality;
+
   /// Callback acionado ao selecionar uma nova personalidade
   final Function(PersonalityType) onPersonalityChanged;
 
@@ -33,8 +37,12 @@ class PersonalitySelector extends StatelessWidget {
   const PersonalitySelector({
     Key? key,
     required this.currentPersonality,
+    this.initialPersonality,
     required this.onPersonalityChanged,
   }) : super(key: key);
+
+  /// Retorna a personalidade atualmente ativa (sempre usa a atual do estado)
+  PersonalityType get activePersonality => currentPersonality;
 
   /// Retorna o ícone associado à personalidade
   IconData _getPersonalityIcon(PersonalityType personality) {
@@ -47,6 +55,12 @@ class PersonalitySelector extends StatelessWidget {
         return Icons.sentiment_very_satisfied;
       case PersonalityType.persistente:
         return Icons.local_fire_department;
+      case PersonalityType.tcc:
+        return Icons.psychology;
+      case PersonalityType.act:
+        return Icons.spa;
+      case PersonalityType.entrevistaMotivacional:
+        return Icons.trending_up;
     }
   }
 
@@ -61,6 +75,12 @@ class PersonalitySelector extends StatelessWidget {
         return const Color(0xFFFF9800);
       case PersonalityType.persistente:
         return const Color(0xFFF44336);
+      case PersonalityType.tcc:
+        return const Color(0xFF2196F3);
+      case PersonalityType.act:
+        return const Color(0xFF4CAF50);
+      case PersonalityType.entrevistaMotivacional:
+        return const Color(0xFF9C27B0);
     }
   }
 
@@ -73,16 +93,25 @@ class PersonalitySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final personalities = PersonalityType.values;
     
+    debugPrint("🎭 PersonalitySelector - Build iniciado");
+    debugPrint("🎭 PersonalitySelector - currentPersonality: ${currentPersonality.id}");
+    debugPrint("🎭 PersonalitySelector - initialPersonality: ${initialPersonality?.id}");
+    debugPrint("🎭 PersonalitySelector - activePersonality: ${activePersonality.id}");
+    
     return Container(
       height: 40,
       child: Row(
         children: personalities.asMap().entries.map((entry) {
           final index = entry.key;
           final personality = entry.value;
-          final isSelected = personality == currentPersonality;
+          final isSelected = personality == activePersonality;
           final color = _getPersonalityColor(personality);
           final icon = _getPersonalityIcon(personality);
           final label = _getPersonalityLabel(personality);
+          
+          if (isSelected) {
+            debugPrint("🎭 PersonalitySelector - Personalidade selecionada: ${personality.id}");
+          }
           
           return Expanded(
             child: Padding(

@@ -40,4 +40,5 @@ class Routes {
   static const map = '/map';
   static const community = '/community';
   static const plantCare = '/plant-care';
+  static const sos = '/sos';
 }

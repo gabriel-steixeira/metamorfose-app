@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.gms.google-services")
+    // id("com.google.gms.google-services") // Comentado temporariamente
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -27,7 +27,7 @@ android {
         applicationId = "br.com.metamorfose.metamorfose_flutter"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         multiDexEnabled = true
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
