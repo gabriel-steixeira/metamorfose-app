@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
 import 'package:metamorfose_flutter/services/hybrid_auth_service.dart';
 import 'package:metamorfose_flutter/theme/theme.dart';
@@ -38,7 +39,17 @@ class MetamorfoseApp extends StatelessWidget {
         theme: MetamorfoseTheme.lightTheme,
         themeMode: ThemeMode.light,
         routerConfig: AppRouter.router,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('pt', 'BR'),
+          Locale('en', 'US'),
+        ],
+        locale: const Locale('pt', 'BR'),
       ),
     );
   }
-} 
+}

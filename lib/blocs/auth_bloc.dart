@@ -134,15 +134,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final passwordError = AuthValidators.validatePassword(event.password);
         final usernameError = AuthValidators.validateUsername(event.username);
         final phoneError = AuthValidators.validatePhone(event.phone);
-
-        // Se há algum erro de validação, exibir todos
-        if (emailError != null || passwordError != null || usernameError != null || phoneError != null) {
+        final completeNameError = AuthValidators.validateCompleteName(event.completeName);
+        final birthDateError = AuthValidators.validateBirthDate(event.birthDate);
+        
+        if (emailError != null || passwordError != null || usernameError != null || phoneError != null || completeNameError != null || birthDateError != null) {
           emit(state.copyWith(
             registerState: state.registerState.copyWith(
               emailError: emailError ?? '',
               passwordError: passwordError ?? '',
               usernameError: usernameError ?? '',
               phoneError: phoneError ?? '',
+              completeNameError: completeNameError ?? '',
+              birthDateError: birthDateError ?? '',
               isLoading: false,
             ),
           ));
@@ -154,6 +157,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.password,
           event.username,
           AuthValidators.cleanPhone(event.phone), // Limpa formatação do telefone
+          event.completeName,
+          event.birthDate,
         );
 
         emit(state.copyWith(
@@ -235,6 +240,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       String passwordError = currentRegister.passwordError;
       String usernameError = currentRegister.usernameError;
       String phoneError = currentRegister.phoneError;
+      String completeNameError = currentRegister.completeNameError;
+      String birthDateError = currentRegister.birthDateError;
       
       if (event.email != null) {
         final validation = AuthValidators.validateEmail(event.email!);
@@ -256,18 +263,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         phoneError = validation ?? '';
       }
       
+      if (event.completeName != null) {
+        final validation = AuthValidators.validateCompleteName(event.completeName!);
+        completeNameError = validation ?? '';
+      }
+      
+      if (event.birthDate != null) {
+        final validation = AuthValidators.validateBirthDate(event.birthDate!);
+        birthDateError = validation ?? '';
+      }
+      
       emit(state.copyWith(
         registerState: RegisterState(
           email: event.email ?? currentRegister.email,
           password: event.password ?? currentRegister.password,
           username: event.username ?? currentRegister.username,
           phone: event.phone ?? currentRegister.phone,
+          completeName: event.completeName ?? currentRegister.completeName,
+          birthDate: event.birthDate ?? currentRegister.birthDate,
           emailError: emailError,
           passwordError: passwordError,
           usernameError: usernameError,
           phoneError: phoneError,
-          errorMessage: currentRegister.errorMessage,
+          completeNameError: completeNameError,
+          birthDateError: birthDateError,
           isLoading: currentRegister.isLoading,
+          errorMessage: currentRegister.errorMessage,
         ),
       ));
     });

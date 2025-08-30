@@ -30,11 +30,27 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
 > [!TIP]  
 > O Metamorfose atua como um **guia interativo e emocional** durante a jornada de superação. Cada funcionalidade foi desenhada para manter o engajamento e reforçar a conexão entre o usuário e sua própria transformação.
 
+- **Sistema de Autenticação Completo**
+  - Login e cadastro com validação
+  - Recuperação de senha via email
+  - Campos de nome completo e data de nascimento
+- **Perfil do Usuário**
+  - Tela de perfil personalizada
+  - Atualização de dados pessoais
+  - Alteração de senha
+  - Função de logout
 - **Integração Planta Real + Digital**
 - **IA como "Consciência da Planta"**
 - **Interação por Voz ou Texto**
 - **Métricas Inteligentes**
 - **Registro Visual**
+- **Mapa de Floriculturas**
+  - Localização via Google Maps
+  - Integração com Places API
+  - Resolução de problemas de CORS
+- **Interface Moderna**
+  - Componente de carousel na home
+  - Funcionalidades "em breve" destacadas
 - **Botão SOS e Suporte Emergencial**
 - **Comunidade Moderada**
 - **Gamificação Emocional**
@@ -61,6 +77,21 @@ O projeto passou por uma refatoração completa para a arquitetura BLoC, resulta
 - **MapScreen**: Localização de floriculturas com Google Maps, Places API e gerenciamento de estado BLoC.
 
 ### Melhorias Técnicas Realizadas
+- **Sistema de Autenticação Aprimorado**: 
+  - Implementação de diálogo de recuperação de senha com funcionalidade de reset via email
+  - Adição de campos obrigatórios de nome completo e data de nascimento no registro
+  - Validações robustas para todos os campos de autenticação
+- **Gestão de Perfil do Usuário**:
+  - Criação de tela completa de perfil do usuário
+  - Funcionalidades para atualização de dados pessoais e senha
+  - Implementação segura de logout
+- **Correções de Infraestrutura**:
+  - Resolução de conflitos de namespace ClearErrorEvent nos BLoCs
+  - Correção de erro de política CORS no map_screen para funcionamento adequado do Google Maps
+- **Interface e Experiência do Usuário**:
+  - Implementação de componente de carousel na home
+  - Adição de seções "em breve" para funcionalidades futuras
+  - Remoção de botões desnecessários para limpeza da interface
 - **APIs de Quotes**: Substituição de API externa por uma lista local com mais de 40 frases em português, eliminando latência e garantindo relevância do conteúdo.
 - **Validações Simplificadas**: Remoção de validações complexas na tela de configuração da planta para melhorar o fluxo de usuário.
 - **Consistência de UI**: Ajustes finos de layout em telas como `Home` e `PlantConfig` para garantir espaçamento e alinhamento consistentes.

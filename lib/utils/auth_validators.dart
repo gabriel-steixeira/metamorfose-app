@@ -145,4 +145,42 @@ class AuthValidators {
   static String cleanPhone(String phone) {
     return phone.replaceAll(RegExp(r'[^\d]'), '');
   }
+
+  static String? validateCompleteName(String name) {
+    final value = name.trim();
+    if (value.isEmpty) {
+      return 'Nome completo é obrigatório';
+    }
+    if (value.length < 2) {
+      return 'Nome completo deve ter pelo menos 2 caracteres';
+    }
+    return null;
+  }
+  
+  static String? validateBirthDate(String date) {
+    if (date.isEmpty) {
+      return 'Data de nascimento é obrigatória';
+    }
+    final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (!regex.hasMatch(date)) {
+      return 'Formato inválido: DD/MM/AAAA';
+    }
+    // Adicional: verificar se data é válida
+    try {
+      final parts = date.split('/');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      final birthDate = DateTime(year, month, day);
+      if (birthDate.year != year || birthDate.month != month || birthDate.day != day) {
+        return 'Data inválida';
+      }
+      if (birthDate.isAfter(DateTime.now())) {
+        return 'Data não pode ser no futuro';
+      }
+    } catch (e) {
+      return 'Data inválida';
+    }
+    return null;
+  }
 }

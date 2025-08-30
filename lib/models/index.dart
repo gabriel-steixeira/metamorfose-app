@@ -19,3 +19,5 @@ export 'quote.dart';
 export 'user_model.dart';
 export 'weather.dart';
 export 'chat_message.dart';
+export 'sos_contact.dart';
+export 'breathing_exercise.dart';

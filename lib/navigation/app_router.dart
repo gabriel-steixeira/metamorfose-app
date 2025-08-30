@@ -19,6 +19,7 @@
  * Squad: Metamorfose
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 
@@ -31,6 +32,10 @@ import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
 import 'package:metamorfose_flutter/screens/community/community_screen.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_care_screen.dart';
+import 'package:metamorfose_flutter/screens/profile/user_profile_screen.dart';
+import 'package:metamorfose_flutter/screens/profile/update_profile_form.dart';
+import 'package:metamorfose_flutter/screens/profile/change_password_screen.dart';
+import 'package:metamorfose_flutter/screens/sos/sos_screen.dart';
 // Adicionar imports necessários para BlocProvider e BLoCs
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
@@ -39,6 +44,7 @@ import 'package:metamorfose_flutter/blocs/community_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
 import 'package:metamorfose_flutter/blocs/text_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
+import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
 import 'package:metamorfose_flutter/services/gemini_service.dart';
 
 // Telas de Onboarding
@@ -142,10 +148,17 @@ class AppRouter {
       ),
       GoRoute(
         path: Routes.voiceChat,
-        builder: (context, state) => BlocProvider(
-          create: (context) => VoiceChatBloc(),
-          child: const VoiceChatScreen(),
-        ),
+        builder: (context, state) {
+          // Extrair personalidade dos argumentos extras (não da URL)
+          final personalityType = state.extra as PersonalityType?;
+          
+          debugPrint("🎭 GoRouter - Argumentos extras recebidos: $personalityType");
+          
+          return BlocProvider(
+            create: (context) => VoiceChatBloc(initialPersonality: personalityType),
+            child: VoiceChatScreen(initialPersonality: personalityType),
+          );
+        },
       ),
       GoRoute(
         path: Routes.textChat,
@@ -170,6 +183,27 @@ class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (_) => PlantCareBloc(),
           child: const PlantCareScreen(),
+        ),
+      ),
+      
+      // Telas de Perfil
+      GoRoute(
+        path: Routes.userProfile,
+        builder: (context, state) => const UserProfileScreen(),
+      ),
+      GoRoute(
+        path: Routes.updateProfile,
+        builder: (context, state) => const UpdateProfileForm(),
+      ),
+      GoRoute(
+        path: Routes.changePassword,
+        builder: (context, state) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: Routes.sos,
+        builder: (context, state) => BlocProvider(
+          create: (_) => SosBloc(),
+          child: const SosScreen(),
         ),
       ),
     ],

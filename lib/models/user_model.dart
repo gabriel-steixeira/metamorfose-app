@@ -4,8 +4,10 @@ class UserModel {
   final String id;
   final String email;
   final String? name;
+  final String? completeName;
   final String? photoUrl;
   final String? phoneNumber;
+  final DateTime? birthDate;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -13,8 +15,10 @@ class UserModel {
     required this.id,
     required this.email,
     this.name,
+    this.completeName,
     this.photoUrl,
     this.phoneNumber,
+    this.birthDate,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -25,8 +29,10 @@ class UserModel {
       id: doc.id,
       email: data['email'] ?? '',
       name: data['name'],
+      completeName: data['completeName'],
       photoUrl: data['photoUrl'],
       phoneNumber: data['phoneNumber'],
+      birthDate: data['birthDate'] != null ? (data['birthDate'] as Timestamp).toDate() : null,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
@@ -38,8 +44,10 @@ class UserModel {
       id: json['id'] as String,
       email: json['email'] as String,
       name: json['name'] as String?,
+      completeName: json['completeName'] as String?,
       photoUrl: json['photoUrl'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
+      birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate'] as String) : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -50,8 +58,10 @@ class UserModel {
       'id': id,
       'email': email,
       'name': name,
+      'completeName': completeName,
       'photoUrl': photoUrl,
       'phoneNumber': phoneNumber,
+      'birthDate': birthDate?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -61,8 +71,10 @@ class UserModel {
     return {
       'email': email,
       'name': name,
+      'completeName': completeName,
       'photoUrl': photoUrl,
       'phoneNumber': phoneNumber,
+      'birthDate': birthDate,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -72,8 +84,10 @@ class UserModel {
     String? id,
     String? email,
     String? name,
+    String? completeName,
     String? photoUrl,
     String? phoneNumber,
+    DateTime? birthDate,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -81,10 +95,12 @@ class UserModel {
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
+      completeName: completeName ?? this.completeName,
       photoUrl: photoUrl ?? this.photoUrl,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      birthDate: birthDate ?? this.birthDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-} 
+}

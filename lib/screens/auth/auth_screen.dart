@@ -41,7 +41,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
+  final TextEditingController _completeNameController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
+  
   @override
   void initState() {
     super.initState();
@@ -146,12 +148,117 @@ class _AuthScreenState extends State<AuthScreen> {
     return numbers;
   }
 
+  void _showForgotPasswordDialog() {
+    final TextEditingController resetEmailController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MetamorfoseColors.whiteLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Esqueceu a senha?',
+            style: TextStyle(
+              color: MetamorfoseColors.greyMedium,
+              fontSize: 18,
+              fontFamily: 'DIN Next for Duolingo',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Digite seu email para receber as instruções de recuperação de senha.',
+                style: TextStyle(
+                  color: MetamorfoseColors.greyLight,
+                  fontSize: 14,
+                  fontFamily: 'DIN Next for Duolingo',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 16),
+              MetamorfeseInput(
+                hintText: 'Digite seu e-mail',
+                controller: resetEmailController,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: SvgPicture.asset(
+                    'assets/images/auth/ic_email.svg',
+                    width: 22,
+                    height: 22,
+                    colorFilter: const ColorFilter.mode(
+                      MetamorfoseColors.purpleNormal,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: MetamorfoseColors.greyLight,
+                  fontSize: 14,
+                  fontFamily: 'DIN Next for Duolingo',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                final email = resetEmailController.text.trim();
+                if (email.isNotEmpty) {
+                  context.read<AuthBloc>().add(AuthResetPasswordEvent(email: email));
+                  Navigator.of(context).pop();
+                  
+                  // Mostrar mensagem de sucesso
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Email de recuperação enviado! Verifique sua caixa de entrada.',
+                        style: TextStyle(
+                          fontFamily: 'DIN Next for Duolingo',
+                        ),
+                      ),
+                      backgroundColor: MetamorfoseColors.greenNormal,
+                    ),
+                  );
+                }
+              },
+              child: const Text(
+                'Enviar',
+                style: TextStyle(
+                  color: MetamorfoseColors.purpleLight,
+                  fontSize: 14,
+                  fontFamily: 'DIN Next for Duolingo',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _usernameController.dispose();
     _phoneController.dispose();
+    _completeNameController.dispose();
+    _birthDateController.dispose();
     super.dispose();
   }
 
@@ -331,71 +438,24 @@ class _AuthScreenState extends State<AuthScreen> {
           
           const SizedBox(height: 16),
           
-          // Lembrar-me e Esqueceu a senha
+          // Esqueceu a senha
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                        context.read<AuthBloc>().add(AuthUpdateLoginFieldEvent(
-                          rememberMe: !state.loginState.rememberMe,
-                        ));
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                              color: state.loginState.rememberMe 
-                              ? MetamorfoseColors.purpleLight 
-                              : MetamorfoseColors.transparent,
-                          border: Border.all(
-                                color: state.loginState.rememberMe 
-                                ? MetamorfoseColors.purpleLight 
-                                : MetamorfoseColors.whiteDark,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                            child: state.loginState.rememberMe
-                            ? const Icon(
-                                Icons.check,
-                                size: 14,
-                                color: MetamorfoseColors.whiteLight,
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Lembrar-me',
-                        style: TextStyle(
-                          color: MetamorfoseColors.greyLight,
-                          fontSize: 14,
-                          fontFamily: 'DIN Next for Duolingo',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+            child: Center(
+              child: GestureDetector(
+                 onTap: () {
+                   _showForgotPasswordDialog();
+                 },
+                child: const Text(
+                  'Esqueceu a senha?',
+                  style: TextStyle(
+                    color: MetamorfoseColors.purpleLight,
+                    fontSize: 14,
+                    fontFamily: 'DIN Next for Duolingo',
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    // Implementar ação de esqueceu a senha
-                  },
-                  child: const Text(
-                    'Esqueceu a senha?',
-                    style: TextStyle(
-                      color: MetamorfoseColors.purpleLight,
-                      fontSize: 14,
-                      fontFamily: 'DIN Next for Duolingo',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           
@@ -412,7 +472,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           context.read<AuthBloc>().add(AuthSubmitLoginEvent(
                             email: _emailController.text,
                             password: _passwordController.text,
-                            rememberMe: state.loginState.rememberMe,
+                            rememberMe: false,
                           ));
                         },
                 ),
@@ -629,6 +689,53 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 16),
 
+              // Campo de nome completo
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MetamorfeseInput(
+                  hintText: 'Nome Completo',
+                  controller: _completeNameController,
+                  errorText: state.registerState.completeNameError.isNotEmpty
+                      ? state.registerState.completeNameError
+                      : null,
+                  onChanged: (value) => _onCompleteNameChanged(),
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.person_outline,
+                      size: 22,
+                      color: MetamorfoseColors.purpleNormal,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de data de nascimento
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MetamorfeseInput(
+                  hintText: 'Data de Nascimento',
+                  controller: _birthDateController,
+                  errorText: state.registerState.birthDateError.isNotEmpty
+                      ? state.registerState.birthDateError
+                      : null,
+                  readOnly: true,
+                  onTap: () => _selectBirthDate(),
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      size: 22,
+                      color: MetamorfoseColors.purpleNormal,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
               // Campo de email
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -699,6 +806,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 password: _passwordController.text,
                                 username: _usernameController.text,
                                 phone: _phoneController.text,
+                                completeName: _completeNameController.text,
+                                birthDate: _birthDateController.text,
                               ));
                         },
                 ),
@@ -967,5 +1076,35 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+  }
+
+  void _onCompleteNameChanged() {
+    if (mounted) {
+      context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+        completeName: _completeNameController.text,
+      ));
+    }
+  }
+
+  void _onBirthDateChanged() {
+    if (mounted) {
+      context.read<AuthBloc>().add(AuthUpdateRegisterFieldEvent(
+        birthDate: _birthDateController.text,
+      ));
+    }
+  }
+
+  Future<void> _selectBirthDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('pt', 'BR'),
+    );
+    if (picked != null) {
+      _birthDateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+      _onBirthDateChanged();
+    }
   }
 }

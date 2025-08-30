@@ -192,6 +192,8 @@ class HybridAuthService {
     String password,
     String name,
     String phoneNumber,
+    String completeName,
+    String birthDate,
   ) async {
     try {
       // Primeiro tenta Firebase
@@ -218,6 +220,8 @@ class HybridAuthService {
         'name': name,
         'photoUrl': user.photoURL,
         'phoneNumber': phoneNumber,
+        'completeName': completeName,
+        'birthDate': _parseBirthDate(birthDate),
         'createdAt': Timestamp.fromDate(userModel.createdAt),
         'updatedAt': Timestamp.fromDate(userModel.updatedAt),
       });
@@ -305,4 +309,18 @@ class HybridAuthService {
   static String get defaultPassword => LocalAuthService.defaultPassword;
   static String get defaultName => LocalAuthService.defaultName;
   static String get defaultPhone => LocalAuthService.defaultPhone;
+}
+
+DateTime? _parseBirthDate(String date) {
+  if (date.isEmpty) return null;
+  final parts = date.split('/');
+  if (parts.length != 3) return null;
+  try {
+    final day = int.parse(parts[0]);
+    final month = int.parse(parts[1]);
+    final year = int.parse(parts[2]);
+    return DateTime(year, month, day);
+  } catch (e) {
+    return null;
+  }
 }

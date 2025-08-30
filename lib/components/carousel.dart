@@ -97,13 +97,16 @@ class CarouselItem extends StatelessWidget {
       width: width,
       height: height,
       margin: const EdgeInsets.only(right: 16),
-      child: Stack(
-        children: [
-          _buildContainer(),
-          _buildContent(),
-          if (isComingSoon) _buildComingSoonOverlay(),
-          if (isComingSoon) _buildComingSoonBadge(),
-        ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Stack(
+          children: [
+            _buildContainer(),
+            _buildContent(),
+            if (isComingSoon) _buildComingSoonOverlay(),
+            if (isComingSoon) _buildComingSoonBadge(),
+          ],
+        ),
       ),
     );
   }

@@ -52,17 +52,7 @@ class BottomNavigationMenu extends StatelessWidget {
         context.go(Routes.home);
         break;
       case 1: // Perfil
-        // Verificar se usuário já tem planta configurada
-        final plantConfigService = PlantConfigService();
-        final hasPlant = await plantConfigService.hasExistingPlant();
-        
-        if (hasPlant) {
-          // Se tem planta, vai para tela de cuidados
-          context.go(Routes.plantCare);
-        } else {
-          // Se não tem planta, vai para tela de configuração
-          context.go(Routes.plantConfig);
-        }
+        context.go(Routes.userProfile);
         break;
       case 2: // Voice
         context.go(Routes.voiceChat);
