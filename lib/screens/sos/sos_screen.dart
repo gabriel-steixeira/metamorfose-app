@@ -1,19 +1,19 @@
 /**
  * File: sos_screen.dart
- * Description: Tela principal do Botão SOS do Metamorfose - Refatorada
+ * Description: Tela principal do Botão SOS do Metamorfose - Refatorada com Layout Responsivo
  *
  * Responsabilidades:
  * - Exibir botão SOS central com animação pulsante
  * - Mostrar menu de opções de suporte responsivo
  * - Gerenciar exercícios de respiração
  * - Integrar com contatos de emergência
- * - Design responsivo para diferentes dispositivos
+ * - Design responsivo baseado em porcentagens da tela
  *
  * Author: Gabriel Teixeira
  * Refactored by: Assistant
  * Created on: 19-08-2025
  * Last modified: 22-08-2025
- * Version: 2.0.0
+ * Version: 3.0.0 - Layout Responsivo
  * Squad: Metamorfose
  */
 
@@ -37,15 +37,66 @@ import 'package:metamorfose_flutter/components/custom_button.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Constantes de layout responsivo
+/// Sistema de Layout Responsivo baseado em porcentagens da tela
+class ResponsiveLayout {
+  static ResponsiveLayout of(BuildContext context) {
+    return ResponsiveLayout._(context);
+  }
+
+  ResponsiveLayout._(this._context);
+  
+  final BuildContext _context;
+  late final MediaQueryData _mediaQuery = MediaQuery.of(_context);
+  late final Size _screenSize = _mediaQuery.size;
+  late final double _screenWidth = _screenSize.width;
+  late final double _screenHeight = _screenSize.height;
+  late final double _pixelRatio = _mediaQuery.devicePixelRatio;
+  
+  /// Dimensões responsivas baseadas em porcentagens
+  double get width => _screenWidth;
+  double get height => _screenHeight;
+  
+  /// Padding e margens responsivos
+  double get horizontalPadding => _screenWidth * 0.06; // 6% da largura
+  double get verticalPadding => _screenHeight * 0.02; // 2% da altura
+  double get cardSpacing => _screenHeight * 0.025; // 2.5% da altura (reduzido)
+  double get sectionSpacing => _screenHeight * 0.035; // 3.5% da altura (reduzido)
+  
+  /// Tamanhos de elementos responsivos
+  double get headerHeight => _screenHeight * 0.12; // 12% da altura
+  double get buttonSize => (_screenWidth * 0.45).clamp(160.0, 220.0); // 45% da largura
+  double get iconSize => buttonSize * 0.25;
+  double get fontSize => buttonSize * 0.15;
+  
+  /// Tamanhos de cards responsivos
+  double get cardHeight => _screenHeight * 0.12; // 12% da altura
+  double get cardPadding => _screenWidth * 0.04; // 4% da largura
+  double get borderRadius => _screenWidth * 0.04; // 4% da largura
+  
+  /// Tamanhos de texto responsivos
+  double get titleFontSize => _screenHeight * 0.025; // 2.5% da altura (reduzido)
+  double get subtitleFontSize => _screenHeight * 0.018; // 1.8% da altura (reduzido)
+  double get bodyFontSize => _screenHeight * 0.015; // 1.5% da altura (reduzido)
+  
+  /// Breakpoints responsivos baseados em porcentagens
+  bool get isSmallScreen => _screenWidth < _screenHeight * 0.8; // Largura < 80% da altura
+  bool get isMediumScreen => _screenWidth >= _screenHeight * 0.8 && _screenWidth < _screenHeight * 1.2;
+  bool get isLargeScreen => _screenWidth >= _screenHeight * 1.2;
+  
+  /// Layout adaptativo baseado no tamanho da tela
+  bool get useHorizontalLayout => _screenWidth > _screenHeight * 1.1;
+  bool get useCompactLayout => _screenHeight < 600;
+  
+  /// Espaçamentos dinâmicos
+  double get dynamicSpacing => _screenHeight * 0.015; // 1.5% da altura
+  double get largeSpacing => _screenHeight * 0.03; // 3% da altura
+  double get extraLargeSpacing => _screenHeight * 0.05; // 5% da altura
+}
+
+/// Constantes de layout responsivo (mantidas para compatibilidade)
 class _SosLayoutConstants {
   static const double minButtonSize = 160.0;
   static const double maxButtonSize = 220.0;
-  static const double headerHeight = 80.0;
-  static const double optionCardHeight = 88.0;
-  static const double horizontalPadding = 24.0;
-  static const double verticalSpacing = 16.0;
-  static const double borderRadius = 16.0;
   static const double shadowBlurRadius = 16.0;
 }
 
@@ -238,9 +289,8 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-    final bool isTablet = screenSize.width > 600;
-    final double maxContentWidth = isTablet ? 600.0 : screenSize.width;
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
+    final double maxContentWidth = responsive.width * 0.9; // 90% da largura da tela
     
     return BlocConsumer<SosBloc, SosState>(
       listener: (context, state) {
@@ -255,9 +305,9 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               ),
               backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
-              margin: const EdgeInsets.all(_SosLayoutConstants.horizontalPadding),
+              margin: EdgeInsets.all(responsive.horizontalPadding),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+                borderRadius: BorderRadius.circular(responsive.borderRadius),
               ),
             ),
           );
@@ -302,23 +352,23 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                       // Conteúdo central com scroll
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: _SosLayoutConstants.horizontalPadding,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsive.horizontalPadding,
                           ),
                           child: Column(
                             children: [
-                              SizedBox(height: screenSize.height * 0.1),
+                              SizedBox(height: responsive.height * 0.08),
                               
                               // Botão SOS responsivo
-                              _buildResponsiveSosButton(state, screenSize),
+                              _buildResponsiveSosButton(state, responsive),
                               
-                              SizedBox(height: screenSize.height * 0.08),
+                              SizedBox(height: responsive.height * 0.06),
                               
                               // Menu de opções responsivo
                               if (_showOptions) 
-                                _buildResponsiveOptionsMenu(state, isTablet),
+                                _buildResponsiveOptionsMenu(state, responsive),
                               
-                              SizedBox(height: _SosLayoutConstants.verticalSpacing * 2),
+                              SizedBox(height: responsive.sectionSpacing),
                             ],
                           ),
                         ),
@@ -335,11 +385,12 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildResponsiveHeader(BuildContext context) {
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
     return Container(
-      height: _SosLayoutConstants.headerHeight,
-      padding: const EdgeInsets.symmetric(
-        horizontal: _SosLayoutConstants.horizontalPadding,
-        vertical: 12,
+      height: responsive.headerHeight,
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.horizontalPadding,
+        vertical: responsive.verticalPadding,
       ),
       child: Row(
         children: [
@@ -347,39 +398,28 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => context.go('/home'),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(responsive.borderRadius * 0.75),
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(responsive.dynamicSpacing),
                 child: Icon(
                   Icons.arrow_back_ios,
                   color: MetamorfoseColors.whiteLight,
-                  size: 24,
+                  size: responsive.titleFontSize,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Botão SOS',
-              style: AppTypography.titleLarge.copyWith(
-                color: MetamorfoseColors.whiteLight,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+          SizedBox(width: responsive.dynamicSpacing),
+
         ],
       ),
     );
   }
 
-  Widget _buildResponsiveSosButton(SosState state, Size screenSize) {
-    final double buttonSize = (screenSize.width * 0.5).clamp(
-      _SosLayoutConstants.minButtonSize,
-      _SosLayoutConstants.maxButtonSize,
-    );
-    final double iconSize = buttonSize * 0.25;
-    final double fontSize = buttonSize * 0.15;
+  Widget _buildResponsiveSosButton(SosState state, ResponsiveLayout responsive) {
+    final double buttonSize = responsive.buttonSize;
+    final double iconSize = responsive.iconSize;
+    final double fontSize = responsive.fontSize;
     
     return Material(
       color: Colors.transparent,
@@ -407,33 +447,45 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                     ],
                   ),
                   boxShadow: [
+                    // Sombra interna para profundidade
                     BoxShadow(
-                      color: MetamorfoseColors.redNormal.withOpacity(0.3),
-                      offset: const Offset(0, 8),
-                      blurRadius: _SosLayoutConstants.shadowBlurRadius,
+                      color: MetamorfoseColors.purpleLight.withOpacity(0.3),
+                      offset: const Offset(0, 4),
+                      blurRadius: 8,
                       spreadRadius: 0,
+                    ),
+                    // Sombra externa principal
+                    BoxShadow(
+                      color: MetamorfoseColors.purpleLight.withOpacity(0.4),
+                      offset: const Offset(0, 12),
+                      blurRadius: _SosLayoutConstants.shadowBlurRadius,
+                      spreadRadius: 2,
+                    ),
+                    // Sombra externa secundária para efeito de brilho
+                    BoxShadow(
+                      color: MetamorfoseColors.purpleLight.withOpacity(0.25),
+                      offset: const Offset(0, 20),
+                      blurRadius: _SosLayoutConstants.shadowBlurRadius * 1.5,
+                      spreadRadius: 4,
+                    ),
+                    // Sombra de borda para definição
+                    BoxShadow(
+                      color: MetamorfoseColors.purpleLight.withOpacity(0.2),
+                      offset: const Offset(0, 0),
+                      blurRadius: 2,
+                      spreadRadius: 1,
                     ),
                   ],
                 ),
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.emergency,
-                        color: MetamorfoseColors.whiteLight,
-                        size: iconSize,
-                      ),
-                      SizedBox(height: buttonSize * 0.05),
-                      Text(
-                        'SOS',
-                        style: AppTypography.displayLarge.copyWith(
-                          color: MetamorfoseColors.whiteLight,
-                          fontWeight: FontWeight.w900,
-                          fontSize: fontSize,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'SOS',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.displayLarge.copyWith(
+                      color: MetamorfoseColors.whiteLight,
+                      fontWeight: FontWeight.w900,
+                      fontSize: fontSize * 1.4,
+                    ),
                   ),
                 ),
               ),
@@ -444,7 +496,7 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildResponsiveOptionsMenu(SosState state, bool isTablet) {
+  Widget _buildResponsiveOptionsMenu(SosState state, ResponsiveLayout responsive) {
     return AnimatedBuilder(
       animation: _fadeAnimation,
       builder: (context, child) {
@@ -452,10 +504,10 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
           opacity: _fadeAnimation,
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(_SosLayoutConstants.horizontalPadding),
+            padding: EdgeInsets.all(responsive.horizontalPadding),
             decoration: BoxDecoration(
               color: MetamorfoseColors.whiteLight.withOpacity(0.96),
-              borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+              borderRadius: BorderRadius.circular(responsive.borderRadius),
               boxShadow: [
                 BoxShadow(
                   color: MetamorfoseColors.shadowLight,
@@ -472,22 +524,23 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                 Text(
                   'O que você precisa?',
                   style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.blackLight,
+                    color: MetamorfoseColors.greyDark,
                     fontWeight: FontWeight.w700,
+                    fontSize: responsive.titleFontSize,
                   ),
                 ),
-                const SizedBox(height: _SosLayoutConstants.verticalSpacing),
+                SizedBox(height: responsive.dynamicSpacing),
                 
-                // Layout responsivo para as opções
-                if (isTablet)
-                  _buildTabletOptionsLayout(state)
-                else
-                  _buildMobileOptionsLayout(state),
-                
-                const SizedBox(height: _SosLayoutConstants.verticalSpacing),
-                
-                // Seção de Contatos de Emergência
-                _buildEmergencyContactsSection(state, isTablet),
+                                 // Layout responsivo para as opções baseado no tamanho da tela
+                 if (responsive.useHorizontalLayout)
+                   _buildHorizontalOptionsLayout(state, responsive)
+                 else
+                   _buildVerticalOptionsLayout(state, responsive),
+                 
+                 SizedBox(height: responsive.cardSpacing),
+                 
+                 // Seção de Contatos de Emergência
+                 _buildEmergencyContactsSection(state, responsive),
               ],
             ),
           ),
@@ -496,18 +549,19 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     );
   }
   
-  Widget _buildMobileOptionsLayout(SosState state) {
+  Widget _buildVerticalOptionsLayout(SosState state, ResponsiveLayout responsive) {
     return Column(
       children: [
         _buildResponsiveOptionCard(
           icon: Icons.psychology,
           title: 'Técnicas de Enfrentamento',
           subtitle: 'Estratégias baseadas em TCC, ACT e Entrevista Motivacional',
-          onTap: () => _showCopingTechniques(state),
+          onTap: () => _showCopingTechniques(state, responsive),
           color: MetamorfoseColors.greenNormal,
+          responsive: responsive,
         ),
         
-        const SizedBox(height: _SosLayoutConstants.verticalSpacing),
+        SizedBox(height: responsive.cardSpacing),
         
         _buildResponsiveOptionCard(
           icon: Icons.location_on,
@@ -515,42 +569,39 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
           subtitle: 'Encontre ajuda profissional',
           onTap: () => context.read<SosBloc>().add(OpenNearbyPsychologistsEvent()),
           color: MetamorfoseColors.purpleNormal,
+          responsive: responsive,
         ),
       ],
     );
   }
   
-  Widget _buildTabletOptionsLayout(SosState state) {
-    return Column(
+  Widget _buildHorizontalOptionsLayout(SosState state, ResponsiveLayout responsive) {
+    return Row(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildResponsiveOptionCard(
-                icon: Icons.psychology,
-                title: 'Técnicas de Enfrentamento',
-                subtitle: 'Estratégias TCC, ACT e EM',
-                onTap: () => _showCopingTechniques(state),
-                color: MetamorfoseColors.greenNormal,
-              ),
-            ),
-            const SizedBox(width: _SosLayoutConstants.verticalSpacing),
-            Expanded(
-              child: _buildResponsiveOptionCard(
-                icon: Icons.location_on,
-                title: 'Psicólogos Próximos',
-                subtitle: 'Ajuda profissional',
-                onTap: () => context.read<SosBloc>().add(OpenNearbyPsychologistsEvent()),
-                color: MetamorfoseColors.purpleNormal,
-              ),
-            ),
-          ],
+        Expanded(
+          child: _buildResponsiveOptionCard(
+            icon: Icons.psychology,
+            title: 'Técnicas de Enfrentamento',
+            subtitle: 'Estratégias TCC, ACT e EM',
+            onTap: () => _showCopingTechniques(state, responsive),
+            color: MetamorfoseColors.greenNormal,
+            responsive: responsive,
+          ),
+        ),
+        SizedBox(width: responsive.cardSpacing),
+        Expanded(
+          child: _buildResponsiveOptionCard(
+            icon: Icons.location_on,
+            title: 'Psicólogos Próximos',
+            subtitle: 'Ajuda profissional',
+            onTap: () => context.read<SosBloc>().add(OpenNearbyPsychologistsEvent()),
+            color: MetamorfoseColors.purpleNormal,
+            responsive: responsive,
+          ),
         ),
       ],
     );
   }
-
-
 
   Widget _buildResponsiveOptionCard({
     required IconData icon,
@@ -558,22 +609,23 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     required String subtitle,
     required VoidCallback onTap,
     required Color color,
+    required ResponsiveLayout responsive,
   }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+        borderRadius: BorderRadius.circular(responsive.borderRadius),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Container(
-          constraints: const BoxConstraints(
-            minHeight: _SosLayoutConstants.optionCardHeight,
+          constraints: BoxConstraints(
+            minHeight: responsive.cardHeight,
           ),
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(responsive.cardPadding),
           decoration: BoxDecoration(
             color: color.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+            borderRadius: BorderRadius.circular(responsive.borderRadius),
             border: Border.all(
               color: color.withOpacity(0.2),
               width: 1,
@@ -582,18 +634,18 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(responsive.dynamicSpacing * 0.6),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(responsive.borderRadius * 0.6),
                 ),
                 child: Icon(
                   icon,
                   color: color,
-                  size: 20,
+                  size: responsive.subtitleFontSize,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.dynamicSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,17 +654,19 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                     Text(
                       title,
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w600,
+                        fontSize: responsive.subtitleFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: responsive.dynamicSpacing * 0.25),
                     Text(
                       subtitle,
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
+                        fontSize: responsive.bodyFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -623,7 +677,7 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               Icon(
                 Icons.arrow_forward_ios,
                 color: color.withOpacity(0.6),
-                size: 14,
+                size: responsive.bodyFontSize,
               ),
             ],
           ),
@@ -632,23 +686,22 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _showCopingTechniques(SosState state) {
+  void _showCopingTechniques(SosState state, ResponsiveLayout responsive) {
     final sosBloc = context.read<SosBloc>();
-    final screenSize = MediaQuery.of(context).size;
-    final isTablet = screenSize.width > 600;
+    final bool useCompactLayout = responsive.useCompactLayout;
     
-    if (isTablet) {
-      // Para tablet, usa showDialog centralizado
+    if (useCompactLayout) {
+      // Para telas compactas, usa showDialog centralizado
       showDialog(
         context: context,
         barrierDismissible: true,
         builder: (_) => BlocProvider.value(
           value: sosBloc,
-          child: _ResponsiveCopingTechniquesSheet(isTablet: isTablet),
+          child: _ResponsiveCopingTechniquesSheet(useCompactLayout: useCompactLayout),
         ),
       );
     } else {
-      // Para mobile, usa showModalBottomSheet
+      // Para telas normais, usa showModalBottomSheet
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -657,63 +710,63 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
         useSafeArea: true,
         builder: (_) => BlocProvider.value(
           value: sosBloc,
-          child: _ResponsiveCopingTechniquesSheet(isTablet: isTablet),
+          child: _ResponsiveCopingTechniquesSheet(useCompactLayout: useCompactLayout),
         ),
       );
     }
   }
 
   /// Seção de Contatos de Emergência
-  Widget _buildEmergencyContactsSection(SosState state, bool isTablet) {
+  Widget _buildEmergencyContactsSection(SosState state, ResponsiveLayout responsive) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Card de contato existente ou card para adicionar
         if (state.hasEmergencyContact && state.emergencyContact != null)
-          _buildExistingContactCard(state.emergencyContact!, isTablet)
+          _buildExistingContactCard(state.emergencyContact!, responsive)
         else
-          _buildAddContactCard(isTablet),
+          _buildAddContactCard(responsive),
       ],
     );
   }
 
   /// Card para adicionar novo contato
-  Widget _buildAddContactCard(bool isTablet) {
+  Widget _buildAddContactCard(ResponsiveLayout responsive) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showAddContactModal(isTablet),
-        borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+        onTap: () => _showAddContactModal(responsive),
+        borderRadius: BorderRadius.circular(responsive.borderRadius),
         splashColor: MetamorfoseColors.purpleNormal.withOpacity(0.1),
         highlightColor: MetamorfoseColors.purpleNormal.withOpacity(0.05),
         child: Container(
-          constraints: const BoxConstraints(
-            minHeight: _SosLayoutConstants.optionCardHeight,
+          constraints: BoxConstraints(
+            minHeight: responsive.cardHeight,
           ),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: MetamorfoseColors.purpleNormal.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
-            border: Border.all(
-              color: MetamorfoseColors.purpleNormal.withOpacity(0.2),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: MetamorfoseColors.purpleNormal.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.person_add,
-                  color: MetamorfoseColors.purpleNormal,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
+          padding: EdgeInsets.all(responsive.cardPadding),
+                     decoration: BoxDecoration(
+             color: MetamorfoseColors.blueNormal.withOpacity(0.08),
+             borderRadius: BorderRadius.circular(responsive.borderRadius),
+             border: Border.all(
+               color: MetamorfoseColors.blueNormal.withOpacity(0.2),
+               width: 1,
+             ),
+           ),
+           child: Row(
+             children: [
+               Container(
+                 padding: EdgeInsets.all(responsive.dynamicSpacing * 0.6),
+                 decoration: BoxDecoration(
+                   color: MetamorfoseColors.blueNormal.withOpacity(0.15),
+                   borderRadius: BorderRadius.circular(responsive.borderRadius * 0.6),
+                 ),
+                 child: Icon(
+                   Icons.person_add,
+                   color: MetamorfoseColors.blueNormal,
+                   size: responsive.subtitleFontSize,
+                 ),
+               ),
+              SizedBox(width: responsive.dynamicSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -722,17 +775,19 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                     Text(
                       'Contatos de Emergência',
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w600,
+                        fontSize: responsive.subtitleFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: responsive.dynamicSpacing * 0.25),
                     Text(
                       'Adicionar contato de confiança para emergências',
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
+                        fontSize: responsive.bodyFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -740,11 +795,11 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: MetamorfoseColors.purpleNormal.withOpacity(0.6),
-                size: 14,
-              ),
+                             Icon(
+                 Icons.arrow_forward_ios,
+                 color: MetamorfoseColors.blueNormal.withOpacity(0.6),
+                 size: responsive.bodyFontSize,
+               ),
             ],
           ),
         ),
@@ -753,15 +808,15 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
   }
 
   /// Card de contato existente
-  Widget _buildExistingContactCard(SosContact contact, bool isTablet) {
+  Widget _buildExistingContactCard(SosContact contact, ResponsiveLayout responsive) {
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: _SosLayoutConstants.optionCardHeight,
+      constraints: BoxConstraints(
+        minHeight: responsive.cardHeight,
       ),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(responsive.cardPadding),
       decoration: BoxDecoration(
         color: MetamorfoseColors.greenNormal.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+        borderRadius: BorderRadius.circular(responsive.borderRadius),
         border: Border.all(
           color: MetamorfoseColors.greenNormal.withOpacity(0.2),
           width: 1,
@@ -773,18 +828,18 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(responsive.dynamicSpacing * 0.6),
                 decoration: BoxDecoration(
                   color: MetamorfoseColors.greenNormal.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(responsive.borderRadius * 0.6),
                 ),
                 child: Icon(
                   Icons.emergency,
                   color: MetamorfoseColors.greenNormal,
-                  size: 20,
+                  size: responsive.subtitleFontSize,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.dynamicSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -793,17 +848,19 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                     Text(
                       'Contatos de Emergência',
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w600,
+                        fontSize: responsive.subtitleFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: responsive.dynamicSpacing * 0.25),
                     Text(
                       '${contact.name} - ${contact.phoneNumber}',
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
+                        fontSize: responsive.bodyFontSize,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -815,14 +872,14 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => _showEditContactModal(contact, isTablet),
-                  borderRadius: BorderRadius.circular(20),
+                  onTap: () => _showEditContactModal(contact, responsive),
+                  borderRadius: BorderRadius.circular(responsive.borderRadius),
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(responsive.dynamicSpacing * 0.5),
                     child: Icon(
                       Icons.edit,
                       color: MetamorfoseColors.blueNormal,
-                      size: 20,
+                      size: responsive.subtitleFontSize,
                     ),
                   ),
                 ),
@@ -830,34 +887,42 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
             ],
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: responsive.dynamicSpacing),
           
           // Botão WhatsApp integrado ao card
-          _buildWhatsAppButton(contact, isTablet),
+          _buildWhatsAppButton(contact, responsive),
         ],
       ),
     );
   }
 
   /// Botão WhatsApp
-  Widget _buildWhatsAppButton(SosContact contact, bool isTablet) {
+  Widget _buildWhatsAppButton(SosContact contact, ResponsiveLayout responsive) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF25D366), // Verde WhatsApp/Metamorfose
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.borderRadius),
         ),
         elevation: 6,
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-        minimumSize: const Size(double.infinity, 50),
+        padding: EdgeInsets.symmetric(
+          vertical: responsive.dynamicSpacing * 0.8, 
+          horizontal: responsive.dynamicSpacing
+        ),
+        minimumSize: Size(double.infinity, responsive.cardHeight * 0.4),
       ),
       onPressed: () => _enviarMensagemWhatsApp(contact),
-      icon: const Icon(Icons.chat, color: Colors.white, size: 20),
+      icon: Icon(
+        Icons.chat, 
+        color: Colors.white, 
+        size: responsive.subtitleFontSize
+      ),
       label: Text(
         "ENVIAR MENSAGEM WHATSAPP",
         style: AppTypography.titleSmall.copyWith(
           color: MetamorfoseColors.whiteLight,
           fontWeight: FontWeight.w600,
+          fontSize: responsive.bodyFontSize,
         ),
       ),
     );
@@ -883,7 +948,7 @@ Podemos conversar?
         await launchUrl(url, mode: LaunchMode.externalApplication);
 
         // Fecha o modal automaticamente após 500ms
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(Duration(milliseconds: 500), () {
           if (mounted && _showOptions) {
             setState(() {
               _showOptions = false;
@@ -894,6 +959,7 @@ Podemos conversar?
         });
       } else {
         if (mounted) {
+          final responsive = ResponsiveLayout.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -904,9 +970,9 @@ Podemos conversar?
               ),
               backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
-              margin: const EdgeInsets.all(24),
+              margin: EdgeInsets.all(responsive.horizontalPadding),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(responsive.borderRadius),
               ),
             ),
           );
@@ -914,6 +980,7 @@ Podemos conversar?
       }
     } catch (e) {
       if (mounted) {
+        final responsive = ResponsiveLayout.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -924,9 +991,9 @@ Podemos conversar?
             ),
             backgroundColor: MetamorfoseColors.redNormal,
             behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(24),
+            margin: EdgeInsets.all(responsive.horizontalPadding),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(responsive.borderRadius),
             ),
           ),
         );
@@ -964,15 +1031,17 @@ Podemos conversar?
   }
 
   /// Modal para adicionar contato
-  void _showAddContactModal(bool isTablet) {
-    if (isTablet) {
+  void _showAddContactModal(ResponsiveLayout responsive) {
+    final bool useCompactLayout = responsive.useCompactLayout;
+    
+    if (useCompactLayout) {
       showDialog(
         context: context,
         barrierDismissible: true,
         builder: (_) => BlocProvider.value(
           value: context.read<SosBloc>(),
           child: _EmergencyContactModal(
-            isTablet: isTablet,
+            useCompactLayout: useCompactLayout,
             isEditing: false,
           ),
         ),
@@ -987,7 +1056,7 @@ Podemos conversar?
         builder: (_) => BlocProvider.value(
           value: context.read<SosBloc>(),
           child: _EmergencyContactModal(
-            isTablet: isTablet,
+            useCompactLayout: useCompactLayout,
             isEditing: false,
           ),
         ),
@@ -996,15 +1065,17 @@ Podemos conversar?
   }
 
   /// Modal para editar contato
-  void _showEditContactModal(SosContact contact, bool isTablet) {
-    if (isTablet) {
+  void _showEditContactModal(SosContact contact, ResponsiveLayout responsive) {
+    final bool useCompactLayout = responsive.useCompactLayout;
+    
+    if (useCompactLayout) {
       showDialog(
         context: context,
         barrierDismissible: true,
         builder: (_) => BlocProvider.value(
           value: context.read<SosBloc>(),
           child: _EmergencyContactModal(
-            isTablet: isTablet,
+            useCompactLayout: useCompactLayout,
             isEditing: true,
             contact: contact,
             onContactDeleted: _forceUIUpdateAfterContactDeletion,
@@ -1021,7 +1092,7 @@ Podemos conversar?
         builder: (_) => BlocProvider.value(
           value: context.read<SosBloc>(),
           child: _EmergencyContactModal(
-            isTablet: isTablet,
+            useCompactLayout: useCompactLayout,
             isEditing: true,
             contact: contact,
             onContactDeleted: _forceUIUpdateAfterContactDeletion,
@@ -1045,13 +1116,13 @@ Podemos conversar?
 
 // Modal responsivo para contatos de emergência
 class _EmergencyContactModal extends StatefulWidget {
-  final bool isTablet;
+  final bool useCompactLayout;
   final bool isEditing;
   final SosContact? contact;
   final VoidCallback? onContactDeleted;
 
   const _EmergencyContactModal({
-    required this.isTablet,
+    required this.useCompactLayout,
     required this.isEditing,
     this.contact,
     this.onContactDeleted,
@@ -1192,7 +1263,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             ),
             backgroundColor: MetamorfoseColors.greenNormal,
             behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(24),
+            margin: EdgeInsets.all(24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -1211,7 +1282,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             ),
             backgroundColor: MetamorfoseColors.redNormal,
             behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(24),
+            margin: EdgeInsets.all(24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -1239,7 +1310,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         title: Text(
           'Limpar Contato',
           style: AppTypography.titleMedium.copyWith(
-            color: MetamorfoseColors.blackLight,
+            color: MetamorfoseColors.greyDark,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1328,7 +1399,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
               ),
               backgroundColor: MetamorfoseColors.blueNormal,
               behavior: SnackBarBehavior.floating,
-              margin: const EdgeInsets.all(24),
+              margin: EdgeInsets.all(24),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -1347,7 +1418,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
               ),
               backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
-              margin: const EdgeInsets.all(24),
+              margin: EdgeInsets.all(24),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -1366,22 +1437,22 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final maxWidth = widget.isTablet ? 500.0 : screenSize.width;
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
+    final double maxWidth = widget.useCompactLayout ? 500.0 : responsive.width;
     
-    if (widget.isTablet) {
-      // Modal centralizado para tablet
+    if (widget.useCompactLayout) {
+      // Modal centralizado para compact
       return Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(32),
+        insetPadding: EdgeInsets.all(32),
         child: Container(
           width: maxWidth,
           constraints: BoxConstraints(
-            maxHeight: screenSize.height * 0.8,
+            maxHeight: responsive.height * 0.8,
           ),
           decoration: BoxDecoration(
             color: MetamorfoseColors.whiteLight,
-            borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+            borderRadius: BorderRadius.circular(responsive.borderRadius),
             boxShadow: [
               BoxShadow(
                 color: MetamorfoseColors.shadowLight,
@@ -1395,13 +1466,13 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         ),
       );
     } else {
-      // Bottom sheet para mobile
+      // Bottom sheet para normal
       return Container(
         width: double.infinity,
         constraints: BoxConstraints(
-          maxHeight: screenSize.height * 0.9,
+          maxHeight: responsive.height * 0.9,
         ),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: MetamorfoseColors.whiteLight,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -1414,10 +1485,10 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Handle (apenas para mobile)
-        if (!widget.isTablet)
+        // Handle (apenas para compact)
+        if (!widget.useCompactLayout)
           Container(
-            margin: const EdgeInsets.only(top: 12),
+            margin: EdgeInsets.only(top: 12),
             width: 40,
             height: 4,
             decoration: BoxDecoration(
@@ -1428,7 +1499,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         
         // Header
         Padding(
-          padding: EdgeInsets.all(widget.isTablet ? 32 : 24),
+          padding: EdgeInsets.all(widget.useCompactLayout ? 32 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1440,19 +1511,19 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                           ? 'Editar Contato de Emergência'
                           : 'Adicionar Contato de Emergência',
                       style: AppTypography.titleLarge.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  if (widget.isTablet)
+                  if (widget.useCompactLayout)
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () => Navigator.pop(context),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8),
                           child: Icon(
                             Icons.close,
                             color: MetamorfoseColors.greyMedium,
@@ -1463,7 +1534,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 'Configure um contato de confiança para emergências',
                 style: AppTypography.bodyMedium.copyWith(
@@ -1481,7 +1552,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             child: ListView(
               shrinkWrap: true,
               padding: EdgeInsets.symmetric(
-                horizontal: widget.isTablet ? 32 : 24,
+                horizontal: widget.useCompactLayout ? 32 : 24,
               ),
               children: [
                 // Campo Nome
@@ -1489,7 +1560,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                   hintText: 'Nome completo',
                   controller: _nameController,
                   errorText: _nameError,
-                  prefixIcon: const Padding(
+                  prefixIcon: Padding(
                     padding: EdgeInsets.all(12),
                     child: Icon(
                       Icons.person_outline,
@@ -1499,7 +1570,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                   ),
                 ),
                 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 
                 // Campo Telefone
                 MetamorfeseInput(
@@ -1507,7 +1578,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                   controller: _phoneController,
                   errorText: _phoneError,
                   keyboardType: TextInputType.phone,
-                  prefixIcon: const Padding(
+                  prefixIcon: Padding(
                     padding: EdgeInsets.all(12),
                     child: Icon(
                       Icons.phone_outlined,
@@ -1526,14 +1597,14 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                   },
                 ),
                 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 
                 // Campo Relacionamento
                 MetamorfeseInput(
                   hintText: 'Relacionamento (ex.: mãe, amigo, parceiro)',
                   controller: _relationshipController,
                   errorText: _relationshipError,
-                  prefixIcon: const Padding(
+                  prefixIcon: Padding(
                     padding: EdgeInsets.all(12),
                     child: Icon(
                       Icons.favorite_outline,
@@ -1543,12 +1614,12 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                   ),
                 ),
                 
-                SizedBox(height: widget.isTablet ? 32 : 24),
+                SizedBox(height: widget.useCompactLayout ? 32 : 24),
                 
                 // Botões de ação
                 _buildActionButtons(),
                 
-                SizedBox(height: widget.isTablet ? 32 : 24),
+                SizedBox(height: widget.useCompactLayout ? 32 : 24),
               ],
             ),
           ),
@@ -1568,7 +1639,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         ),
         
         if (widget.isEditing) ...[
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           
           // Botão de exclusão
           _MetamorfeseButtonHelper.createDeleteButton(
@@ -1577,7 +1648,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           ),
         ],
         
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         
         // Botão cancelar
         _MetamorfeseButtonHelper.createSecondaryButton(
@@ -1591,28 +1662,28 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
 
 // Sheet responsivo para técnicas de enfrentamento
 class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
-  final bool isTablet;
+  final bool useCompactLayout;
   
-  const _ResponsiveCopingTechniquesSheet({required this.isTablet});
+  const _ResponsiveCopingTechniquesSheet({required this.useCompactLayout});
   
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final maxWidth = isTablet ? 600.0 : screenSize.width;
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
+    final double maxWidth = useCompactLayout ? 600.0 : responsive.width;
     
-    if (isTablet) {
-      // Modal centralizado para tablet
+    if (useCompactLayout) {
+      // Modal centralizado para compact
       return Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(32),
+        insetPadding: EdgeInsets.all(32),
         child: Container(
           width: maxWidth,
           constraints: BoxConstraints(
-            maxHeight: screenSize.height * 0.8,
+            maxHeight: responsive.height * 0.8,
           ),
           decoration: BoxDecoration(
             color: MetamorfoseColors.whiteLight,
-            borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+            borderRadius: BorderRadius.circular(responsive.borderRadius),
             boxShadow: [
               BoxShadow(
                 color: MetamorfoseColors.shadowLight,
@@ -1625,13 +1696,13 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
         ),
       );
     } else {
-      // Bottom sheet para mobile
+      // Bottom sheet para normal
       return Container(
         width: double.infinity,
         constraints: BoxConstraints(
-          maxHeight: screenSize.height * 0.9,
+          maxHeight: responsive.height * 0.9,
         ),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: MetamorfoseColors.whiteLight,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -1645,10 +1716,10 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
       builder: (context) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Handle (apenas para mobile)
-        if (!isTablet)
+        // Handle (apenas para compact)
+        if (!useCompactLayout)
           Container(
-            margin: const EdgeInsets.only(top: 12),
+            margin: EdgeInsets.only(top: 12),
             width: 40,
             height: 4,
             decoration: BoxDecoration(
@@ -1659,7 +1730,7 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
         
         // Header
         Padding(
-          padding: EdgeInsets.all(isTablet ? 32 : 24),
+          padding: EdgeInsets.all(useCompactLayout ? 32 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1669,19 +1740,19 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
                     child: Text(
                       'Técnicas de Enfrentamento',
                       style: AppTypography.titleLarge.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  if (isTablet)
+                  if (useCompactLayout)
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () => Navigator.pop(context),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8),
                           child: Icon(
                             Icons.close,
                             color: MetamorfoseColors.greyMedium,
@@ -1692,7 +1763,7 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 'Estratégias baseadas em evidências científicas para lidar com crises',
                 style: AppTypography.bodyMedium.copyWith(
@@ -1708,7 +1779,7 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
           child: ListView(
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 32 : 24,
+              horizontal: useCompactLayout ? 32 : 24,
             ),
             children: [
               _ResponsiveCopingTechniqueCard(
@@ -1717,32 +1788,32 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
                 description: 'Quando você se sentir sobrecarregado, pergunte-se: "Esta situação é realmente tão ruim quanto parece? Existe outra forma de ver isso?" A TCC ajuda a reconhecer padrões de pensamento que podem estar causando sofrimento e a desenvolver estratégias mais saudáveis para lidar com desafios.',
                 color: MetamorfoseColors.greenNormal,
                 technique: 'tcc',
-                isTablet: isTablet,
+                isCompact: useCompactLayout,
               ),
               
-              const SizedBox(height: 16),
+                             SizedBox(height: 16),
+               
+               _ResponsiveCopingTechniqueCard(
+                 title: 'Terapia de Aceitação e Compromisso (ACT)',
+                 subtitle: 'Aceitar emoções e focar no que importa',
+                 description: 'Em vez de lutar contra seus sentimentos, observe-os com curiosidade. Lembre-se dos seus valores e do que realmente importa para você. A ACT ensina a aceitar experiências difíceis enquanto se compromete com ações alinhadas aos seus valores pessoais.',
+                 color: MetamorfoseColors.blueNormal,
+                 technique: 'act',
+                 isCompact: useCompactLayout,
+               ),
+               
+               SizedBox(height: 16),
+               
+               _ResponsiveCopingTechniqueCard(
+                 title: 'Entrevista Motivacional',
+                 subtitle: 'Explorar sua motivação para mudança',
+                 description: 'Reflita sobre o que você quer mudar e por quê. Quais são os benefícios de fazer algo diferente agora? A Entrevista Motivacional ajuda a explorar ambivalências e fortalecer a motivação intrínseca para mudanças positivas em sua vida.',
+                 color: MetamorfoseColors.purpleNormal,
+                 technique: 'entrevista_motivacional',
+                 isCompact: useCompactLayout,
+               ),
               
-              _ResponsiveCopingTechniqueCard(
-                title: 'Terapia de Aceitação e Compromisso (ACT)',
-                subtitle: 'Aceitar emoções e focar no que importa',
-                description: 'Em vez de lutar contra seus sentimentos, observe-os com curiosidade. Lembre-se dos seus valores e do que realmente importa para você. A ACT ensina a aceitar experiências difíceis enquanto se compromete com ações alinhadas aos seus valores pessoais.',
-                color: MetamorfoseColors.blueNormal,
-                technique: 'act',
-                isTablet: isTablet,
-              ),
-              
-              const SizedBox(height: 16),
-              
-              _ResponsiveCopingTechniqueCard(
-                title: 'Entrevista Motivacional',
-                subtitle: 'Explorar sua motivação para mudança',
-                description: 'Reflita sobre o que você quer mudar e por quê. Quais são os benefícios de fazer algo diferente agora? A Entrevista Motivacional ajuda a explorar ambivalências e fortalecer a motivação intrínseca para mudanças positivas em sua vida.',
-                color: MetamorfoseColors.purpleNormal,
-                technique: 'entrevista_motivacional',
-                isTablet: isTablet,
-              ),
-              
-              SizedBox(height: isTablet ? 32 : 24),
+              SizedBox(height: useCompactLayout ? 32 : 24),
             ],
           ),
         ),
@@ -1759,7 +1830,7 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
   final String description;
   final Color color;
   final String technique;
-  final bool isTablet;
+  final bool isCompact;
 
   const _ResponsiveCopingTechniqueCard({
     required this.title,
@@ -1767,16 +1838,17 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
     required this.description,
     required this.color,
     required this.technique,
-    required this.isTablet,
+    required this.isCompact,
   });
 
   @override
   Widget build(BuildContext context) {
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
     return Container(
-      padding: EdgeInsets.all(isTablet ? 24 : 20),
+      padding: EdgeInsets.all(isCompact ? responsive.cardPadding * 1.5 : responsive.cardPadding),
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(_SosLayoutConstants.borderRadius),
+        borderRadius: BorderRadius.circular(responsive.borderRadius),
         border: Border.all(
           color: color.withOpacity(0.2),
           width: 1,
@@ -1788,18 +1860,18 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(responsive.dynamicSpacing * 0.6),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(responsive.borderRadius * 0.6),
                 ),
                 child: Icon(
                   Icons.psychology,
                   color: color,
-                  size: 20,
+                  size: responsive.subtitleFontSize,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.dynamicSpacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1807,39 +1879,44 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
                     Text(
                       title,
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.blackLight,
+                        color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w600,
+                        fontSize: responsive.subtitleFontSize,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: responsive.dynamicSpacing * 0.25),
                     Text(
                       subtitle,
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
+                        fontSize: responsive.bodyFontSize,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsive.dynamicSpacing * 0.5, 
+                  vertical: responsive.dynamicSpacing * 0.25
+                ),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(responsive.borderRadius * 0.4),
                 ),
                 child: Text(
                   technique.toUpperCase(),
                   style: AppTypography.bodySmall.copyWith(
                     color: color,
                     fontWeight: FontWeight.w600,
-                    fontSize: 10,
+                    fontSize: responsive.bodyFontSize * 0.8,
                   ),
                 ),
               ),
             ],
           ),
           
-          const SizedBox(height: 12),
+          SizedBox(height: responsive.dynamicSpacing),
           
           Text(
             description,
@@ -1847,14 +1924,15 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
               color: MetamorfoseColors.greyMedium,
               fontStyle: FontStyle.italic,
               height: 1.4,
+              fontSize: responsive.bodyFontSize,
             ),
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: responsive.dynamicSpacing),
           
           // Botão roxo padrão para todas as técnicas
           _MetamorfeseButtonHelper.createPrimaryButton(
-            text: isTablet 
+            text: isCompact 
                 ? 'Conversar com Persona usando esta técnica'
                 : 'Conversar com Persona\nusando esta técnica',
             onPressed: () {
@@ -1881,7 +1959,7 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
       debugPrint("🎭 SOS - Erro na navegação GoRouter: $e");
       // Fallback: navegar para home e depois para voice-chat
       context.go('/home');
-      Future.delayed(const Duration(milliseconds: 100), () {
+      Future.delayed(Duration(milliseconds: 100), () {
         if (context.mounted) {
           context.push('/voice-chat', extra: personalityType);
         }
@@ -1928,7 +2006,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
   void initState() {
     super.initState();
     _breathingController = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: Duration(seconds: 1),
       vsync: this,
     );
     
@@ -1955,7 +2033,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
   }
 
   void _startTimer() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(Duration(seconds: 1), (timer) {
       if (!mounted || !_isActive) {
         timer.cancel();
         return;
@@ -2005,7 +2083,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
     
     _breathingController.stop();
     
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 2), () {
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -2020,13 +2098,15 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
 
   @override
   Widget build(BuildContext context) {
+    final ResponsiveLayout responsive = ResponsiveLayout.of(context);
+    
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(responsive.horizontalPadding * 1.3),
         decoration: BoxDecoration(
           color: MetamorfoseColors.whiteLight,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(responsive.borderRadius * 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2034,12 +2114,13 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
             Text(
               widget.exercise.name,
               style: AppTypography.titleLarge.copyWith(
-                color: MetamorfoseColors.blackLight,
+                color: MetamorfoseColors.greyDark,
                 fontWeight: FontWeight.w700,
+                fontSize: responsive.titleFontSize,
               ),
             ),
             
-            const SizedBox(height: 24),
+            SizedBox(height: responsive.largeSpacing),
             
             AnimatedBuilder(
               animation: _breathingAnimation,
@@ -2047,8 +2128,8 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
                 return Transform.scale(
                   scale: _breathingAnimation.value,
                   child: Container(
-                    width: 120,
-                    height: 120,
+                    width: responsive.buttonSize * 0.6,
+                    height: responsive.buttonSize * 0.6,
                     decoration: BoxDecoration(
                       color: MetamorfoseColors.greenNormal.withOpacity(0.2),
                       shape: BoxShape.circle,
@@ -2056,44 +2137,46 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
                     child: Icon(
                       Icons.air,
                       color: MetamorfoseColors.greenNormal,
-                      size: 60,
+                      size: responsive.buttonSize * 0.3,
                     ),
                   ),
                 );
               },
             ),
             
-            const SizedBox(height: 24),
+            SizedBox(height: responsive.largeSpacing),
             
             Text(
               _currentPhase,
               style: AppTypography.displayMedium.copyWith(
                 color: MetamorfoseColors.greenNormal,
                 fontWeight: FontWeight.w700,
+                fontSize: responsive.titleFontSize * 1.2,
               ),
             ),
             
-            const SizedBox(height: 16),
+            SizedBox(height: responsive.dynamicSpacing),
             
             Text(
               '$_timeLeft',
               style: AppTypography.displayLarge.copyWith(
-                color: MetamorfoseColors.blackLight,
+                color: MetamorfoseColors.greyDark,
                 fontWeight: FontWeight.w200,
-                fontSize: 48,
+                fontSize: responsive.titleFontSize * 2.4,
               ),
             ),
             
-            const SizedBox(height: 16),
+            SizedBox(height: responsive.dynamicSpacing),
             
             Text(
               'Ciclo $_currentCycle de ${widget.exercise.cycles}',
               style: AppTypography.bodyMedium.copyWith(
                 color: MetamorfoseColors.greyMedium,
+                fontSize: responsive.bodyFontSize,
               ),
             ),
             
-            const SizedBox(height: 24),
+            SizedBox(height: responsive.largeSpacing),
             
             if (_isActive)
               ElevatedButton(
@@ -2109,9 +2192,12 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: MetamorfoseColors.redNormal,
                   foregroundColor: MetamorfoseColors.whiteLight,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsive.horizontalPadding * 1.3, 
+                    vertical: responsive.dynamicSpacing
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(responsive.borderRadius),
                   ),
                 ),
                 child: Text(
@@ -2119,6 +2205,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
                   style: AppTypography.titleMedium.copyWith(
                     color: MetamorfoseColors.whiteLight,
                     fontWeight: FontWeight.w600,
+                    fontSize: responsive.subtitleFontSize,
                   ),
                 ),
               ),
