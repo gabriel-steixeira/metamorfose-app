@@ -70,7 +70,8 @@ enum PersonalityType {
 
 /// Configurações estáticas para acesso à API Gemini.
 class GeminiConfig {
-  static const String apiKey = 'AIzaSyAzMuYRlod7aPJa5aekPCgj4RO-RLHEpXk';
+  // static const String apiKey = 'AIzaSyAzMuYRlod7aPJa5aekPCgj4RO-RLHEpXk';
+  static const String apiKey = 'AIzaSyD62zb3io5KwTg0T_I37HayzlKRAwCUYrI';
   static const String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
   static const String model = 'gemini-2.0-flash';
   static const int maxRetries = 3;

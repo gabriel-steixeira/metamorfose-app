@@ -586,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         );
       case 'psicólogos':
-      case 'Botão de Emergência':
+      case 'Botão SOS':
       case 'hub educacional':
         return LinearGradient(
           begin: Alignment.topLeft,
@@ -624,8 +624,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Icons.flag;
       case 'hub educacional':
         return Icons.school;
-      case 'Botão de Emergência':
-        return Icons.emergency;
+      case 'sos':
+        return Icons.crisis_alert;
       case 'conquistas':
         return Icons.emoji_events;
       case 'feedback':
@@ -673,9 +673,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     final supportFeatures = [
       CarouselItem(
-        title: 'Botão de Emergência',
+        title: 'Botão SOS',
         image: 'assets/images/features/emergency_support.png',
-        icon: _getIconForFeature('SOS'),
+        icon: _getIconForFeature('sos'),
         isComingSoon: false,
         onTap: () => context.go('/sos'),
       ),
