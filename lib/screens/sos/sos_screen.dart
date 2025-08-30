@@ -1,22 +1,3 @@
-/**
- * File: sos_screen.dart
- * Description: Tela principal do Botão SOS do Metamorfose - Refatorada com Layout Responsivo
- *
- * Responsabilidades:
- * - Exibir botão SOS central com animação pulsante
- * - Mostrar menu de opções de suporte responsivo
- * - Gerenciar exercícios de respiração
- * - Integrar com contatos de emergência
- * - Design responsivo baseado em porcentagens da tela
- *
- * Author: Gabriel Teixeira
- * Refactored by: Assistant
- * Created on: 19-08-2025
- * Last modified: 22-08-2025
- * Version: 3.0.0 - Layout Responsivo
- * Squad: Metamorfose
- */
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,10 +6,10 @@ import 'package:metamorfose_flutter/theme/typography.dart';
 import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
 import 'package:metamorfose_flutter/state/sos/sos_state.dart';
 import 'package:metamorfose_flutter/state/sos/sos_events.dart';
-import 'package:metamorfose_flutter/models/breathing_exercise.dart';
 import 'package:metamorfose_flutter/models/sos_contact.dart';
-import 'package:metamorfose_flutter/services/gemini_service.dart';
+import 'package:metamorfose_flutter/models/breathing_exercise.dart';
 import 'package:metamorfose_flutter/services/sos_service.dart';
+import 'package:metamorfose_flutter/services/gemini_service.dart';
 import 'package:metamorfose_flutter/components/metamorfose_input.dart';
 import 'package:metamorfose_flutter/components/metamorfose_button.dart';
 import 'package:metamorfose_flutter/components/metamorfose_secondary_button.dart';
@@ -49,60 +30,48 @@ class ResponsiveLayout {
   late final MediaQueryData _mediaQuery = MediaQuery.of(_context);
   late final Size _screenSize = _mediaQuery.size;
   late final double _screenWidth = _screenSize.width;
-  late final double _screenHeight = _screenSize.height;
-  late final double _pixelRatio = _mediaQuery.devicePixelRatio;
+  late final double _screenHeight = _mediaQuery.size.height;
   
-  /// Dimensões responsivas baseadas em porcentagens
   double get width => _screenWidth;
   double get height => _screenHeight;
   
-  /// Padding e margens responsivos
-  double get horizontalPadding => _screenWidth * 0.06; // 6% da largura
-  double get verticalPadding => _screenHeight * 0.02; // 2% da altura
-  double get cardSpacing => _screenHeight * 0.025; // 2.5% da altura (reduzido)
-  double get sectionSpacing => _screenHeight * 0.035; // 3.5% da altura (reduzido)
+  double get horizontalPadding => _screenWidth * 0.06;
+  double get verticalPadding => _screenHeight * 0.02;
+  double get cardSpacing => _screenHeight * 0.025;
+  double get sectionSpacing => _screenHeight * 0.035;
   
-  /// Tamanhos de elementos responsivos
-  double get headerHeight => _screenHeight * 0.12; // 12% da altura
-  double get buttonSize => (_screenWidth * 0.45).clamp(160.0, 220.0); // 45% da largura
+  double get headerHeight => _screenHeight * 0.12;
+  double get buttonSize => (_screenWidth * 0.45).clamp(160.0, 220.0);
   double get iconSize => buttonSize * 0.25;
   double get fontSize => buttonSize * 0.15;
   
-  /// Tamanhos de cards responsivos
-  double get cardHeight => _screenHeight * 0.12; // 12% da altura
-  double get cardPadding => _screenWidth * 0.04; // 4% da largura
-  double get borderRadius => _screenWidth * 0.04; // 4% da largura
+  double get cardHeight => _screenHeight * 0.12;
+  double get cardPadding => _screenWidth * 0.04;
+  double get borderRadius => _screenWidth * 0.04;
   
-  /// Tamanhos de texto responsivos
-  double get titleFontSize => _screenHeight * 0.025; // 2.5% da altura (reduzido)
-  double get subtitleFontSize => _screenHeight * 0.018; // 1.8% da altura (reduzido)
-  double get bodyFontSize => _screenHeight * 0.015; // 1.5% da altura (reduzido)
+  double get titleFontSize => _screenHeight * 0.025;
+  double get subtitleFontSize => _screenHeight * 0.018;
+  double get bodyFontSize => _screenHeight * 0.015;
   
-  /// Breakpoints responsivos baseados em porcentagens
-  bool get isSmallScreen => _screenWidth < _screenHeight * 0.8; // Largura < 80% da altura
+  bool get isSmallScreen => _screenWidth < _screenHeight * 0.8;
   bool get isMediumScreen => _screenWidth >= _screenHeight * 0.8 && _screenWidth < _screenHeight * 1.2;
   bool get isLargeScreen => _screenWidth >= _screenHeight * 1.2;
   
-  /// Layout adaptativo baseado no tamanho da tela
   bool get useHorizontalLayout => _screenWidth > _screenHeight * 1.1;
   bool get useCompactLayout => _screenHeight < 600;
   
-  /// Espaçamentos dinâmicos
-  double get dynamicSpacing => _screenHeight * 0.015; // 1.5% da altura
-  double get largeSpacing => _screenHeight * 0.03; // 3% da altura
-  double get extraLargeSpacing => _screenHeight * 0.05; // 5% da altura
+  double get dynamicSpacing => _screenHeight * 0.015;
+  double get largeSpacing => _screenHeight * 0.03;
+  double get extraLargeSpacing => _screenHeight * 0.05;
 }
 
-/// Constantes de layout responsivo (mantidas para compatibilidade)
 class _SosLayoutConstants {
   static const double minButtonSize = 160.0;
   static const double maxButtonSize = 220.0;
   static const double shadowBlurRadius = 16.0;
 }
 
-/// Helper simplificado usando apenas os botões padrão do projeto
 class _MetamorfeseButtonHelper {
-  /// Botão primário roxo - padrão do projeto
   static Widget createPrimaryButton({
     required String text,
     required VoidCallback? onPressed,
@@ -112,7 +81,7 @@ class _MetamorfeseButtonHelper {
     if (isLoading) {
       return MetamorfeseButton(
         text: text,
-        onPressed: () {}, // Não faz nada quando loading
+        onPressed: () {},
         child: SizedBox(
           height: 20,
           width: 20,
@@ -133,7 +102,6 @@ class _MetamorfeseButtonHelper {
     );
   }
 
-  /// Botão secundário branco - padrão do projeto
   static Widget createSecondaryButton({
     required String text,
     required VoidCallback onPressed,
@@ -144,7 +112,6 @@ class _MetamorfeseButtonHelper {
     );
   }
 
-  /// Botão verde especial para WhatsApp
   static Widget createWhatsAppButton({
     required String text,
     required VoidCallback onPressed,
@@ -161,7 +128,6 @@ class _MetamorfeseButtonHelper {
     );
   }
 
-  /// Botão vermelho para exclusão
   static Widget createDeleteButton({
     required String text,
     required VoidCallback? onPressed,
@@ -207,8 +173,6 @@ class _MetamorfeseButtonHelper {
       ),
     );
   }
-
-
 }
 
 class SosScreen extends StatefulWidget {
@@ -1441,7 +1405,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
     final double maxWidth = widget.useCompactLayout ? 500.0 : responsive.width;
     
     if (widget.useCompactLayout) {
-      // Modal centralizado para compact
       return Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.all(32),
@@ -1466,7 +1429,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         ),
       );
     } else {
-      // Bottom sheet para normal
       return Container(
         width: double.infinity,
         constraints: BoxConstraints(
@@ -1485,7 +1447,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Handle (apenas para compact)
         if (!widget.useCompactLayout)
           Container(
             margin: EdgeInsets.only(top: 12),
@@ -1497,7 +1458,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             ),
           ),
         
-        // Header
         Padding(
           padding: EdgeInsets.all(widget.useCompactLayout ? 32 : 24),
           child: Column(
@@ -1545,7 +1505,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           ),
         ),
         
-        // Formulário
         Flexible(
           child: Form(
             key: _formKey,
@@ -1599,7 +1558,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                 
                 SizedBox(height: 16),
                 
-                // Campo Relacionamento
                 MetamorfeseInput(
                   hintText: 'Relacionamento (ex.: mãe, amigo, parceiro)',
                   controller: _relationshipController,
@@ -1616,7 +1574,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                 
                 SizedBox(height: widget.useCompactLayout ? 32 : 24),
                 
-                // Botões de ação
                 _buildActionButtons(),
                 
                 SizedBox(height: widget.useCompactLayout ? 32 : 24),
@@ -1631,7 +1588,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
   Widget _buildActionButtons() {
     return Column(
       children: [
-        // Botão principal
         _MetamorfeseButtonHelper.createPrimaryButton(
           text: widget.isEditing ? 'ATUALIZAR CONTATO' : 'SALVAR CONTATO',
           onPressed: _isLoading ? null : _saveContact,
@@ -1641,7 +1597,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         if (widget.isEditing) ...[
           SizedBox(height: 16),
           
-          // Botão de exclusão
           _MetamorfeseButtonHelper.createDeleteButton(
             text: 'EXCLUIR CONTATO',
             onPressed: _isLoading ? null : _deleteContact,
@@ -1650,7 +1605,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         
         SizedBox(height: 16),
         
-        // Botão cancelar
         _MetamorfeseButtonHelper.createSecondaryButton(
           text: 'CANCELAR',
           onPressed: _isLoading ? () {} : () => Navigator.of(context).pop(),
@@ -1672,7 +1626,6 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
     final double maxWidth = useCompactLayout ? 600.0 : responsive.width;
     
     if (useCompactLayout) {
-      // Modal centralizado para compact
       return Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.all(32),
@@ -1696,7 +1649,6 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
         ),
       );
     } else {
-      // Bottom sheet para normal
       return Container(
         width: double.infinity,
         constraints: BoxConstraints(
@@ -1791,27 +1743,27 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
                 isCompact: useCompactLayout,
               ),
               
-                             SizedBox(height: 16),
-               
-               _ResponsiveCopingTechniqueCard(
-                 title: 'Terapia de Aceitação e Compromisso (ACT)',
-                 subtitle: 'Aceitar emoções e focar no que importa',
-                 description: 'Em vez de lutar contra seus sentimentos, observe-os com curiosidade. Lembre-se dos seus valores e do que realmente importa para você. A ACT ensina a aceitar experiências difíceis enquanto se compromete com ações alinhadas aos seus valores pessoais.',
-                 color: MetamorfoseColors.blueNormal,
-                 technique: 'act',
-                 isCompact: useCompactLayout,
-               ),
-               
-               SizedBox(height: 16),
-               
-               _ResponsiveCopingTechniqueCard(
-                 title: 'Entrevista Motivacional',
-                 subtitle: 'Explorar sua motivação para mudança',
-                 description: 'Reflita sobre o que você quer mudar e por quê. Quais são os benefícios de fazer algo diferente agora? A Entrevista Motivacional ajuda a explorar ambivalências e fortalecer a motivação intrínseca para mudanças positivas em sua vida.',
-                 color: MetamorfoseColors.purpleNormal,
-                 technique: 'entrevista_motivacional',
-                 isCompact: useCompactLayout,
-               ),
+              SizedBox(height: 16),
+              
+              _ResponsiveCopingTechniqueCard(
+                title: 'Terapia de Aceitação e Compromisso (ACT)',
+                subtitle: 'Aceitar emoções e focar no que importa',
+                description: 'Em vez de lutar contra seus sentimentos, observe-os com curiosidade. Lembre-se dos seus valores e do que realmente importa para você. A ACT ensina a aceitar experiências difíceis enquanto se compromete com ações alinhadas aos seus valores pessoais.',
+                color: MetamorfoseColors.blueNormal,
+                technique: 'act',
+                isCompact: useCompactLayout,
+              ),
+              
+              SizedBox(height: 16),
+              
+              _ResponsiveCopingTechniqueCard(
+                title: 'Entrevista Motivacional',
+                subtitle: 'Explorar sua motivação para mudança',
+                description: 'Reflita sobre o que você quer mudar e por quê. Quais são os benefícios de fazer algo diferente agora? A Entrevista Motivacional ajuda a explorar ambivalências e fortalecer a motivação intrínseca para mudanças positivas em sua vida.',
+                color: MetamorfoseColors.purpleNormal,
+                technique: 'entrevista_motivacional',
+                isCompact: useCompactLayout,
+              ),
               
               SizedBox(height: useCompactLayout ? 32 : 24),
             ],
@@ -1823,7 +1775,6 @@ class _ResponsiveCopingTechniquesSheet extends StatelessWidget {
   }
 }
 
-// Card responsivo para técnica de enfrentamento
 class _ResponsiveCopingTechniqueCard extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -1946,18 +1897,11 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
   }
 
   void _redirectToVoiceChatWithTechnique(BuildContext context, String title, String technique) {
-    // Mapear técnica para personalidade correspondente
     final personalityType = _mapTechniqueToPersonality(technique);
     
-    debugPrint("🎭 SOS - Técnica: $technique -> Personalidade: ${personalityType.id}");
-    
-    // Usar push com argumentos extras em vez de go com parâmetros na URL
     try {
       context.push('/voice-chat', extra: personalityType);
-      debugPrint("🎭 SOS - Navegação GoRouter executada com personalidade: ${personalityType.id}");
     } catch (e) {
-      debugPrint("🎭 SOS - Erro na navegação GoRouter: $e");
-      // Fallback: navegar para home e depois para voice-chat
       context.go('/home');
       Future.delayed(Duration(milliseconds: 100), () {
         if (context.mounted) {
@@ -1967,7 +1911,6 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
     }
   }
 
-  /// Mapeia a técnica de enfrentamento para a personalidade correspondente
   PersonalityType _mapTechniqueToPersonality(String technique) {
     switch (technique) {
       case 'tcc':
@@ -1977,13 +1920,11 @@ class _ResponsiveCopingTechniqueCard extends StatelessWidget {
       case 'entrevista_motivacional':
         return PersonalityType.entrevistaMotivacional;
       default:
-        debugPrint("🎭 SOS - Técnica não reconhecida: $technique, usando padrão");
         return PersonalityType.padrao;
     }
   }
 }
 
-// Dialog para sessão de respiração
 class _BreathingSessionDialog extends StatefulWidget {
   final BreathingExercise exercise;
 
@@ -2006,7 +1947,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
   void initState() {
     super.initState();
     _breathingController = AnimationController(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     
@@ -2033,7 +1974,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
   }
 
   void _startTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted || !_isActive) {
         timer.cancel();
         return;
@@ -2083,7 +2024,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
     
     _breathingController.stop();
     
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -2131,7 +2072,7 @@ class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
                     width: responsive.buttonSize * 0.6,
                     height: responsive.buttonSize * 0.6,
                     decoration: BoxDecoration(
-                      color: MetamorfoseColors.greenNormal.withOpacity(0.2),
+                      color: MetamorfoseColors.greenNormal.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
