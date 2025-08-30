@@ -46,6 +46,9 @@ export 'selectionactivity/selectionactivity_questions_screen.dart';
 export 'plant/plant_care_screen.dart';
 export 'plant/plant_config_screen.dart';
 
+// SOS
+export 'sos/sos_screen.dart';
+
 // Splash
 export 'splash/brand_splash_screen.dart';
 export 'splash/mascot_splash_screen.dart';

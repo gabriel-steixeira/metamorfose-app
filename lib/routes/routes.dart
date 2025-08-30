@@ -43,4 +43,5 @@ class Routes {
   static const userProfile = '/user-profile';
   static const updateProfile = '/update-profile';
   static const changePassword = '/change-password';
+  static const sos = '/sos';
 }

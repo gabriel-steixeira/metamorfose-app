@@ -131,6 +131,10 @@ class _TextChatScreenState extends State<TextChatScreen> {
                     builder: (context, state) {
                       return PersonalitySelector(
                         currentPersonality: _currentPersonality,
+                        // Exemplo de uso: definir personalidade inicial específica
+                        // initialPersonality: PersonalityType.engracada, // Personalidade engraçada
+                        // initialPersonality: PersonalityType.sarcastica, // Personalidade sarcástica
+                        // initialPersonality: PersonalityType.tcc, // Personalidade TCC
                         onPersonalityChanged: _onPersonalityChanged,
                       );
                     },

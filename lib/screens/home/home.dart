@@ -572,86 +572,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-// Carrossel de funcionalidades organizadas por categoria
-  List<Widget> get _personalFeatures => [
-        CarouselItem(
-          title: 'Daily Check-in',
-          image: 'assets/images/features/daily_checkin.png',
-          icon: _getIconForFeature('Daily Check-in'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Modo Noturno',
-          image: 'assets/images/features/night_mode.png',
-          icon: _getIconForFeature('Modo Noturno'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Configurações',
-          image: 'assets/images/features/settings.png',
-          icon: _getIconForFeature('Configurações'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-      ];
-
-  List<Widget> get _supportFeatures => [
-        CarouselItem(
-          title: 'Psicólogos',
-          image: 'assets/images/features/psychologists.png',
-          icon: _getIconForFeature('Psicólogos'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Suporte de Emergência',
-          image: 'assets/images/features/emergency_support.png',
-          icon: _getIconForFeature('Suporte de Emergência'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Hub Educacional',
-          image: 'assets/images/features/education_hub.png',
-          icon: _getIconForFeature('Hub Educacional'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-      ];
-
-  List<Widget> get _progressFeatures => [
-        CarouselItem(
-          title: 'Relatórios',
-          image: 'assets/images/features/progress_report.png',
-          icon: _getIconForFeature('Relatórios'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Centro de Missões',
-          image: 'assets/images/features/mission_center.png',
-          icon: _getIconForFeature('Centro de Missões'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Conquistas',
-          image: 'assets/images/features/achievements.png',
-          icon: _getIconForFeature('Conquistas'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-        CarouselItem(
-          title: 'Feedback',
-          image: 'assets/images/features/feedback.png',
-          icon: _getIconForFeature('Feedback'),
-          isComingSoon: true,
-          onTap: null,
-        ),
-      ];
-
   LinearGradient _getGradientForFeature(String title) {
     switch (title.toLowerCase()) {
       case 'daily check-in':
@@ -666,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         );
       case 'psicólogos':
-      case 'suporte de emergência':
+      case 'Botão de Emergência':
       case 'hub educacional':
         return LinearGradient(
           begin: Alignment.topLeft,
@@ -704,7 +624,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Icons.flag;
       case 'hub educacional':
         return Icons.school;
-      case 'suporte de emergência':
+      case 'Botão de Emergência':
         return Icons.emergency;
       case 'conquistas':
         return Icons.emoji_events;
@@ -725,6 +645,86 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
+    // Definir os carrosséis aqui para ter acesso ao contexto
+    final personalFeatures = [
+      CarouselItem(
+        title: 'Daily Check-in',
+        image: 'assets/images/features/daily_checkin.png',
+        icon: _getIconForFeature('Daily Check-in'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Modo Noturno',
+        image: 'assets/images/features/night_mode.png',
+        icon: _getIconForFeature('Modo Noturno'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Configurações',
+        image: 'assets/images/features/settings.png',
+        icon: _getIconForFeature('Configurações'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+    ];
+
+    final supportFeatures = [
+      CarouselItem(
+        title: 'Botão de Emergência',
+        image: 'assets/images/features/emergency_support.png',
+        icon: _getIconForFeature('SOS'),
+        isComingSoon: false,
+        onTap: () => context.go('/sos'),
+      ),
+      CarouselItem(
+        title: 'Psicólogos',
+        image: 'assets/images/features/psychologists.png',
+        icon: _getIconForFeature('Psicólogos'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Hub Educacional',
+        image: 'assets/images/features/education_hub.png',
+        icon: _getIconForFeature('Hub Educacional'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+    ];
+
+    final progressFeatures = [
+      CarouselItem(
+        title: 'Relatórios',
+        image: 'assets/images/features/progress_report.png',
+        icon: _getIconForFeature('Relatórios'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Centro de Missões',
+        image: 'assets/images/features/mission_center.png',
+        icon: _getIconForFeature('Centro de Missões'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Conquistas',
+        image: 'assets/images/features/achievements.png',
+        icon: _getIconForFeature('Conquistas'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+      CarouselItem(
+        title: 'Feedback',
+        image: 'assets/images/features/feedback.png',
+        icon: _getIconForFeature('Feedback'),
+        isComingSoon: true,
+        onTap: null,
+      ),
+    ];
 
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
@@ -841,7 +841,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                                       Carousel(
                                         title: 'Pessoal',
-                                        items: _personalFeatures,
+                                        items: personalFeatures,
                                         height: 200,
                                         itemExtent: 164,
                                       ),
@@ -849,7 +849,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                                       Carousel(
                                         title: 'Suporte & Cuidado',
-                                        items: _supportFeatures,
+                                        items: supportFeatures,
                                         height: 200,
                                         itemExtent: 164,
                                       ),
@@ -857,7 +857,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                                       Carousel(
                                         title: 'Progresso & Conquistas',
-                                        items: _progressFeatures,
+                                        items: progressFeatures,
                                         height: 200,
                                         itemExtent: 164,
                                       ),

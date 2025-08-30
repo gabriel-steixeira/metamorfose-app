@@ -49,8 +49,9 @@ class MetamorfoseColors {
   static const blackLighten = Color(0xFF9B9B9B);
 
   // Red
-  static const redNormal = Color(0xFFE74C3C);
-  static const redLight = Color(0xFFFFCDD2);
+  static const redLight = Color(0xFFFF6D2D2);
+  static const redNormal = Color(0xFFF03D3D);
+  static const redDark = Color(0xFFEB0000);
 
   // Blue
   static const blueDark = Color(0xFF3B5998);
