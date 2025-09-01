@@ -30,7 +30,7 @@ class PlantCareService {
       }
 
       final firestore = FirebaseFirestore.instance;
-      
+
       // Buscar a primeira planta do usuário
       final querySnapshot = await firestore
           .collection('users')
@@ -45,13 +45,14 @@ class PlantCareService {
 
       final plantDoc = querySnapshot.docs.first;
       final plantData = plantDoc.data();
-      
+
       // Converter timestamp para string formatada
       String startDate = 'N/A';
       if (plantData['start_date'] != null) {
         final timestamp = plantData['start_date'] as Timestamp;
         final date = timestamp.toDate();
-        startDate = '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+        startDate =
+            '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
       }
 
       // Mapear cor do vaso para nome
@@ -69,6 +70,26 @@ class PlantCareService {
         }
       }
 
+      // Buscar foto atual da planta
+      String? plantImageUrl;
+      try {
+        final photoSnapshot = await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('plant_info')
+            .doc(plantDoc.id)
+            .collection('current_photo')
+            .limit(1)
+            .get();
+
+        if (photoSnapshot.docs.isNotEmpty) {
+          final photoData = photoSnapshot.docs.first.data();
+          plantImageUrl = photoData['url'] as String?;
+        }
+      } catch (e) {
+        debugPrint('Erro ao carregar foto da planta: $e');
+      }
+
       // Mapear espécie para informações de cuidado
       final species = plantData['species'] ?? 'suculenta';
       Map<String, String> careInfo = _getCareInfoForSpecies(species);
@@ -79,6 +100,7 @@ class PlantCareService {
         'startDate': startDate,
         'potColor': potColorName,
         'potColorValue': plantData['pot_color'], // Valor da cor para o SVG
+        'plantImageUrl': plantImageUrl, // URL da foto real da planta
         'icon': _getIconForSpecies(species),
         'location': careInfo['location'] ?? 'Ambiente interno',
         'sunlight': careInfo['sunlight'] ?? 'Luz indireta',

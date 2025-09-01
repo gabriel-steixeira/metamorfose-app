@@ -8,11 +8,12 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
+ * Last modified: 31-08-2025
  * 
  * Changes:
  * - Adicionado Comunidade e Cuidados em routes. (Evelin Cordeiro)
  * - Adicionado SelectionActivityWelcome em routes. (Lana)
+ * - Adicionado Calendar em routes. (Evelin Cordeiro)
  * 
  * Version: 1.0.1
  * Squad: Metamorfose
@@ -35,8 +36,7 @@ class Routes {
   static const register = '/register';
   static const plantConfig = '/plant-config';
   static const home = '/home';
-  static const voiceChat = '/voice-chat';
-  static const textChat = '/text-chat';
+  static const chat = '/chat';
   static const map = '/map';
   static const community = '/community';
   static const plantCare = '/plant-care';
@@ -44,4 +44,5 @@ class Routes {
   static const updateProfile = '/update-profile';
   static const changePassword = '/change-password';
   static const sos = '/sos';
+  static const calendar = '/calendar';
 }

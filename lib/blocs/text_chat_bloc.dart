@@ -1,18 +1,28 @@
-/// File: text_chat_bloc.dart
-/// Description: BLoC para gerenciar o chat de texto.
-///
-/// Responsabilidades:
-/// - Gerenciar estado das mensagens
-/// - Processar envio de mensagens
-/// - Integrar com serviços de IA
-///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 29-05-2025
-/// Last modified: 29-05-2025
-/// Version: 1.0.0
-/// Squad: Metamorfose
+/**
+ * File: text_chat_bloc.dart
+ * Description: Gerencia a lógica de chat de texto com controle de estado, eventos e comunicação com IA.
+ *
+ * Responsabilidades:
+ * - Controlar estados do chat de texto (carregamento, mensagens, erros)
+ * - Processar mensagens de texto com o serviço Gemini (IA)
+ * - Gerenciar mudança de personalidade da IA
+ * - Emitir estados atualizados para UI e lógica reativa via Bloc
+ * - Oferecer diagnóstico interno para debug e monitoramento
+ *
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 08-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Implementação inicial do TextChatBloc com controle de fluxo de texto e IA (Evelin Cordeiro)
+ * - Correção do isFirstMessage para preservar estado durante carregamento
+ * 
+ * Version: 1.0.0
+ * Squad: Metamorfose
+ */
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:metamorfose_flutter/models/chat_message.dart';
 import 'package:metamorfose_flutter/services/gemini_service.dart';
 
@@ -22,79 +32,113 @@ abstract class TextChatEvent {}
 class SendMessageEvent extends TextChatEvent {
   final String message;
   final PersonalityType personality;
-  
-  SendMessageEvent(this.message, this.personality);
+  final String? plantName;
+  final String? userName;
+
+  SendMessageEvent(this.message, this.personality,
+      {this.plantName, this.userName});
 }
 
 class ClearChatEvent extends TextChatEvent {}
+
+class InitializeWithWelcomeEvent extends TextChatEvent {
+  final String? plantName;
+
+  InitializeWithWelcomeEvent({this.plantName});
+}
+
+class ResetConversationEvent extends TextChatEvent {}
 
 // States
 abstract class TextChatState {
   final List<ChatMessage> messages;
   final bool isLoading;
   final String? error;
-  
+  final bool isFirstMessage;
+
   const TextChatState({
     required this.messages,
     this.isLoading = false,
     this.error,
+    this.isFirstMessage = false,
   });
 }
 
 class TextChatInitial extends TextChatState {
-  TextChatInitial() : super(messages: [
-    ChatMessage(
-      content: 'Olá! Eu sou Perona, sua planta companheira! 🌿\n\nEstou aqui para te apoiar na sua jornada de superação e crescimento. Digite sua mensagem e eu responderei com carinho e sabedoria!',
-      isUser: false,
-      sender: 'Perona',
-    ),
-  ]);
+  const TextChatInitial() : super(messages: const []);
+}
+
+class TextChatWithWelcome extends TextChatState {
+  TextChatWithWelcome({String? plantName})
+      : super(messages: [
+          ChatMessage(
+            content: 'Como posso te ajudar hoje?',
+            isUser: false,
+            sender: plantName ?? 'Plantinha',
+          ),
+        ], isFirstMessage: true);
 }
 
 class TextChatLoading extends TextChatState {
-  const TextChatLoading(List<ChatMessage> messages) : super(messages: messages, isLoading: true);
+  const TextChatLoading(List<ChatMessage> messages,
+      {bool isFirstMessage = false})
+      : super(
+            messages: messages,
+            isLoading: true,
+            isFirstMessage: isFirstMessage);
 }
 
 class TextChatLoaded extends TextChatState {
-  const TextChatLoaded(List<ChatMessage> messages) : super(messages: messages);
+  const TextChatLoaded(List<ChatMessage> messages,
+      {bool isFirstMessage = false})
+      : super(messages: messages, isFirstMessage: isFirstMessage);
 }
 
 class TextChatError extends TextChatState {
-  const TextChatError(List<ChatMessage> messages, String error) : super(messages: messages, error: error);
+  const TextChatError(List<ChatMessage> messages, String error)
+      : super(messages: messages, error: error);
 }
 
 // BLoC
 class TextChatBloc extends Bloc<TextChatEvent, TextChatState> {
   final GeminiService _geminiService;
 
-  TextChatBloc(this._geminiService) : super(TextChatInitial()) {
+  TextChatBloc(this._geminiService) : super(const TextChatInitial()) {
     on<SendMessageEvent>(_onSendMessage);
     on<ClearChatEvent>(_onClearChat);
+    on<InitializeWithWelcomeEvent>(_onInitializeWithWelcome);
+    on<ResetConversationEvent>(_onResetConversation);
   }
 
-  Future<void> _onSendMessage(SendMessageEvent event, Emitter<TextChatState> emit) async {
+  Future<void> _onSendMessage(
+      SendMessageEvent event, Emitter<TextChatState> emit) async {
     try {
-      // Adiciona mensagem do usuário
       final updatedMessages = List<ChatMessage>.from(state.messages);
       updatedMessages.add(ChatMessage.user(event.message));
-      
-      emit(TextChatLoading(updatedMessages));
 
-      // Define a personalidade no serviço e envia a mensagem usando o mesmo fluxo do VoiceChat
+      emit(TextChatLoading(updatedMessages,
+          isFirstMessage: state.isFirstMessage));
+
       _geminiService.setPersonalityByType(event.personality);
-      final geminiResponse = await _geminiService.sendMessage(event.message);
 
-      // Adiciona resposta da IA
+      final userName = state.isFirstMessage ? event.userName : null;
+
+      debugPrint(
+          '💬 Text Chat - isFirstMessage: ${state.isFirstMessage}, userName: $userName, plantName: ${event.plantName}');
+
+      final geminiResponse = await _geminiService.sendMessage(event.message,
+          plantName: event.plantName, userName: userName);
+
+      final plantName = event.plantName ?? 'Plantinha';
       if (geminiResponse.isSuccess) {
-        updatedMessages.add(ChatMessage.assistant(geminiResponse.text, 'Perona'));
+        updatedMessages
+            .add(ChatMessage.assistant(geminiResponse.text, plantName));
       } else {
         updatedMessages.add(ChatMessage.assistant(
-          'Desculpe, não consegui processar sua mensagem no momento. Pode tentar novamente?',
-          'Perona'
-        ));
+            'Desculpe, não consegui processar sua mensagem no momento. Pode tentar novamente?',
+            plantName));
       }
-      emit(TextChatLoaded(updatedMessages));
-      
+      emit(TextChatLoaded(updatedMessages, isFirstMessage: false));
     } catch (e) {
       final updatedMessages = List<ChatMessage>.from(state.messages);
       updatedMessages.add(ChatMessage.user(event.message));
@@ -103,6 +147,17 @@ class TextChatBloc extends Bloc<TextChatEvent, TextChatState> {
   }
 
   void _onClearChat(ClearChatEvent event, Emitter<TextChatState> emit) {
-    emit(TextChatInitial());
+    emit(const TextChatInitial());
+  }
+
+  void _onInitializeWithWelcome(
+      InitializeWithWelcomeEvent event, Emitter<TextChatState> emit) {
+    emit(TextChatWithWelcome(plantName: event.plantName));
+  }
+
+  void _onResetConversation(
+      ResetConversationEvent event, Emitter<TextChatState> emit) {
+    final currentMessages = state.messages;
+    emit(TextChatLoaded(currentMessages, isFirstMessage: true));
   }
 }

@@ -10,7 +10,11 @@
  *
  * Author: Evelin Cordeiro
  * Created on: 06-08-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - UI Ajustada. (Evelin Cordeiro)
+ * 
  * Version: 1.0.0 (BLoC)
  * Squad: Metamorfose
  */
@@ -21,10 +25,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
-import 'package:metamorfose_flutter/components/metamorfose_primary_button.dart';
+import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/blocs/community_bloc.dart';
 import 'package:metamorfose_flutter/state/community/community_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
+import 'package:metamorfose_flutter/services/user_progress_service.dart';
 
 /// Tela de comunidade com feed e lista de amigos usando BLoC.
 class CommunityScreen extends StatefulWidget {
@@ -80,48 +85,36 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ),
           bottomNavigationBar: BottomNavigationMenu(
-            activeIndex: 3, 
+            activeIndex: 3,
           ),
         );
       },
     );
   }
 
-/// Header
-Widget _buildHeader() {
-  return Container(
-    padding: const EdgeInsets.all(24),
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 28,
-          backgroundColor: MetamorfoseColors.purpleLight,
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/onboarding/ic_butterfly_transformation.png',
-              width: 40,
-              height: 40,
-              fit: BoxFit.cover,
+  /// Header
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Row(
+        children: [
+          _buildUserProgressAvatar(),
+
+          const SizedBox(width: 12),
+
+          // Título
+          Text(
+            'Comunidade',
+            style: AppTypography.headlineMedium.copyWith(
+              color: MetamorfoseColors.greyDark,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'DinNext',
             ),
           ),
-        ),
-
-        const SizedBox(width: 12),
-
-        // Título
-        Text(
-          'Comunidade',
-          style: AppTypography.headlineMedium.copyWith(
-            color: MetamorfoseColors.greyDark,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'DinNext',
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   /// Abas (Feed/Amigos)
   Widget _buildTabs(CommunityState state) {
@@ -283,6 +276,42 @@ Widget _buildHeader() {
           ),
         ),
       ),
+    );
+  }
+
+  /// Constrói o avatar com a foto de perfil do progresso do usuário
+  Widget _buildUserProgressAvatar() {
+    return FutureBuilder<int>(
+      future: UserProgressService.getUserProgress(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircleAvatar(
+            radius: 28,
+            backgroundColor: MetamorfoseColors.purpleLight,
+            child: const CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          );
+        }
+
+        final progress = snapshot.data ?? 10;
+        final phase = UserProgressService.getPhaseByProgress(progress);
+        final imagePath = UserProgressService.getPhaseImagePath(phase);
+
+        return CircleAvatar(
+          radius: 28,
+          backgroundColor: MetamorfoseColors.purpleLight,
+          child: ClipOval(
+            child: Image.asset(
+              imagePath,
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
     );
   }
 }

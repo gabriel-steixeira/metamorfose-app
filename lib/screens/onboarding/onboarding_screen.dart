@@ -19,8 +19,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/components/metamorfose_primary_button.dart';
-import 'package:metamorfose_flutter/components/metamorfose_secondary_button.dart';
+import 'package:metamorfose_flutter/components/primary_button.dart';
+import 'package:metamorfose_flutter/components/secondary_button.dart';
 
 /// Tela inicial do fluxo de onboarding que introduz o usuário ao aplicativo Metamorfose.
 /// Oferece opções para continuar o fluxo de onboarding ou ir diretamente para o login.

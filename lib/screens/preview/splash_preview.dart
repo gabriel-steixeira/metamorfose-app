@@ -20,7 +20,7 @@ import 'package:metamorfose_flutter/screens/onboarding/onboarding_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_welcome_screen.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
 import 'package:metamorfose_flutter/screens/auth/auth_screen.dart';
-import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
+import 'package:metamorfose_flutter/screens/chat/chat_screen.dart';
 import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/home/home.dart';
 

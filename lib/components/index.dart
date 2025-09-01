@@ -9,20 +9,21 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
+ * Last modified: 31-08-2025
  * Version: 1.0.0
  * Squad: Metamorfose
  */
 
 export 'metamorfose_button.dart';
-export 'metamorfose_secondary_button.dart';
-export 'metamorfose_social_button.dart';
-export 'metamorfose_input.dart';
+export 'secondary_button.dart';
+export 'social_button_field.dart';
+export 'input_field.dart';
+export 'chat_bubble.dart';
+export 'avatar.dart';
 
-
-export 'metamorfose_select.dart';
-export 'metamorfose_password_input.dart';
+export 'select_field.dart';
+export 'password_input_field.dart';
 export 'bottom_navigation_menu.dart';
 export 'mode_switcher.dart';
 export 'speech_bubble.dart';
-export 'plant_personality_selector.dart'; 
+export 'plant_personality_selector.dart';

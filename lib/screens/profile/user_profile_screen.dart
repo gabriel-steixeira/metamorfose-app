@@ -10,7 +10,11 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 06-08-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado MetamorphosisProgress. (Evelin Cordeiro)
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -27,6 +31,15 @@ import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
 import 'package:metamorfose_flutter/services/auth_service.dart';
 import 'package:metamorfose_flutter/models/user_model.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+/// Enum para as fases da metamorfose
+enum MetamorphosisPhase {
+  egg,
+  caterpillar,
+  chrysalis,
+  butterfly,
+}
 
 /// Tela de perfil do usuário com informações pessoais e opções de ação
 class UserProfileScreen extends StatefulWidget {
@@ -59,8 +72,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final userData = await _authService.getUserData(user.uid);
+        // Se não tem foto no Firestore, usar a do Firebase Auth
+        final finalUserData = userData?.photoUrl != null
+            ? userData
+            : UserModel(
+                id: userData?.id ?? user.uid,
+                email: userData?.email ?? user.email ?? '',
+                name: userData?.name ?? user.displayName,
+                completeName: userData?.completeName ?? user.displayName,
+                photoUrl: userData?.photoUrl ?? user.photoURL,
+                phoneNumber: userData?.phoneNumber ?? user.phoneNumber,
+                birthDate: userData?.birthDate,
+                createdAt: userData?.createdAt ?? DateTime.now(),
+                updatedAt: userData?.updatedAt ?? DateTime.now(),
+              );
         setState(() {
-          _userModel = userData;
+          _userModel = finalUserData;
           _isLoading = false;
         });
       } else {
@@ -80,15 +107,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Calcula a idade baseada na data de nascimento
   int? _calculateAge(DateTime? birthDate) {
     if (birthDate == null) return null;
-    
+
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    
-    if (now.month < birthDate.month || 
+
+    if (now.month < birthDate.month ||
         (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -140,23 +167,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 width: 2,
               ),
             ),
-            child: _userModel?.photoUrl != null
-                ? ClipOval(
-                    child: Image.network(
-                      _userModel!.photoUrl!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildDefaultAvatar();
-                      },
-                    ),
-                  )
-                : _buildDefaultAvatar(),
+            child: _buildUserAvatar(),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Nome completo do usuário
           Text(
             _userModel?.completeName ?? 'Nome não informado',
@@ -168,9 +183,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Username do usuário
           Text(
             _userModel?.name ?? 'Username não informado',
@@ -182,9 +197,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Email do usuário
           Text(
             _userModel?.email ?? 'Email não informado',
@@ -199,6 +214,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ],
       ),
     );
+  }
+
+  /// Constrói o avatar do usuário
+  Widget _buildUserAvatar() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    // Prioriza a foto do Firebase Auth primeiro, depois Firestore
+    final photoUrl = currentUser?.photoURL ?? _userModel?.photoUrl;
+
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          photoUrl,
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildDefaultAvatar();
+          },
+        ),
+      );
+    }
+
+    return _buildDefaultAvatar();
   }
 
   /// Constrói o avatar padrão
@@ -237,32 +276,32 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Data de nascimento e idade na mesma linha
           _buildInfoRow(
             icon: Icons.cake,
             label: 'Data de Nascimento',
-            value: _userModel?.birthDate != null 
+            value: _userModel?.birthDate != null
                 ? '${_formatDate(_userModel?.birthDate)} (${_calculateAge(_userModel?.birthDate)?.toString() ?? 'Idade não calculada'} anos)'
                 : 'Não informado',
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Telefone
           _buildInfoRow(
             icon: Icons.phone,
             label: 'Telefone',
             value: _userModel?.phoneNumber ?? 'Não informado',
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Email
           _buildInfoRow(
-            icon: Icons.email,
+            icon: Icons.email_outlined,
             label: 'E-mail',
             value: _userModel?.email ?? 'Não informado',
           ),
@@ -280,10 +319,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: MetamorfoseColors.purpleLight,
-          size: 20,
+        Container(
+          width: 40,
+          height: 43,
+          padding: const EdgeInsets.all(10),
+          child: Center(
+            child: Icon(
+              icon,
+              color: MetamorfoseColors.purpleLight,
+              size: 20,
+            ),
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -316,6 +362,233 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
+  /// Constrói o card de progresso da metamorfose
+  Widget _buildMetamorphosisProgress() {
+    // TODO: Implementar lógica para determinar a fase atual do usuário
+    // Por enquanto, vamos usar uma porcentagem fixa para demonstração
+    // Aqui você pode implementar a lógica baseada em dados reais do usuário
+    const userProgress = 10; // Exemplo: 75% de progresso
+    final currentPhase = _getPhaseByProgress(userProgress);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: MetamorfoseColors.purpleLight,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Minha Metamorfose',
+                style: const TextStyle(
+                  fontFamily: 'DinNext',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: MetamorfoseColors.greyMedium,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Imagem da fase atual
+          Center(
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: MetamorfoseColors.purpleLight.withOpacity(0.1),
+                border: Border.all(
+                  color: MetamorfoseColors.purpleLight,
+                  width: 2,
+                ),
+              ),
+              child: ClipOval(
+                child: _getPhaseImage(currentPhase),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Título da fase
+          Center(
+            child: Text(
+              _getPhaseTitle(currentPhase),
+              style: const TextStyle(
+                fontFamily: 'DinNext',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: MetamorfoseColors.purpleNormal,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Descrição da fase
+          Center(
+            child: Text(
+              _getPhaseDescription(currentPhase),
+              style: const TextStyle(
+                fontFamily: 'DinNext',
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                color: MetamorfoseColors.greyMedium,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Barra de progresso
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Progresso',
+                    style: const TextStyle(
+                      fontFamily: 'DinNext',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: MetamorfoseColors.greyMedium,
+                    ),
+                  ),
+                  Text(
+                    '$userProgress%',
+                    style: const TextStyle(
+                      fontFamily: 'DinNext',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: MetamorfoseColors.purpleNormal,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: MetamorfoseColors.greyLightest,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: userProgress / 100,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          MetamorfoseColors.purpleLight,
+                          MetamorfoseColors.greenLight,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Retorna a imagem da fase atual
+  Widget _getPhaseImage(MetamorphosisPhase phase) {
+    switch (phase) {
+      case MetamorphosisPhase.egg:
+        return Image.asset(
+          'assets/images/onboarding/ic_egg.png',
+          fit: BoxFit.contain,
+        );
+      case MetamorphosisPhase.caterpillar:
+        return Image.asset(
+          'assets/images/onboarding/ic_caterpillar.png',
+          fit: BoxFit.contain,
+        );
+      case MetamorphosisPhase.chrysalis:
+        return Image.asset(
+          'assets/images/onboarding/ic_chrysalis.png',
+          fit: BoxFit.contain,
+        );
+      case MetamorphosisPhase.butterfly:
+        return SvgPicture.asset(
+          'assets/images/onboarding/ic_butterfly.svg',
+          fit: BoxFit.contain,
+        );
+    }
+  }
+
+  /// Retorna o título da fase
+  String _getPhaseTitle(MetamorphosisPhase phase) {
+    switch (phase) {
+      case MetamorphosisPhase.egg:
+        return 'Ovo';
+      case MetamorphosisPhase.caterpillar:
+        return 'Lagarta';
+      case MetamorphosisPhase.chrysalis:
+        return 'Crisálida';
+      case MetamorphosisPhase.butterfly:
+        return 'Borboleta';
+    }
+  }
+
+  /// Retorna a descrição da fase
+  String _getPhaseDescription(MetamorphosisPhase phase) {
+    switch (phase) {
+      case MetamorphosisPhase.egg:
+        return 'Iniciando sua jornada de superação';
+      case MetamorphosisPhase.caterpillar:
+        return 'Sua transformação está acontecendo';
+      case MetamorphosisPhase.chrysalis:
+        return 'Crescendo e aprendendo a cuidar de si mesmo';
+      case MetamorphosisPhase.butterfly:
+        return 'Você se tornou livre e transformado!';
+    }
+  }
+
+  /// Retorna o progresso da fase (0-100)
+  int _getPhaseProgress(MetamorphosisPhase phase) {
+    switch (phase) {
+      case MetamorphosisPhase.egg:
+        return 15;
+      case MetamorphosisPhase.caterpillar:
+        return 45;
+      case MetamorphosisPhase.chrysalis:
+        return 75;
+      case MetamorphosisPhase.butterfly:
+        return 100;
+    }
+  }
+
+  /// Determina a fase baseada na porcentagem de progresso
+  MetamorphosisPhase _getPhaseByProgress(int progress) {
+    if (progress < 30) {
+      return MetamorphosisPhase.egg;
+    } else if (progress < 60) {
+      return MetamorphosisPhase.caterpillar;
+    } else if (progress < 90) {
+      return MetamorphosisPhase.chrysalis;
+    } else {
+      return MetamorphosisPhase.butterfly;
+    }
+  }
+
   /// Constrói os botões de ação
   Widget _buildActionButtons() {
     return Column(
@@ -332,9 +605,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           shadowColor: MetamorfoseColors.purpleDark,
           strokeColor: MetamorfoseColors.purpleNormal,
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Botão Trocar Senha
         CustomButton(
           text: 'TROCAR SENHA',
@@ -347,51 +620,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           shadowColor: MetamorfoseColors.blueDark,
           strokeColor: MetamorfoseColors.blueNormal,
         ),
-        
-        const SizedBox(height: 16),
-        
-        // Botão Sair
-        CustomButton(
-          text: 'SAIR',
-          onPressed: _showLogoutConfirmation,
-          backgroundColor: MetamorfoseColors.redNormal,
-          textColor: MetamorfoseColors.whiteLight,
-          shadowColor: MetamorfoseColors.redNormal,
-          strokeColor: MetamorfoseColors.redNormal,
-        ),
       ],
     );
-  }
-
-  /// Exibe diálogo de confirmação para logout
-  void _showLogoutConfirmation() {
-    ConfirmationDialog.show(
-      context,
-      title: 'Sair da Conta',
-      content: 'Deseja realmente sair da sua conta?',
-      confirmText: 'Sair',
-      cancelText: 'Cancelar',
-      onConfirm: _performLogout,
-    );
-  }
-
-  /// Realiza o logout do usuário
-  Future<void> _performLogout() async {
-    try {
-      await _authService.signOut();
-      if (mounted) {
-        context.go(Routes.auth);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao sair: $e'),
-            backgroundColor: MetamorfoseColors.redNormal,
-          ),
-        );
-      }
-    }
   }
 
   /// Constrói o estado de loading
@@ -455,13 +685,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: MetamorfoseColors.greyMedium,
-          ),
-          onPressed: () => context.pop(),
-        ),
       ),
       body: _isLoading
           ? _buildLoadingState()
@@ -475,17 +698,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       children: [
                         // Header com informações básicas
                         _buildUserHeader(),
-                        
+
                         const SizedBox(height: 20),
-                        
+
                         // Informações detalhadas
                         _buildUserInfo(),
-                        
+
+                        const SizedBox(height: 20),
+
+                        // Card de progresso da metamorfose
+                        _buildMetamorphosisProgress(),
+
                         const SizedBox(height: 24),
-                        
+
                         // Botões de ação
                         _buildActionButtons(),
-                        
+
                         const SizedBox(height: 24),
                       ],
                     ),

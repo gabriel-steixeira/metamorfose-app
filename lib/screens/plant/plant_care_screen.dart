@@ -11,7 +11,12 @@
  *
  * Author: Evelin Cordeiro
  * Created on: 06-08-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - UI Ajustada. (Evelin Cordeiro)
+ * 
+ * 
  * Version: 1.0.0 (BLoC)
  * Squad: Metamorfose
  */
@@ -19,10 +24,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
-import 'package:metamorfose_flutter/components/metamorfose_primary_button.dart';
+import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/components/custom_button.dart';
 import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
 import 'package:metamorfose_flutter/state/plant_care/plant_care_state.dart';
@@ -277,6 +283,22 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
                   color: MetamorfoseColors.greyMedium,
                 ),
               ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => context.go('/calendar'),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MetamorfoseColors.purpleLight,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: MetamorfoseColors.whiteLight,
+                    size: 16,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -445,8 +467,6 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
     );
   }
 
-
-
   /// Constrói lista de tarefas
   Widget _buildTasksList(List<dynamic> tasks) {
     return Row(
@@ -597,7 +617,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
             ),
           ),
           bottomNavigationBar: BottomNavigationMenu(
-            activeIndex: 2, 
+            activeIndex: 2,
           ),
         );
       },

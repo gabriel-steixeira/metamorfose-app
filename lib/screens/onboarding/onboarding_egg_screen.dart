@@ -20,7 +20,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/components/metamorfose_primary_button.dart';
+import 'package:metamorfose_flutter/components/primary_button.dart';
 
 /// Constantes de layout para facilitar manutenção e clareza
 class _LayoutConstants {
@@ -108,7 +108,7 @@ class OnboardingEggScreen extends StatelessWidget {
                       SizedBox(height: 8),
                       // Ovo imagem central
                       Image.asset(
-                        'assets/images/onboarding/ic_egg_transformation.png',
+                        'assets/images/onboarding/ic_egg.png',
                         width: screenSize.width * _LayoutConstants.ivyWidthFactor,
                         height: screenSize.height * _LayoutConstants.ivyHeightFactor,
                         fit: BoxFit.contain,

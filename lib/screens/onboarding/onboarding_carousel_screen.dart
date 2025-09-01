@@ -20,7 +20,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/components/metamorfose_primary_button.dart';
+import 'package:metamorfose_flutter/components/primary_button.dart';
 
 class _LayoutConstants {
   static const double backgroundTopPadding = 24;

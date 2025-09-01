@@ -9,7 +9,11 @@
  * - Gerenciar localização do usuário via BLoC
  *
  * Author: Gabriel Teixeira
- * Created on: 29-05-2025
+ * Created on: 31-08-2025
+ * 
+ * Changes:
+ * - UI Ajustada. (Evelin Cordeiro)
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -19,11 +23,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/map_bloc.dart';
 import 'package:metamorfose_flutter/state/map/map_state.dart';
 import 'package:metamorfose_flutter/services/map_service.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
+import 'package:metamorfose_flutter/components/input_field.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/services/map_service.dart'; // Import MapService para usar Floricultura
+import 'package:metamorfose_flutter/utils/responsive_utils.dart';
 
 class MapScreenBloc extends StatelessWidget {
   const MapScreenBloc({super.key});
@@ -54,10 +58,10 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _searchFocusNode = FocusNode();
-    
+
     // Opcional: listener para limpar o ícone de 'clear' quando o texto for apagado
     _searchController.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
@@ -73,7 +77,8 @@ class _MapViewState extends State<MapView> {
     return BlocConsumer<MapBloc, MapState>(
       listener: (context, state) {
         // Mostra erro de localização se houver
-        if (state.locationState.hasError && state.locationState.shouldShowError) {
+        if (state.locationState.hasError &&
+            state.locationState.shouldShowError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.locationState.errorMessage!),
@@ -130,42 +135,39 @@ class _MapViewState extends State<MapView> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text('Floriculturas Próximas', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: MetamorfoseColors.blackNormal, fontFamily: 'DIN Next for Duolingo')),
+          const Text('Floriculturas Próximas',
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: MetamorfoseColors.blackNormal,
+                  fontFamily: 'DIN Next for Duolingo')),
           const SizedBox(height: 16),
-          Container(
-            height: 56,
-            decoration: ShapeDecoration(
-              color: MetamorfoseColors.whiteLight,
-              shape: RoundedRectangleBorder(side: const BorderSide(width: 1, color: MetamorfoseColors.whiteDark), borderRadius: BorderRadius.circular(16)),
-              shadows: const [BoxShadow(color: MetamorfoseColors.shadowLight, blurRadius: 8, offset: Offset(0, 2), spreadRadius: 0)],
+          InputField(
+            hintText: 'Buscar floricultura...',
+            controller: _searchController,
+            prefixIcon: const Padding(
+              padding: EdgeInsets.all(12),
+              child: Icon(Icons.search,
+                  color: MetamorfoseColors.purpleNormal, size: 22),
             ),
-            child: TextField(
-              controller: _searchController,
-              focusNode: _searchFocusNode,
-              textInputAction: TextInputAction.search,
-              onSubmitted: (value) {
-                if (value.trim().isNotEmpty) {
-                  context.read<MapBloc>().add(MapSearchWithQueryEvent(value.trim()));
-                }
-              },
-              decoration: InputDecoration(
-                hintText: 'Buscar floricultura...',
-                hintStyle: const TextStyle(color: MetamorfoseColors.greyLight, fontSize: 16, fontFamily: 'DIN Next for Duolingo', fontWeight: FontWeight.w400),
-                prefixIcon: const Padding(padding: EdgeInsets.all(12), child: Icon(Icons.search, color: MetamorfoseColors.purpleNormal, size: 22)),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: MetamorfoseColors.greyMedium, size: 22),
-                        onPressed: () {
-                          _searchController.clear();
-                          _searchFocusNode.unfocus();
-                          context.read<MapBloc>().add(MapClearSearchEvent());
-                        },
-                      )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              ),
-            ),
+            suffixIcon: _searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear,
+                        color: MetamorfoseColors.greyMedium, size: 22),
+                    onPressed: () {
+                      _searchController.clear();
+                      _searchFocusNode.unfocus();
+                      context.read<MapBloc>().add(MapClearSearchEvent());
+                    },
+                  )
+                : null,
+            onSubmitted: (value) {
+              if (value.trim().isNotEmpty) {
+                context
+                    .read<MapBloc>()
+                    .add(MapSearchWithQueryEvent(value.trim()));
+              }
+            },
           ),
         ],
       ),
@@ -178,7 +180,10 @@ class _MapViewState extends State<MapView> {
       height: 43,
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
-      decoration: ShapeDecoration(color: MetamorfoseColors.greyLightest2, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+      decoration: ShapeDecoration(
+          color: MetamorfoseColors.greyLightest2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
       child: Row(
         children: [
           _buildTabItem(context, 'Mapa', MapTabIndex.map, state.selectedTab),
@@ -189,7 +194,8 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  Widget _buildTabItem(BuildContext context, String title, MapTabIndex tabIndex, MapTabIndex selectedTab) {
+  Widget _buildTabItem(BuildContext context, String title, MapTabIndex tabIndex,
+      MapTabIndex selectedTab) {
     final isSelected = tabIndex == selectedTab;
     return Expanded(
       child: GestureDetector(
@@ -200,8 +206,15 @@ class _MapViewState extends State<MapView> {
           decoration: isSelected
               ? ShapeDecoration(
                   color: MetamorfoseColors.whiteLight,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  shadows: const [BoxShadow(color: MetamorfoseColors.shadowLight, blurRadius: 2, offset: Offset(0, 1), spreadRadius: 0)],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  shadows: const [
+                    BoxShadow(
+                        color: MetamorfoseColors.shadowLight,
+                        blurRadius: 2,
+                        offset: Offset(0, 1),
+                        spreadRadius: 0)
+                  ],
                 )
               : null,
           child: Center(
@@ -209,7 +222,9 @@ class _MapViewState extends State<MapView> {
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isSelected ? MetamorfoseColors.greyMedium : MetamorfoseColors.greyLight,
+                color: isSelected
+                    ? MetamorfoseColors.greyMedium
+                    : MetamorfoseColors.greyLight,
                 fontSize: 16,
                 fontFamily: 'DIN Next for Duolingo',
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
@@ -223,29 +238,58 @@ class _MapViewState extends State<MapView> {
 
   Widget _buildMapView(BuildContext context, MapState state) {
     if (state.locationState.isLoading) {
-      return const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [CircularProgressIndicator(color: MetamorfoseColors.purpleNormal), SizedBox(height: 16), Text('Obtendo sua localização...', style: TextStyle(color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo'))]));
+      return const Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
+        SizedBox(height: 16),
+        Text('Obtendo sua localização...',
+            style: TextStyle(
+                color: MetamorfoseColors.greyMedium,
+                fontFamily: 'DIN Next for Duolingo'))
+      ]));
     }
     if (state.locationState.hasError) {
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.location_off, size: 64, color: MetamorfoseColors.greyLight),
+        const Icon(Icons.location_off,
+            size: 64, color: MetamorfoseColors.greyLight),
         const SizedBox(height: 16),
-        Text(state.locationState.errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo')),
+        Text(state.locationState.errorMessage!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                color: MetamorfoseColors.greyMedium,
+                fontFamily: 'DIN Next for Duolingo')),
         const SizedBox(height: 16),
-        ElevatedButton(onPressed: () => context.read<MapBloc>().add(MapReloadLocationEvent()), child: const Text('Tentar Novamente')),
+        ElevatedButton(
+            onPressed: () =>
+                context.read<MapBloc>().add(MapReloadLocationEvent()),
+            child: const Text('Tentar Novamente')),
       ]));
     }
     if (state.locationState.position != null) {
       return Container(
         margin: const EdgeInsets.all(24),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), boxShadow: const [BoxShadow(color: MetamorfoseColors.shadowLight, blurRadius: 8, offset: Offset(0, 2), spreadRadius: 0)]),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                  color: MetamorfoseColors.shadowLight,
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                  spreadRadius: 0)
+            ]),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
               GoogleMap(
-                onMapCreated: (controller) => context.read<MapBloc>().add(MapGoogleMapReadyEvent(controller)),
-                initialCameraPosition: CameraPosition(target: LatLng(state.locationState.position!.latitude, state.locationState.position!.longitude), zoom: 14.0),
+                onMapCreated: (controller) => context
+                    .read<MapBloc>()
+                    .add(MapGoogleMapReadyEvent(controller)),
+                initialCameraPosition: CameraPosition(
+                    target: LatLng(state.locationState.position!.latitude,
+                        state.locationState.position!.longitude),
+                    zoom: 14.0),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 markers: state.mapState.markers,
@@ -254,7 +298,10 @@ class _MapViewState extends State<MapView> {
               if (state.searchState.isSearching)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+                  child: const Center(
+                      child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white))),
                 ),
             ],
           ),
@@ -266,7 +313,15 @@ class _MapViewState extends State<MapView> {
 
   Widget _buildListView(BuildContext context, MapState state) {
     if (state.locationState.isLoading || state.searchState.isSearching) {
-      return const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [CircularProgressIndicator(color: MetamorfoseColors.purpleNormal), SizedBox(height: 16), Text('Buscando floriculturas...', style: TextStyle(color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo'))]));
+      return const Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
+        SizedBox(height: 16),
+        Text('Buscando floriculturas...',
+            style: TextStyle(
+                color: MetamorfoseColors.greyMedium,
+                fontFamily: 'DIN Next for Duolingo'))
+      ]));
     }
     final floriculturas = state.searchState.displayResults;
     if (floriculturas.isEmpty) {
@@ -276,9 +331,14 @@ class _MapViewState extends State<MapView> {
       }
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.local_florist, size: 64, color: MetamorfoseColors.greyLight),
+        const Icon(Icons.local_florist,
+            size: 64, color: MetamorfoseColors.greyLight),
         const SizedBox(height: 16),
-        Text(message, textAlign: TextAlign.center, style: const TextStyle(color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo')),
+        Text(message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                color: MetamorfoseColors.greyMedium,
+                fontFamily: 'DIN Next for Duolingo')),
       ]));
     }
     return ListView.builder(
@@ -291,44 +351,83 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  Widget _buildFloriculturaCard(BuildContext context, Floricultura floricultura) {
+  Widget _buildFloriculturaCard(
+      BuildContext context, Floricultura floricultura) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: ShapeDecoration(
         color: MetamorfoseColors.whiteLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        shadows: const [BoxShadow(color: MetamorfoseColors.shadowLight, blurRadius: 8, offset: Offset(0, 2), spreadRadius: 0)],
+        shadows: const [
+          BoxShadow(
+              color: MetamorfoseColors.shadowLight,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+              spreadRadius: 0)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(child: Text(floricultura.nome, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: MetamorfoseColors.blackNormal, fontFamily: 'DIN Next for Duolingo'))),
+              Expanded(
+                  child: Text(floricultura.nome,
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: MetamorfoseColors.blackNormal,
+                          fontFamily: 'DIN Next for Duolingo'))),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: floricultura.isOpen ? MetamorfoseColors.greenLight : MetamorfoseColors.redLight, borderRadius: BorderRadius.circular(12)),
-                child: Text(floricultura.isOpen ? 'Aberto' : 'Fechado', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: floricultura.isOpen ? MetamorfoseColors.greenDarken : MetamorfoseColors.redNormal, fontFamily: 'DIN Next for Duolingo')),
+                decoration: BoxDecoration(
+                    color: floricultura.isOpen
+                        ? MetamorfoseColors.greenLight
+                        : MetamorfoseColors.redLight,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Text(floricultura.isOpen ? 'Aberto' : 'Fechado',
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: floricultura.isOpen
+                            ? MetamorfoseColors.greenDarken
+                            : MetamorfoseColors.redNormal,
+                        fontFamily: 'DIN Next for Duolingo')),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(floricultura.endereco, style: const TextStyle(fontSize: 14, color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo')),
+          Text(floricultura.endereco,
+              style: const TextStyle(
+                  fontSize: 14,
+                  color: MetamorfoseColors.greyMedium,
+                  fontFamily: 'DIN Next for Duolingo')),
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on, size: 16, color: MetamorfoseColors.purpleNormal),
+              const Icon(Icons.location_on,
+                  size: 16, color: MetamorfoseColors.purpleNormal),
               const SizedBox(width: 4),
-              Text('${floricultura.distancia.toStringAsFixed(1)} km de distância', style: const TextStyle(fontSize: 14, color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo')),
+              Text(
+                  '${floricultura.distancia.toStringAsFixed(1)} km de distância',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      color: MetamorfoseColors.greyMedium,
+                      fontFamily: 'DIN Next for Duolingo')),
               const Spacer(),
-              const Icon(Icons.local_florist, size: 16, color: MetamorfoseColors.greenNormal),
+              const Icon(Icons.local_florist,
+                  size: 16, color: MetamorfoseColors.greenNormal),
               const SizedBox(width: 4),
-              Text(floricultura.tiposAceitos, style: const TextStyle(fontSize: 12, color: MetamorfoseColors.greyMedium, fontFamily: 'DIN Next for Duolingo')),
+              Text(floricultura.tiposAceitos,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      color: MetamorfoseColors.greyMedium,
+                      fontFamily: 'DIN Next for Duolingo')),
             ],
           ),
         ],
       ),
     );
   }
-} 
+}

@@ -11,7 +11,7 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 30-05-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
  * 
  * Changes:
  * - UI Refatorado e Adicionado Community Icon (Evelin Cordeiro)
@@ -55,7 +55,7 @@ class BottomNavigationMenu extends StatelessWidget {
         context.go(Routes.userProfile);
         break;
       case 2: // Voice
-        context.go(Routes.voiceChat);
+        context.go(Routes.chat);
         break;
       case 3: // Comunidade
         context.go(Routes.community);

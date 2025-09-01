@@ -12,14 +12,16 @@
  *
  * Author: Evelin Cordeiro
  * Created on: 08-08-2025
- * Last modified: 08-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado PlantPersonalitySelector (Evelin Cordeiro)
  * 
  * Version: 1.1.0
  * Squad: Metamorfose
  */
 
 import 'package:flutter/material.dart';
-import 'package:metamorfose_flutter/theme/colors.dart';
 import '../services/gemini_service.dart';
 
 /// Widget que exibe uma linha de botões para o usuário escolher a personalidade do assistente.
@@ -55,12 +57,6 @@ class PersonalitySelector extends StatelessWidget {
         return Icons.sentiment_very_satisfied;
       case PersonalityType.persistente:
         return Icons.local_fire_department;
-      case PersonalityType.tcc:
-        return Icons.psychology;
-      case PersonalityType.act:
-        return Icons.spa;
-      case PersonalityType.entrevistaMotivacional:
-        return Icons.trending_up;
     }
   }
 
@@ -75,29 +71,26 @@ class PersonalitySelector extends StatelessWidget {
         return const Color(0xFFFF9800);
       case PersonalityType.persistente:
         return const Color(0xFFF44336);
-      case PersonalityType.tcc:
-        return const Color(0xFF2196F3);
-      case PersonalityType.act:
-        return const Color(0xFF4CAF50);
-      case PersonalityType.entrevistaMotivacional:
-        return const Color(0xFF9C27B0);
     }
   }
 
   /// Extrai o texto da label da personalidade removendo emoji inicial
   String _getPersonalityLabel(PersonalityType personality) {
-    return personality.label.substring(2); 
+    return personality.label.substring(2);
   }
 
   @override
   Widget build(BuildContext context) {
     final personalities = PersonalityType.values;
-    
+
     debugPrint("🎭 PersonalitySelector - Build iniciado");
-    debugPrint("🎭 PersonalitySelector - currentPersonality: ${currentPersonality.id}");
-    debugPrint("🎭 PersonalitySelector - initialPersonality: ${initialPersonality?.id}");
-    debugPrint("🎭 PersonalitySelector - activePersonality: ${activePersonality.id}");
-    
+    debugPrint(
+        "🎭 PersonalitySelector - currentPersonality: ${currentPersonality.id}");
+    debugPrint(
+        "🎭 PersonalitySelector - initialPersonality: ${initialPersonality?.id}");
+    debugPrint(
+        "🎭 PersonalitySelector - activePersonality: ${activePersonality.id}");
+
     return Container(
       height: 40,
       child: Row(
@@ -108,11 +101,12 @@ class PersonalitySelector extends StatelessWidget {
           final color = _getPersonalityColor(personality);
           final icon = _getPersonalityIcon(personality);
           final label = _getPersonalityLabel(personality);
-          
+
           if (isSelected) {
-            debugPrint("🎭 PersonalitySelector - Personalidade selecionada: ${personality.id}");
+            debugPrint(
+                "🎭 PersonalitySelector - Personalidade selecionada: ${personality.id}");
           }
-          
+
           return Expanded(
             child: Padding(
               padding: EdgeInsets.only(
@@ -127,27 +121,26 @@ class PersonalitySelector extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     curve: Curves.easeOutCubic,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected 
-                        ? color
-                        : Colors.grey.shade100,
+                      color: isSelected ? color : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(20),
-                      border: isSelected 
-                        ? null
-                        : Border.all(
-                            color: Colors.grey.shade300,
-                            width: 0.5,
-                          ),
-                      boxShadow: isSelected 
-                        ? [
-                            BoxShadow(
-                              color: color.withOpacity(0.25),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
+                      border: isSelected
+                          ? null
+                          : Border.all(
+                              color: Colors.grey.shade300,
+                              width: 0.5,
                             ),
-                          ]
-                        : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: color.withOpacity(0.25),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -163,9 +156,9 @@ class PersonalitySelector extends StatelessWidget {
                           child: Text(
                             label,
                             style: TextStyle(
-                              color: isSelected 
-                                ? Colors.white 
-                                : Colors.grey.shade700,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.grey.shade700,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),

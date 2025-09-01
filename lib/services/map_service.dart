@@ -22,7 +22,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:metamorfose_flutter/config/environment.dart';
 import 'package:metamorfose_flutter/state/map/map_state.dart';
-import 'package:metamorfose_flutter/services/map_service_web.dart' if (dart.library.io) 'package:metamorfose_flutter/services/map_service_stub.dart';
+import 'package:metamorfose_flutter/services/map_service_stub.dart'
+    if (dart.library.html) 'package:metamorfose_flutter/services/map_service_web.dart';
 
 /// Resultado de uma operação de busca
 class SearchResult {
@@ -66,7 +67,8 @@ class LocationResult {
     this.errorMessage,
   });
 
-  factory LocationResult.success(Position position, LocationPermission permission) {
+  factory LocationResult.success(
+      Position position, LocationPermission permission) {
     return LocationResult(
       success: true,
       position: position,
@@ -74,7 +76,8 @@ class LocationResult {
     );
   }
 
-  factory LocationResult.error(String message, [LocationPermission? permission]) {
+  factory LocationResult.error(String message,
+      [LocationPermission? permission]) {
     return LocationResult(
       success: false,
       permission: permission,
@@ -88,7 +91,9 @@ class MapService {
   final Dio _dio;
   final MapServiceWeb? _webService;
 
-  MapService() : _dio = Dio(), _webService = kIsWeb ? MapServiceWeb() : null;
+  MapService()
+      : _dio = Dio(),
+        _webService = kIsWeb ? MapServiceWeb() : null;
 
   /// Obtém a localização atual do usuário
   Future<LocationResult> getCurrentLocation() async {
@@ -135,7 +140,7 @@ class MapService {
     if (kIsWeb && _webService != null) {
       return _webService!.searchNearbyFloriculturas(position);
     }
-    
+
     try {
       final String apiKey = Environment.googlePlacesApiKey;
       if (apiKey.isEmpty) {
@@ -145,7 +150,8 @@ class MapService {
       final String location = '${position.latitude},${position.longitude}';
       const int radius = 15000; // 15km de raio
 
-      final String url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
+      final String url =
+          'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
           'location=$location&'
           'radius=$radius&'
           'type=florist&'
@@ -157,7 +163,8 @@ class MapService {
         final data = response.data;
 
         if (data['status'] == 'REQUEST_DENIED') {
-          return SearchResult.error('API Key não autorizada. Verifique as configurações no Google Console.');
+          return SearchResult.error(
+              'API Key não autorizada. Verifique as configurações no Google Console.');
         }
 
         if (data['status'] == 'OK') {
@@ -178,7 +185,9 @@ class MapService {
                 nome: place['name'],
                 endereco: place['vicinity'] ?? 'Endereço não disponível',
                 distancia: distancia,
-                status: (place['opening_hours']?['open_now'] == true) ? 'Open' : 'Closed',
+                status: (place['opening_hours']?['open_now'] == true)
+                    ? 'Open'
+                    : 'Closed',
                 tiposAceitos: 'Flores,Plantas,Decoração',
                 latitude: placeLocation['lat'],
                 longitude: placeLocation['lng'],
@@ -204,12 +213,13 @@ class MapService {
   }
 
   /// Busca floriculturas com termo específico
-  Future<SearchResult> searchFloriculturas(Position position, String query) async {
+  Future<SearchResult> searchFloriculturas(
+      Position position, String query) async {
     // Se estiver na web, usa o serviço web para evitar CORS
     if (kIsWeb && _webService != null) {
       return _webService!.searchFloriculturas(position, query);
     }
-    
+
     try {
       if (query.isEmpty) {
         return SearchResult.success([]);
@@ -223,7 +233,8 @@ class MapService {
       final String location = '${position.latitude},${position.longitude}';
       const int radius = 10000; // 10km de raio
 
-      final String url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
+      final String url =
+          'https://maps.googleapis.com/maps/api/place/textsearch/json?'
           'query=floricultura $query&'
           'location=$location&'
           'radius=$radius&'
@@ -251,9 +262,12 @@ class MapService {
               Floricultura(
                 id: place['place_id'],
                 nome: place['name'],
-                endereco: place['formatted_address'] ?? 'Endereço não disponível',
+                endereco:
+                    place['formatted_address'] ?? 'Endereço não disponível',
                 distancia: distancia,
-                status: (place['opening_hours']?['open_now'] == true) ? 'Open' : 'Closed',
+                status: (place['opening_hours']?['open_now'] == true)
+                    ? 'Open'
+                    : 'Closed',
                 tiposAceitos: 'Flores,Plantas,Decoração',
                 latitude: placeLocation['lat'],
                 longitude: placeLocation['lng'],
@@ -266,7 +280,8 @@ class MapService {
 
           return SearchResult.success(results);
         } else {
-          return SearchResult.error('Nenhum resultado encontrado para "$query"');
+          return SearchResult.error(
+              'Nenhum resultado encontrado para "$query"');
         }
       } else {
         return SearchResult.error('Erro na API: ${response.statusCode}');
@@ -284,9 +299,10 @@ class MapService {
         position: LatLng(floricultura.latitude, floricultura.longitude),
         infoWindow: InfoWindow(
           title: floricultura.nome,
-          snippet: '${floricultura.endereco}\n${floricultura.distancia.toStringAsFixed(1)}km',
+          snippet:
+              '${floricultura.endereco}\n${floricultura.distancia.toStringAsFixed(1)}km',
         ),
-        icon: floricultura.isOpen 
+        icon: floricultura.isOpen
             ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
             : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
       );
@@ -307,9 +323,9 @@ class MapService {
 
     double a = sin(dLat / 2) * sin(dLat / 2) +
         cos(_degreesToRadians(startLatitude)) *
-        cos(_degreesToRadians(endLatitude)) *
-        sin(dLon / 2) *
-        sin(dLon / 2);
+            cos(_degreesToRadians(endLatitude)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
 
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return earthRadius * c;

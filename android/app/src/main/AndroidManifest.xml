@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     
+    <!-- Permissões para câmera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    
     <!-- Permissões para url_launcher e WhatsApp -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     

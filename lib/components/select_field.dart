@@ -31,7 +31,7 @@ class SelectOption<T> {
 }
 
 /// Input de seleção do aplicativo Metamorfose.
-/// 
+///
 /// Este componente implementa o campo de seleção usado em todo o aplicativo,
 /// mantendo as características visuais consistentes:
 /// - Cor de fundo branca
@@ -39,30 +39,30 @@ class SelectOption<T> {
 /// - Sombra suave
 /// - Bottom sheet para seleção de opções
 /// - Fonte DinNext padronizada
-class MetamorfeseSelect<T> extends StatelessWidget {
+class SelectField<T> extends StatelessWidget {
   /// Texto de placeholder do select
   final String hintText;
-  
+
   /// Valor atualmente selecionado
   final T? selectedValue;
-  
+
   /// Lista de opções disponíveis
   final List<SelectOption<T>> options;
-  
+
   /// Callback executado quando uma opção é selecionada
   final ValueChanged<T>? onChanged;
-  
+
   /// Ícone a ser exibido no início do select
   final Widget? prefixIcon;
-  
+
   /// Título do bottom sheet de seleção
   final String? modalTitle;
-  
+
   /// Se o select está desabilitado
   final bool enabled;
 
   /// Construtor do select Metamorfose
-  const MetamorfeseSelect({
+  const SelectField({
     super.key,
     required this.hintText,
     required this.options,
@@ -102,13 +102,13 @@ class MetamorfeseSelect<T> extends StatelessWidget {
             ...options.map((option) {
               final isSelected = selectedValue == option.value;
               return ListTile(
-                leading: option.icon ?? 
-                  Icon(
-                    Icons.radio_button_unchecked,
-                    color: isSelected 
-                        ? MetamorfoseColors.purpleNormal 
-                        : MetamorfoseColors.greyLight,
-                  ),
+                leading: option.icon ??
+                    Icon(
+                      Icons.radio_button_unchecked,
+                      color: isSelected
+                          ? MetamorfoseColors.purpleNormal
+                          : MetamorfoseColors.greyLight,
+                    ),
                 title: Text(
                   option.label,
                   style: const TextStyle(
@@ -116,9 +116,9 @@ class MetamorfeseSelect<T> extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                trailing: isSelected 
+                trailing: isSelected
                     ? const Icon(
-                        Icons.check, 
+                        Icons.check,
                         color: MetamorfoseColors.purpleNormal,
                       )
                     : null,
@@ -136,23 +136,23 @@ class MetamorfeseSelect<T> extends StatelessWidget {
 
   String get _displayText {
     if (selectedValue == null) return hintText;
-    
+
     final selectedOption = options.firstWhere(
       (option) => option.value == selectedValue,
       orElse: () => SelectOption(value: selectedValue as T, label: hintText),
     );
-    
+
     return selectedOption.label;
   }
 
   Widget? get _currentIcon {
     if (selectedValue == null) return prefixIcon;
-    
+
     final selectedOption = options.firstWhere(
       (option) => option.value == selectedValue,
       orElse: () => SelectOption(value: selectedValue as T, label: hintText),
     );
-    
+
     return selectedOption.icon ?? prefixIcon;
   }
 
@@ -160,67 +160,66 @@ class MetamorfeseSelect<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 56,
+      height: 43,
       decoration: ShapeDecoration(
-        color: enabled 
-            ? MetamorfoseColors.whiteLight 
-            : MetamorfoseColors.greyExtraLight,
+        color: MetamorfoseColors.greyExtraLight,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             width: 1,
-            color: enabled 
-                ? MetamorfoseColors.whiteDark 
-                : MetamorfoseColors.greyLightest,
+            color: MetamorfoseColors.whiteDark,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
         ),
-        shadows: enabled ? const [
-          BoxShadow(
-            color: MetamorfoseColors.shadowLight,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-            spreadRadius: 0,
-          ),
-        ] : null,
+        shadows: [],
       ),
       child: Material(
         color: MetamorfoseColors.transparent,
         child: InkWell(
           onTap: enabled ? () => _showSelectionModal(context) : null,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              children: [
-                if (_currentIcon != null) ...[
-                  _currentIcon!,
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
+          borderRadius: BorderRadius.circular(12),
+          child: Row(
+            children: [
+              if (_currentIcon != null) ...[
+                Container(
+                  width: 40,
+                  height: 43,
+                  padding: const EdgeInsets.only(left: 16, right: 8),
+                  child: Center(child: _currentIcon!),
+                ),
+              ],
+              Expanded(
+                child: Container(
+                  height: 43,
+                  alignment: Alignment.centerLeft,
                   child: Text(
                     _displayText,
-                    style: TextStyle(
-                      color: selectedValue == null 
-                          ? MetamorfoseColors.greyLight 
-                          : MetamorfoseColors.blackNormal,
+                    style: const TextStyle(
+                      color: MetamorfoseColors.greyMedium,
                       fontSize: 16,
                       fontFamily: 'DIN Next for Duolingo',
                       fontWeight: FontWeight.w400,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  color: enabled 
-                      ? MetamorfoseColors.purpleNormal 
-                      : MetamorfoseColors.greyLight,
-                  size: 24,
+              ),
+              Container(
+                width: 40,
+                height: 43,
+                padding: const EdgeInsets.only(right: 16, left: 8),
+                child: const Center(
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: MetamorfoseColors.purpleLight,
+                    size: 20,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-} 
+}

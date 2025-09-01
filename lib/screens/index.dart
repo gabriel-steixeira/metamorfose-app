@@ -9,7 +9,11 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado Calendar. (Evelin Cordeiro)
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -18,7 +22,7 @@
 export 'auth/auth_screen.dart';
 
 // Chat
-export 'chat/voice_chat_screen.dart';
+export 'chat/chat_screen.dart';
 export 'chat/text_chat_screen.dart';
 
 // Community
@@ -45,6 +49,9 @@ export 'selectionactivity/selectionactivity_questions_screen.dart';
 // Plant
 export 'plant/plant_care_screen.dart';
 export 'plant/plant_config_screen.dart';
+
+// Calendar
+export 'calendar/calendar_screen.dart';
 
 // SOS
 export 'sos/sos_screen.dart';

@@ -9,7 +9,11 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado CalendarPhotoModel (Evelin Cordeiro)
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -21,3 +25,4 @@ export 'weather.dart';
 export 'chat_message.dart';
 export 'sos_contact.dart';
 export 'breathing_exercise.dart';
+export 'calendar_photo.dart';

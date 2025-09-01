@@ -73,7 +73,7 @@ O projeto passou por uma refatoração completa para a arquitetura BLoC, resulta
 - **AuthScreen**: Sistema de login e cadastro com gerenciamento de estado via BLoC.
 - **HomeScreen**: Carregamento de dados (clima, quotes) e notificações gerenciados pelo BLoC.
 - **PlantConfigScreen**: Configuração da planta virtual com validações e lógica no BLoC.
-- **VoiceChatScreen**: Interface de chat por voz reativa, controlada pelo BLoC.
+- **ChatScreen**: Interface de chat híbrido (voz e texto) reativa, controlada pelo BLoC.
 - **MapScreen**: Localização de floriculturas com Google Maps, Places API e gerenciamento de estado BLoC.
 
 ### Melhorias Técnicas Realizadas

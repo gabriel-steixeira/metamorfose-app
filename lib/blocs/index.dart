@@ -9,12 +9,17 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 29-05-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado CalendarBloc (Evelin Cordeiro)
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
 
 export 'auth_bloc.dart';
+export 'calendar_bloc.dart' hide ClearErrorEvent;
 export 'community_bloc.dart' hide ClearErrorEvent;
 export 'home_bloc.dart' hide ClearErrorEvent;
 export 'map_bloc.dart';

@@ -10,7 +10,12 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 06-08-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - UI Ajustada. (Evelin Cordeiro)
+ * 
+ * 
  * Version: 1.0.0
  * Squad: Metamorfose
  */
@@ -21,8 +26,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/custom_button.dart';
-import 'package:metamorfose_flutter/components/metamorfose_input.dart';
-import 'package:metamorfose_flutter/components/metamorfose_secondary_button.dart';
+import 'package:metamorfose_flutter/components/input_field.dart';
+import 'package:metamorfose_flutter/components/secondary_button.dart';
 import 'package:metamorfose_flutter/services/auth_service.dart';
 import 'package:metamorfose_flutter/models/user_model.dart';
 import 'package:metamorfose_flutter/utils/auth_validators.dart';
@@ -39,13 +44,13 @@ class UpdateProfileForm extends StatefulWidget {
 class _UpdateProfileFormState extends State<UpdateProfileForm> {
   final _formKey = GlobalKey<FormState>();
   final AuthService _authService = AuthService();
-  
+
   // Controladores dos campos
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _completeNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
-  
+
   UserModel? _userModel;
   bool _isLoading = true;
   bool _isSaving = false;
@@ -73,35 +78,35 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
   Future<void> _loadUserData() async {
     try {
       setState(() => _isLoading = true);
-      
+
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final userData = await _authService.getUserData(user.uid);
-        
+
         // Buscar dados adicionais do Firestore
         final userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .get();
-        
+
         final userDocData = userDoc.data();
-        
+
         setState(() {
           _userModel = userData;
           _usernameController.text = userData.name ?? '';
           _completeNameController.text = userDocData?['completeName'] ?? '';
-          
+
           // Aplicar máscara no telefone
           final phone = userData.phoneNumber ?? '';
           _phoneController.text = phone.isNotEmpty ? _formatPhone(phone) : '';
-          
+
           // Carregar data de nascimento do Firestore
           if (userDocData?['birthDate'] != null) {
             final birthDateTimestamp = userDocData!['birthDate'] as Timestamp;
             _selectedBirthDate = birthDateTimestamp.toDate();
             _birthDateController.text = _formatDate(_selectedBirthDate!);
           }
-          
+
           _isLoading = false;
         });
       }
@@ -154,7 +159,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
   /// Formata o telefone durante a digitação
   String _formatPhone(String value) {
     final cleanPhone = value.replaceAll(RegExp(r'[^0-9]'), '');
-    
+
     if (cleanPhone.length <= 2) {
       return cleanPhone;
     } else if (cleanPhone.length <= 7) {
@@ -188,7 +193,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
         );
       },
     );
-    
+
     if (picked != null && picked != _selectedBirthDate) {
       setState(() {
         _selectedBirthDate = picked;
@@ -208,9 +213,11 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
     _validateUsername();
     _validateCompleteName();
     _validatePhone();
-    
+
     // Verificar se há erros
-    if (_usernameError != null || _completeNameError != null || _phoneError != null) {
+    if (_usernameError != null ||
+        _completeNameError != null ||
+        _phoneError != null) {
       return;
     }
 
@@ -232,11 +239,12 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           .update({
         'name': _usernameController.text.trim(), // Nome de usuário
         'completeName': _completeNameController.text.trim(), // Nome completo
-        'phoneNumber': _phoneController.text.trim().isEmpty 
-            ? null 
+        'phoneNumber': _phoneController.text.trim().isEmpty
+            ? null
             : _phoneController.text.trim(),
         'updatedAt': Timestamp.now(),
-        if (_selectedBirthDate != null) 'birthDate': Timestamp.fromDate(_selectedBirthDate!),
+        if (_selectedBirthDate != null)
+          'birthDate': Timestamp.fromDate(_selectedBirthDate!),
       });
 
       if (mounted) {
@@ -320,7 +328,8 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           color: MetamorfoseColors.purpleLight.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: MetamorfoseColors.purpleLight.withOpacity(0.3),
+                            color:
+                                MetamorfoseColors.purpleLight.withOpacity(0.3),
                           ),
                         ),
                         child: Row(
@@ -344,9 +353,9 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Campo Nome de Usuário
                       const Text(
                         'Nome de Usuário *',
@@ -358,22 +367,19 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      MetamorfeseInput(
+                      InputField(
                         hintText: 'Digite seu nome de usuário',
                         controller: _usernameController,
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(
-                            Icons.alternate_email,
-                            color: MetamorfoseColors.purpleNormal,
-                            size: 22,
-                          ),
+                        prefixIcon: const Icon(
+                          Icons.alternate_email,
+                          color: MetamorfoseColors.purpleLight,
+                          size: 20,
                         ),
                         errorText: _usernameError,
                       ),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Campo Nome Completo
                       const Text(
                         'Nome Completo *',
@@ -385,22 +391,19 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      MetamorfeseInput(
+                      InputField(
                         hintText: 'Digite seu nome completo',
                         controller: _completeNameController,
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(
-                            Icons.person_outline,
-                            color: MetamorfoseColors.purpleNormal,
-                            size: 22,
-                          ),
+                        prefixIcon: const Icon(
+                          Icons.person_outline,
+                          color: MetamorfoseColors.purpleLight,
+                          size: 20,
                         ),
                         errorText: _completeNameError,
                       ),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Campo Telefone
                       const Text(
                         'Telefone',
@@ -412,7 +415,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      MetamorfeseInput(
+                      InputField(
                         hintText: '(11) 99999-9999',
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
@@ -427,19 +430,16 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                             );
                           }
                         },
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(
-                            Icons.phone_outlined,
-                            color: MetamorfoseColors.purpleNormal,
-                            size: 22,
-                          ),
+                        prefixIcon: const Icon(
+                          Icons.phone_outlined,
+                          color: MetamorfoseColors.purpleLight,
+                          size: 20,
                         ),
                         errorText: _phoneError,
                       ),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Campo Data de Nascimento
                       const Text(
                         'Data de Nascimento',
@@ -451,31 +451,25 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      MetamorfeseInput(
+                      InputField(
                         hintText: 'DD/MM/AAAA',
                         controller: _birthDateController,
                         readOnly: true,
                         onTap: _selectBirthDate,
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(
-                            Icons.cake_outlined,
-                            color: MetamorfoseColors.purpleNormal,
-                            size: 22,
-                          ),
+                        prefixIcon: const Icon(
+                          Icons.cake_outlined,
+                          color: MetamorfoseColors.purpleLight,
+                          size: 20,
                         ),
-                        suffixIcon: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(
-                            Icons.calendar_today,
-                            color: MetamorfoseColors.purpleNormal,
-                            size: 20,
-                          ),
+                        suffixIcon: const Icon(
+                          Icons.calendar_today,
+                          color: MetamorfoseColors.purpleLight,
+                          size: 20,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // Botões
                       Row(
                         children: [
@@ -483,14 +477,16 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           Expanded(
                             child: MetamorfeseSecondaryButton(
                               text: 'CANCELAR',
-                              onPressed: _isSaving ? () {} : () {
-                                context.go(Routes.userProfile);
-                              },
+                              onPressed: _isSaving
+                                  ? () {}
+                                  : () {
+                                      context.go(Routes.userProfile);
+                                    },
                             ),
                           ),
-                          
+
                           const SizedBox(width: 16),
-                          
+
                           // Botão Salvar
                           Expanded(
                             child: CustomButton(
@@ -504,7 +500,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 24),
                     ],
                   ),

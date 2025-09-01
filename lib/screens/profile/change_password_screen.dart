@@ -21,8 +21,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/custom_button.dart';
-import 'package:metamorfose_flutter/components/metamorfose_password_input.dart';
-import 'package:metamorfose_flutter/components/metamorfose_secondary_button.dart';
+import 'package:metamorfose_flutter/components/password_input_field.dart';
+import 'package:metamorfose_flutter/components/secondary_button.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 
 /// Tela para alteração de senha do usuário
@@ -35,17 +35,19 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controladores dos campos
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   // Estados de visibilidade das senhas
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  
+
   bool _isChanging = false;
   String? _currentPasswordError;
   String? _newPasswordError;
@@ -129,9 +131,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     _validateCurrentPassword();
     _validateNewPassword();
     _validateConfirmPassword();
-    
+
     // Verificar se há erros
-    if (_currentPasswordError != null || _newPasswordError != null || _confirmPasswordError != null) {
+    if (_currentPasswordError != null ||
+        _newPasswordError != null ||
+        _confirmPasswordError != null) {
       return;
     }
 
@@ -152,13 +156,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.updatePassword(_newPasswordController.text);
-        
+
         if (mounted) {
           _showSuccessSnackBar('Senha alterada com sucesso!');
-          
+
           // Aguarda um pouco para mostrar a mensagem e depois volta
           await Future.delayed(const Duration(seconds: 2));
-          
+
           if (mounted) {
             context.go(Routes.userProfile);
           }
@@ -166,7 +170,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage;
-      
+
       switch (e.code) {
         case 'weak-password':
           errorMessage = 'A senha é muito fraca';
@@ -183,7 +187,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         default:
           errorMessage = 'Erro ao alterar senha: ${e.message}';
       }
-      
+
       _showErrorSnackBar(errorMessage);
     } catch (e) {
       _showErrorSnackBar('Erro inesperado: $e');
@@ -238,18 +242,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        MetamorfesePasswordInput(
+        PasswordInputField(
           hintText: hint,
           controller: controller,
           initiallyVisible: isVisible,
           onVisibilityChanged: (visible) => onToggleVisibility(),
-          prefixIcon: const Padding(
-            padding: EdgeInsets.all(12),
-            child: Icon(
-              Icons.lock_outline,
-              color: MetamorfoseColors.purpleNormal,
-              size: 22,
-            ),
+          prefixIcon: const Icon(
+            Icons.lock_outline,
+            color: MetamorfoseColors.purpleLight,
+            size: 20,
           ),
           errorText: errorText,
         ),
@@ -335,9 +336,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Campo Senha Atual
                 _buildPasswordField(
                   label: 'Senha Atual *',
@@ -351,9 +352,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   },
                   errorText: _currentPasswordError,
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Campo Nova Senha
                 _buildPasswordField(
                   label: 'Nova Senha *',
@@ -367,9 +368,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   },
                   errorText: _newPasswordError,
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Campo Confirmar Nova Senha
                 _buildPasswordField(
                   label: 'Confirmar Nova Senha *',
@@ -383,9 +384,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   },
                   errorText: _confirmPasswordError,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Dicas de senha
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -430,9 +431,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Botões
                 Row(
                   children: [
@@ -443,9 +444,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         onPressed: () => context.go(Routes.userProfile),
                       ),
                     ),
-                    
+
                     const SizedBox(width: 16),
-                    
+
                     // Botão Alterar Senha
                     Expanded(
                       child: CustomButton(
@@ -459,7 +460,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
               ],
             ),

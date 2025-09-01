@@ -12,7 +12,7 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 08-08-2025
- * Last modified: 08-08-2025
+ * Last modified: 31-08-2025
  * 
  * Changes:
  * - Implementação inicial do VoiceChatBloc com controle de fluxo de voz e IA (Evelin Cordeiro)
@@ -37,6 +37,9 @@ class VoiceChatState {
   final PersonalityType currentPersonality;
   final SpeechState speechState;
   final double confidence;
+  final String? plantName;
+  final String? userName;
+  final bool isFirstMessage;
 
   /// Construtor com valores padrão.
   const VoiceChatState({
@@ -49,6 +52,9 @@ class VoiceChatState {
     this.currentPersonality = PersonalityType.padrao,
     this.speechState = SpeechState.idle,
     this.confidence = 0.0,
+    this.plantName,
+    this.userName,
+    this.isFirstMessage = false,
   });
 
   /// Retorna uma cópia do estado atual com campos opcionais atualizados.
@@ -62,6 +68,9 @@ class VoiceChatState {
     PersonalityType? currentPersonality,
     SpeechState? speechState,
     double? confidence,
+    String? plantName,
+    String? userName,
+    bool? isFirstMessage,
   }) {
     return VoiceChatState(
       currentMessage: currentMessage ?? this.currentMessage,
@@ -73,6 +82,9 @@ class VoiceChatState {
       currentPersonality: currentPersonality ?? this.currentPersonality,
       speechState: speechState ?? this.speechState,
       confidence: confidence ?? this.confidence,
+      plantName: plantName ?? this.plantName,
+      userName: userName ?? this.userName,
+      isFirstMessage: isFirstMessage ?? this.isFirstMessage,
     );
   }
 
@@ -98,11 +110,25 @@ class VoiceChatClearErrorEvent extends VoiceChatEvent {}
 /// Evento para parar todos os processos (gravação, fala, etc).
 class VoiceChatStopAllEvent extends VoiceChatEvent {}
 
+/// Evento para definir o nome da planta.
+class VoiceChatSetPlantNameEvent extends VoiceChatEvent {
+  final String plantName;
+
+  VoiceChatSetPlantNameEvent(this.plantName);
+}
+
+/// Evento para definir o nome do usuário.
+class VoiceChatSetUserNameEvent extends VoiceChatEvent {
+  final String userName;
+
+  VoiceChatSetUserNameEvent(this.userName);
+}
+
 /// Evento para trocar a personalidade da IA.
 class VoiceChatChangePersonalityEvent extends VoiceChatEvent {
   final PersonalityType personality;
-  final bool silent; // Se true, não emite mensagem de confirmação
-  
+  final bool silent; 
+
   VoiceChatChangePersonalityEvent(this.personality, {this.silent = false});
 }
 
@@ -112,6 +138,9 @@ class VoiceChatUpdateStateEvent extends VoiceChatEvent {
   VoiceChatUpdateStateEvent(this.speechState);
 }
 
+/// Evento para resetar a conversa (primeira mensagem).
+class VoiceChatResetConversationEvent extends VoiceChatEvent {}
+
 /// Bloc responsável pelo gerenciamento do chat de voz, integração com serviços de voz e IA.
 class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   final SpeechServices _speechServices = SpeechServices();
@@ -119,30 +148,36 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   bool _isInitialized = false;
 
   /// Construtor que configura os handlers para os eventos e callbacks dos serviços.
-  VoiceChatBloc({PersonalityType? initialPersonality}) : super(VoiceChatState(
-    currentPersonality: initialPersonality ?? PersonalityType.padrao,
-  )) {
+  VoiceChatBloc({PersonalityType? initialPersonality})
+      : super(VoiceChatState(
+          currentPersonality: initialPersonality ?? PersonalityType.padrao,
+        )) {
     on<VoiceChatInitializeEvent>(_onInitialize);
     on<VoiceChatToggleListeningEvent>(_onToggleListening);
     on<VoiceChatClearErrorEvent>(_onClearError);
+    on<VoiceChatSetPlantNameEvent>(_onSetPlantName);
+    on<VoiceChatSetUserNameEvent>(_onSetUserName);
     on<VoiceChatChangePersonalityEvent>(_onChangePersonality);
     on<VoiceChatStopAllEvent>(_onStopAll);
     on<VoiceChatUpdateStateEvent>(_onUpdateState);
-    
+    on<VoiceChatResetConversationEvent>(_onResetConversation);
+
     _setupSpeechCallbacks();
   }
 
   /// Configura callbacks do serviço de fala para enviar eventos ao Bloc.
   void _setupSpeechCallbacks() {
     _speechServices.onStateChanged = (speechState) {
+      debugPrint('🎤 SpeechServices - Estado mudou para: $speechState');
       add(VoiceChatUpdateStateEvent(speechState));
     };
-    
+
     _speechServices.onTextRecognized = (text) {
       debugPrint('📝 Texto reconhecido em tempo real: "$text"');
     };
-    
+
     _speechServices.onError = (error) {
+      debugPrint('❌ SpeechServices - Erro: $error');
       add(VoiceChatClearErrorEvent());
     };
   }
@@ -153,14 +188,12 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     Emitter<VoiceChatState> emit,
   ) async {
     if (_isInitialized) return;
-    
+
     try {
       debugPrint('🚀 Inicializando serviços...');
-      
+
       emit(state.copyWith(
-        isProcessing: true,
-        currentMessage: 'Inicializando...'
-      ));
+          isProcessing: true, currentMessage: 'Inicializando...'));
 
       final hasPermission = await _speechServices.checkMicrophonePermission();
       if (!hasPermission) {
@@ -169,24 +202,22 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
 
       await _speechServices.init();
       _isInitialized = true;
-      
+
       emit(state.copyWith(
-        isProcessing: false,
-        // Não sobrescrever a personalidade atual se já foi definida
-        currentMessage: 'Oi, eu sou Perona! Como está hoje?',
-        speechState: SpeechState.idle
-      ));
-      
+          isProcessing: false,
+          currentMessage: 'Oi, eu sou Perona! Como está hoje?',
+          speechState: SpeechState.idle,
+          isFirstMessage:
+              true)); 
+
       debugPrint('✅ Inicialização completa');
-      
     } catch (e) {
       debugPrint('❌ Falha na inicialização: $e');
       emit(state.copyWith(
-        hasError: true,
-        errorMessage: 'Erro ao inicializar: ${e.toString()}',
-        isProcessing: false,
-        speechState: SpeechState.error
-      ));
+          hasError: true,
+          errorMessage: 'Erro ao inicializar: ${e.toString()}',
+          isProcessing: false,
+          speechState: SpeechState.error));
     }
   }
 
@@ -203,81 +234,84 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     try {
       if (state.isRecording) {
         debugPrint('🛑 Parando gravação...');
-        
+
         emit(state.copyWith(
-          isRecording: false,
-          isProcessing: true,
-          currentMessage: "Processando seu áudio..."
-        ));
+            isRecording: false,
+            isProcessing: true,
+            currentMessage: "Processando seu áudio..."));
 
         final result = await _speechServices.stopRecording();
-        
+
         if (!result.isSuccess || result.text.trim().isEmpty) {
           emit(state.copyWith(
-            currentMessage: result.error ?? "Não consegui ouvir. Tente novamente!",
-            isProcessing: false
-          ));
+              currentMessage:
+                  result.error ?? "Não consegui ouvir. Tente novamente!",
+              isProcessing: false));
           return;
         }
 
-        debugPrint('📝 Texto final: "${result.text}" (confiança: ${result.confidence})');
-        
+        debugPrint(
+            '📝 Texto final: "${result.text}" (confiança: ${result.confidence})');
+
         emit(state.copyWith(
-          currentMessage: "Pensando na resposta...",
-          confidence: result.confidence
-        ));
-        
-        final geminiResponse = await _geminiService.sendMessage(result.text);
-        
+            currentMessage: "Pensando na resposta...",
+            confidence: result.confidence));
+
+        final userName = state.isFirstMessage ? state.userName : null;
+
+        debugPrint(
+            '🎤 Voice Chat - isFirstMessage: ${state.isFirstMessage}, userName: $userName, plantName: ${state.plantName}');
+
+        final geminiResponse = await _geminiService.sendMessage(result.text,
+            plantName: state.plantName, userName: userName);
+
         if (!geminiResponse.isSuccess) {
           throw Exception(geminiResponse.error ?? 'Erro no processamento');
         }
-        
+
         emit(state.copyWith(
-          currentMessage: geminiResponse.text,
-          isProcessing: false
-        ));
-        
+            currentMessage: geminiResponse.text,
+            isProcessing: false,
+            isFirstMessage: false));
+
         debugPrint('🔊 Reproduzindo resposta...');
         final speakSuccess = await _speechServices.speak(geminiResponse.text);
-        
+
         if (!speakSuccess) {
           debugPrint('⚠️ Falha na síntese, mas continuando...');
+        } else {
+          debugPrint('✅ Síntese iniciada com sucesso');
         }
-        
       } else {
         if (!state.canStartRecording) {
           debugPrint('⚠️ Não pode iniciar gravação no estado atual');
           return;
         }
-        
+
         debugPrint('🎤 Iniciando gravação...');
-        
+
         await _speechServices.startRecording();
-        
+
         emit(state.copyWith(
-          isRecording: true,
-          currentMessage: "Estou te ouvindo...",
-          isProcessing: false,
-          hasError: false,
-          errorMessage: null
-        ));
+            isRecording: true,
+            currentMessage: "Estou te ouvindo...",
+            isProcessing: false,
+            hasError: false,
+            errorMessage: null));
       }
-      
     } catch (e) {
       debugPrint('❌ Erro no toggle: $e');
-      
+
       await _speechServices.stop();
-      
+
       emit(state.copyWith(
-        hasError: true,
-        errorMessage: 'Erro: ${e.toString()}',
-        isRecording: false,
-        isProcessing: false,
-        isSpeaking: false,
-        currentMessage: 'Ops! Algo deu errado. Tente novamente.',
-        speechState: SpeechState.error
-      ));
+          hasError: true,
+          errorMessage: 'Erro: ${e.toString()}',
+          isRecording: false,
+          isProcessing: false,
+          isSpeaking: false,
+          currentMessage: 'Ops! Algo deu errado. Tente novamente.',
+          speechState: SpeechState.error));
     }
   }
 
@@ -286,11 +320,12 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     VoiceChatUpdateStateEvent event,
     Emitter<VoiceChatState> emit,
   ) {
+    debugPrint(
+        '🔄 VoiceChatBloc - Estado atualizado: ${event.speechState}, isSpeaking: ${event.speechState == SpeechState.speaking}');
     emit(state.copyWith(
-      speechState: event.speechState,
-      isSpeaking: event.speechState == SpeechState.speaking,
-      isProcessing: event.speechState == SpeechState.processing
-    ));
+        speechState: event.speechState,
+        isSpeaking: event.speechState == SpeechState.speaking,
+        isProcessing: event.speechState == SpeechState.processing));
   }
 
   /// Para todos os serviços de fala e reseta o estado.
@@ -300,15 +335,13 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   ) async {
     try {
       await _speechServices.stop();
-      
+
       emit(state.copyWith(
-        isRecording: false,
-        isProcessing: false,
-        isSpeaking: false,
-        speechState: SpeechState.idle,
-        currentMessage: 'Pronto! Como posso ajudar?'
-      ));
-      
+          isRecording: false,
+          isProcessing: false,
+          isSpeaking: false,
+          speechState: SpeechState.idle,
+          currentMessage: 'Pronto! Como posso ajudar?'));
     } catch (e) {
       debugPrint('❌ Erro ao parar serviços: $e');
     }
@@ -320,10 +353,34 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     Emitter<VoiceChatState> emit,
   ) {
     emit(state.copyWith(
-      hasError: false, 
-      errorMessage: null,
-      speechState: SpeechState.idle
-    ));
+        hasError: false, errorMessage: null, speechState: SpeechState.idle));
+  }
+
+  /// Define o nome da planta no estado.
+  void _onSetPlantName(
+    VoiceChatSetPlantNameEvent event,
+    Emitter<VoiceChatState> emit,
+  ) {
+    emit(state.copyWith(plantName: event.plantName));
+    debugPrint('🌱 Nome da planta definido: ${event.plantName}');
+  }
+
+  /// Define o nome do usuário no estado.
+  void _onSetUserName(
+    VoiceChatSetUserNameEvent event,
+    Emitter<VoiceChatState> emit,
+  ) {
+    emit(state.copyWith(userName: event.userName));
+    debugPrint('👤 Nome do usuário definido: ${event.userName}');
+  }
+
+  /// Reseta a conversa para primeira mensagem.
+  void _onResetConversation(
+    VoiceChatResetConversationEvent event,
+    Emitter<VoiceChatState> emit,
+  ) {
+    emit(state.copyWith(isFirstMessage: true));
+    debugPrint('🔄 Conversa resetada - próxima mensagem será a primeira');
   }
 
   /// Altera a personalidade do assistente e confirma por voz.
@@ -333,20 +390,21 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
   ) async {
     try {
       final newPersonality = event.personality;
-      
+
       if (newPersonality == state.currentPersonality) {
         debugPrint('🎭 Personalidade já é ${newPersonality.id}');
         return;
       }
 
-      debugPrint('🎭 Mudando personalidade: ${state.currentPersonality.id} → ${newPersonality.id}');
-      
+      debugPrint(
+          '🎭 Mudando personalidade: ${state.currentPersonality.id} → ${newPersonality.id}');
+
       if (state.isSpeaking) {
         await _speechServices.stop();
       }
-      
+
       _geminiService.setPersonalityByType(newPersonality);
-      
+
       // Se for uma mudança silenciosa (personalidade inicial), não emitir mensagem
       if (event.silent) {
         emit(state.copyWith(
@@ -355,26 +413,23 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
         debugPrint('✅ Personalidade inicial aplicada silenciosamente');
         return;
       }
-      
+
       // Mensagem para mudança manual de personalidade
-      final displayMessage = 'Personalidade alterada para ${newPersonality.label}!';
+      final displayMessage =
+          'Personalidade alterada para ${newPersonality.label}!';
       final speakMessage = 'Mudei para ${newPersonality.label.substring(2)}!';
-      
+
       emit(state.copyWith(
-        currentPersonality: newPersonality,
-        currentMessage: displayMessage
-      ));
-      
+          currentPersonality: newPersonality, currentMessage: displayMessage));
+
       await _speechServices.speak(speakMessage);
-      
+
       debugPrint('✅ Personalidade alterada com sucesso');
-      
     } catch (e) {
       debugPrint('❌ Erro ao alterar personalidade: $e');
       emit(state.copyWith(
-        hasError: true,
-        errorMessage: 'Erro ao mudar personalidade: ${e.toString()}'
-      ));
+          hasError: true,
+          errorMessage: 'Erro ao mudar personalidade: ${e.toString()}'));
     }
   }
 

@@ -9,7 +9,7 @@
  *
  * Author: Gabriel Teixeira e Vitoria Lana
  * Created on: 29-05-2025
- * Last modified: 06-08-2025
+ * Last modified: 31-08-2025
  * 
  * Changes:
  * - Adicionado Site24x7NavigatorObserver para o GoRouter. (Evelin Cordeiro)
@@ -26,8 +26,8 @@ import 'package:metamorfose_flutter/routes/routes.dart';
 // Telas principais (padrão BLoC)
 import 'package:metamorfose_flutter/screens/auth/auth_screen.dart';
 import 'package:metamorfose_flutter/screens/home/home.dart';
-import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
-import 'package:metamorfose_flutter/screens/chat/text_chat_screen.dart';
+import 'package:metamorfose_flutter/screens/chat/chat_screen.dart';
+
 import 'package:metamorfose_flutter/screens/map/map_screen_bloc.dart';
 import 'package:metamorfose_flutter/screens/plant/plant_config_screen.dart';
 import 'package:metamorfose_flutter/screens/community/community_screen.dart';
@@ -36,6 +36,7 @@ import 'package:metamorfose_flutter/screens/profile/user_profile_screen.dart';
 import 'package:metamorfose_flutter/screens/profile/update_profile_form.dart';
 import 'package:metamorfose_flutter/screens/profile/change_password_screen.dart';
 import 'package:metamorfose_flutter/screens/sos/sos_screen.dart';
+import 'package:metamorfose_flutter/screens/calendar/calendar_screen.dart';
 // Adicionar imports necessários para BlocProvider e BLoCs
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
@@ -45,7 +46,9 @@ import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
 import 'package:metamorfose_flutter/blocs/text_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
-import 'package:metamorfose_flutter/services/gemini_service.dart';
+import 'package:metamorfose_flutter/blocs/calendar_bloc.dart';
+import 'package:metamorfose_flutter/services/gemini_service.dart'
+    show PersonalityType;
 
 // Telas de Onboarding
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
@@ -147,26 +150,29 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: Routes.voiceChat,
+        path: Routes.chat,
         builder: (context, state) {
           // Extrair personalidade dos argumentos extras (não da URL)
           final personalityType = state.extra as PersonalityType?;
-          
-          debugPrint("🎭 GoRouter - Argumentos extras recebidos: $personalityType");
-          
-          return BlocProvider(
-            create: (context) => VoiceChatBloc(initialPersonality: personalityType),
-            child: VoiceChatScreen(initialPersonality: personalityType),
+
+          debugPrint(
+              "🎭 GoRouter - Argumentos extras recebidos: $personalityType");
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    VoiceChatBloc(initialPersonality: personalityType),
+              ),
+              BlocProvider(
+                create: (context) => PlantCareBloc(),
+              ),
+            ],
+            child: ChatScreen(initialPersonality: personalityType),
           );
         },
       ),
-      GoRoute(
-        path: Routes.textChat,
-        builder: (context, state) => BlocProvider(
-          create: (context) => TextChatBloc(GeminiService()),
-          child: const TextChatScreen(),
-        ),
-      ),
+
       GoRoute(
         path: Routes.map,
         builder: (context, state) => const MapScreenBloc(),
@@ -185,7 +191,7 @@ class AppRouter {
           child: const PlantCareScreen(),
         ),
       ),
-      
+
       // Telas de Perfil
       GoRoute(
         path: Routes.userProfile,
@@ -204,6 +210,13 @@ class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (_) => SosBloc(),
           child: const SosScreen(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.calendar,
+        builder: (context, state) => BlocProvider(
+          create: (_) => CalendarBloc(),
+          child: const CalendarScreen(),
         ),
       ),
     ],

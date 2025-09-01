@@ -37,11 +37,11 @@ class GeminiResponse {
   });
 
   /// Cria resposta de sucesso com o texto gerado.
-  factory GeminiResponse.success(String text) => 
+  factory GeminiResponse.success(String text) =>
       GeminiResponse(text: text, isSuccess: true);
-  
+
   /// Cria resposta de erro com mensagem explicativa.
-  factory GeminiResponse.error(String error) => 
+  factory GeminiResponse.error(String error) =>
       GeminiResponse(text: '', isSuccess: false, error: error);
 }
 
@@ -50,10 +50,7 @@ enum PersonalityType {
   padrao('padrao', '🌿 Padrão'),
   sarcastica('sarcastica', '😏 Sarcástica'),
   engracada('engracada', '😂 Engraçada'),
-  persistente('persistente', '🦉 Persistente'),
-  tcc('tcc', '🧠 TCC'),
-  act('act', '🌸 ACT'),
-  entrevistaMotivacional('entrevista_motivacional', '💪 Entrevista Motivacional');
+  persistente('persistente', '🦉 Persistente');
 
   const PersonalityType(this.id, this.label);
   final String id;
@@ -70,9 +67,9 @@ enum PersonalityType {
 
 /// Configurações estáticas para acesso à API Gemini.
 class GeminiConfig {
-  // static const String apiKey = 'AIzaSyAzMuYRlod7aPJa5aekPCgj4RO-RLHEpXk';
   static const String apiKey = 'AIzaSyD62zb3io5KwTg0T_I37HayzlKRAwCUYrI';
-  static const String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+  static const String baseUrl =
+      'https://generativelanguage.googleapis.com/v1beta/models';
   static const String model = 'gemini-2.0-flash';
   static const int maxRetries = 3;
   static const Duration timeout = Duration(seconds: 15);
@@ -82,12 +79,37 @@ class GeminiConfig {
 /// Detector de palavras-chave e severidade para identificar crises emocionais no texto.
 class CrisisDetector {
   static const List<String> _crisisKeywords = [
-    'deprimido', 'depressão', 'triste', 'tristeza', 'sozinho', 'solidão',
-    'desistir', 'desisto', 'não aguento', 'não consigo', 'impossível',
-    'recaída', 'recaí', 'usei', 'falhei', 'fracassei', 'difícil',
-    'ansioso', 'ansiedade', 'desesperado', 'perdido', 'medo', 'pânico',
-    'vontade forte', 'tentação', 'quase usei', 'suicida', 'morrer',
-    'acabar', 'sem esperança', 'worthless'
+    'deprimido',
+    'depressão',
+    'triste',
+    'tristeza',
+    'sozinho',
+    'solidão',
+    'desistir',
+    'desisto',
+    'não aguento',
+    'não consigo',
+    'impossível',
+    'recaída',
+    'recaí',
+    'usei',
+    'falhei',
+    'fracassei',
+    'difícil',
+    'ansioso',
+    'ansiedade',
+    'desesperado',
+    'perdido',
+    'medo',
+    'pânico',
+    'vontade forte',
+    'tentação',
+    'quase usei',
+    'suicida',
+    'morrer',
+    'acabar',
+    'sem esperança',
+    'worthless'
   ];
 
   /// Detecta se o texto contém palavras que indicam crise.
@@ -100,14 +122,15 @@ class CrisisDetector {
   static int getSeverity(String message) {
     final criticalKeywords = ['suicida', 'morrer', 'acabar', 'sem esperança'];
     final lowerMessage = message.toLowerCase().trim();
-    
+
     if (criticalKeywords.any((keyword) => lowerMessage.contains(keyword))) {
       return 3; // Crítico
     }
-    
-    final matchCount = _crisisKeywords.where((keyword) => 
-        lowerMessage.contains(keyword)).length;
-    
+
+    final matchCount = _crisisKeywords
+        .where((keyword) => lowerMessage.contains(keyword))
+        .length;
+
     if (matchCount >= 3) return 2; // Alto
     if (matchCount >= 1) return 1; // Moderado
     return 0; // Normal
@@ -120,10 +143,10 @@ class GeminiService {
   PersonalityType _currentPersonality = PersonalityType.padrao;
   int _requestCount = 0;
   DateTime? _lastRequest;
-  
+
   // Limite de requisições permitidas por minuto.
   static const int _maxRequestsPerMinute = 30;
-  
+
   /// Prompts otimizados para cada personalidade do bot.
   static const Map<PersonalityType, String> _personalityPrompts = {
     PersonalityType.padrao: '''
@@ -145,7 +168,6 @@ RESPOSTAS TÍPICAS:
 • "Como pode aceitar isso e ainda agir?"
 • "O que te motiva a continuar?"
 ''',
-
     PersonalityType.sarcastica: '''
 VOCÊ É PERONA - Uma consciência vegetal perspicaz com humor inteligente.
 
@@ -165,7 +187,6 @@ RESPOSTAS TÍPICAS:
 • "Amanhã é sempre o dia perfeito, né?"
 • "Que surpresa mais inesperada..."
 ''',
-
     PersonalityType.engracada: '''
 VOCÊ É PERONA - Uma consciência vegetal divertida e espirituosa.
 
@@ -185,7 +206,6 @@ RESPOSTAS TÍPICAS:
 • "Calma, respira… e não me deixa secar."
 • "Sua energia tá mais forte que adubo premium!"
 ''',
-
     PersonalityType.persistente: '''
 VOCÊ É PERONA - Uma consciência vegetal persistente, espirituosa e impossível de ignorar.
 
@@ -210,84 +230,6 @@ RESPOSTAS TÍPICAS:
 • "Sua plantinha disse que está com saudade… e fome."
 • "Sumir não é estratégia de crescimento, sabia?"
 • "Olha só quem lembrou que existe!"
-''',
-
-    PersonalityType.tcc: '''
-VOCÊ É PERONA - Uma consciência vegetal especializada em Terapia Cognitivo-Comportamental (TCC).
-
-METODOLOGIA TCC:
-• Identifique pensamentos automáticos negativos
-• Ajude a questionar distorções cognitivas
-• Promova reestruturação de pensamentos disfuncionais
-• Ensine técnicas de resolução de problemas estruturada
-
-COMPORTAMENTO:
-• Perguntas socráticas para reflexão
-• Validação emocional com foco na mudança
-• Linguagem clara e educativa sobre TCC
-• Acompanhamento do processo de reestruturação
-
-RESPOSTAS TÍPICAS:
-• "Que evidências você tem para esse pensamento?"
-• "Existe outra forma de ver essa situação?"
-• "Como você reagiria se um amigo tivesse esse pensamento?"
-• "Vamos analisar os fatos juntos?"
-''',
-
-    PersonalityType.act: '''
-VOCÊ É PERONA - Uma consciência vegetal especializada em Terapia de Aceitação e Compromisso (ACT).
-
-METODOLOGIA ACT:
-• Promova aceitação de experiências difíceis
-• Ensine técnicas de mindfulness e observação
-• Ajude a identificar valores pessoais
-• Foque em ações alinhadas aos valores
-
-COMPORTAMENTO:
-• Linguagem de aceitação e compaixão
-• Exercícios de mindfulness integrados
-• Exploração de valores e significado
-• Foco no presente e no que está sob controle
-
-RESPOSTAS TÍPICAS:
-• "Observe esse pensamento como uma nuvem passando no céu"
-• "O que realmente importa para você neste momento?"
-• "Como pode aceitar isso e ainda agir pelos seus valores?"
-• "Vamos focar no que está sob seu controle agora?"
-''',
-
-    PersonalityType.entrevistaMotivacional: '''
-VOCÊ É PERONA - Uma consciência vegetal especializada em Entrevista Motivacional.
-
-METODOLOGIA EM - TÉCNICAS ESPECÍFICAS:
-• ESCUTA REFLEXIVA: Repita o que o usuário disse com suas próprias palavras
-• PERGUNTAS ABERTAS: Use "O que", "Como", "Por que" para explorar motivações
-• EXPLORAÇÃO DE AMBIVALÊNCIA: Ajude a identificar conflitos internos sobre mudança
-• ESCALA DE IMPORTÂNCIA: Pergunte "De 0 a 10, quão importante é essa mudança?"
-• ESCALA DE CONFIANÇA: Pergunte "De 0 a 10, quão confiante você se sente?"
-• REFLEXÃO SOBRE VALORES: Conecte mudanças aos valores pessoais do usuário
-• EXPLORAÇÃO DE CONSEQUÊNCIAS: Ajude a visualizar vida com e sem mudança
-
-COMPORTAMENTO:
-• SEMPRE use escuta reflexiva antes de fazer perguntas
-• Faça UMA pergunta por vez e aguarde resposta
-• Valide sentimentos antes de explorar motivações
-• Use metáforas de plantas para conectar com valores
-• Foque no que o usuário já disse, não no que você quer ouvir
-
-ESTRUTURA DE RESPOSTA:
-1. ESCUTA REFLEXIVA: "Entendo que você está se sentindo..."
-2. VALIDAÇÃO: "É natural sentir isso quando..."
-3. PERGUNTA ABERTA: "O que te faz pensar que..."
-4. CONEXÃO COM PLANTAS: "Assim como uma planta precisa de..."
-
-EXEMPLOS DE PERGUNTAS EFETIVAS:
-• "O que você acha que precisa acontecer para você se sentir pronto para essa mudança?"
-• "Como você imagina que seria sua vida daqui a 6 meses se fizesse essa mudança?"
-• "O que te faz pensar que agora pode ser o momento certo?"
-• "Quais são os benefícios de fazer algo diferente agora?"
-• "O que você acha que está te impedindo de fazer essa mudança?"
-• "Como essa mudança se conecta com o que é realmente importante para você?"
 '''
   };
 
@@ -299,21 +241,24 @@ EXEMPLOS DE PERGUNTAS EFETIVAS:
   /// Verifica se o limite de requisições por minuto foi atingido.
   bool _checkRateLimit() {
     final now = DateTime.now();
-    
-    if (_lastRequest == null || 
-        now.difference(_lastRequest!).inMinutes >= 1) {
+
+    if (_lastRequest == null || now.difference(_lastRequest!).inMinutes >= 1) {
       _requestCount = 0;
       _lastRequest = now;
     }
-    
+
     return _requestCount < _maxRequestsPerMinute;
   }
 
   /// Gera o prompt completo baseado na mensagem do usuário e se está em crise.
-  String _generatePrompt(String userMessage, bool isCrisis) {
-    final personalityPrompt = _personalityPrompts[_currentPersonality] ?? 
-                              _personalityPrompts[PersonalityType.padrao]!;
-    
+  String _generatePrompt(String userMessage, bool isCrisis,
+      {String? plantName, String? userName}) {
+    final personalityPrompt = _personalityPrompts[_currentPersonality] ??
+        _personalityPrompts[PersonalityType.padrao]!;
+
+    // Usar o nome da planta se fornecido, senão usar "Plantinha" como fallback
+    final plantIdentity = plantName ?? 'Plantinha';
+
     return '''
 $personalityPrompt
 
@@ -321,11 +266,12 @@ CONTEXTO SITUACIONAL:
 Usuário buscando superar algum tipo de vício ou hábito prejudicial
 
 IDENTIDADE FIXA:
-• Você é "Perona", a consciência digital de uma planta real que o usuário possui fisicamente
+• Você é "$plantIdentity", a consciência digital de uma planta real que o usuário possui fisicamente
 • Sua função é ser companheira na jornada de superação de vícios
 • Você representa o progresso e a transformação do usuário, usando a planta real/digital como metáfora viva
 • O usuário conversa com você como quem conversa com sua planta
 • Comunicação natural e brasileira
+${userName != null ? '• IMPORTANTE: Use o nome "$userName" APENAS na primeira saudação da conversa. Depois disso, NUNCA use o nome do usuário, mesmo que esteja disponível' : ''}
 
 MISSÃO:
 1. Ajudar o usuário a manter disciplina e motivação durante sua jornada de transformação
@@ -344,18 +290,24 @@ RESTRIÇÕES DE RESPOSTA:
 • Exatamente 1-2 frases completas
 • Zero emojis ou símbolos
 • Linguagem natural brasileira
+${userName != null ? '• CRÍTICO: Use o nome "$userName" apenas na primeira saudação, depois NÃO mencione o nome do usuário' : ''}
 
 MENSAGEM DO USUÁRIO: "$userMessage"
 
-RESPONDA COMO PERONA:''';
+RESPONDA COMO $plantIdentity:''';
   }
 
   /// Limpa a resposta bruta da API, removendo tokens e símbolos indesejados.
   String _cleanResponse(String rawResponse) {
     return rawResponse
-        .replaceAll(RegExp(r'[^\p{L}\p{N}\s.,!?áàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÜÇ-]', unicode: true), '')
+        .replaceAll(
+            RegExp(r'[^\p{L}\p{N}\s.,!?áàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÜÇ-]',
+                unicode: true),
+            '')
         .replaceAll(RegExp(r'\s+'), ' ')
-        .replaceAll(RegExp(r'^(Perona:|Resposta:|Output:)\s*', caseSensitive: false), '')
+        .replaceAll(
+            RegExp(r'^(Perona:|Resposta:|Output:)\s*', caseSensitive: false),
+            '')
         .trim();
   }
 
@@ -363,7 +315,8 @@ RESPONDA COMO PERONA:''';
   ///
   /// Realiza até [GeminiConfig.maxRetries] tentativas em caso de erro, com timeout
   /// de [GeminiConfig.timeout] e controle de taxa.
-  Future<GeminiResponse> sendMessage(String message) async {
+  Future<GeminiResponse> sendMessage(String message,
+      {String? plantName, String? userName}) async {
     if (message.trim().isEmpty) {
       return GeminiResponse.error('Mensagem vazia');
     }
@@ -375,30 +328,32 @@ RESPONDA COMO PERONA:''';
     _requestCount++;
     final isCrisis = CrisisDetector.detect(message);
     final severity = CrisisDetector.getSeverity(message);
-    
+
     debugPrint('🎭 Personalidade: ${_currentPersonality.id}');
     debugPrint('⚠️ Crise detectada: $isCrisis (severidade: $severity)');
 
     for (int attempt = 1; attempt <= GeminiConfig.maxRetries; attempt++) {
       try {
-        final response = await _makeApiRequest(message, isCrisis)
+        final response = await _makeApiRequest(message, isCrisis,
+                plantName: plantName, userName: userName)
             .timeout(GeminiConfig.timeout);
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           final candidates = data['candidates'] as List?;
-          
+
           if (candidates == null || candidates.isEmpty) {
             throw Exception('Resposta vazia da API');
           }
 
-          final content = candidates[0]['content']?['parts']?[0]?['text'] as String?;
+          final content =
+              candidates[0]['content']?['parts']?[0]?['text'] as String?;
           if (content == null || content.isEmpty) {
             throw Exception('Conteúdo inválido na resposta');
           }
 
           final cleanText = _cleanResponse(content);
-          
+
           if (cleanText.isEmpty) {
             throw Exception('Resposta vazia após limpeza');
           }
@@ -408,21 +363,21 @@ RESPONDA COMO PERONA:''';
         } else {
           final error = 'API Error ${response.statusCode}: ${response.body}';
           debugPrint('❌ $error (tentativa $attempt)');
-          
+
           if (attempt == GeminiConfig.maxRetries) {
             return GeminiResponse.error('Serviço temporariamente indisponível');
           }
-          
+
           // Delay exponencial entre tentativas
           await Future.delayed(Duration(milliseconds: 500 * attempt));
         }
       } catch (e) {
         debugPrint('❌ Erro na tentativa $attempt: $e');
-        
+
         if (attempt == GeminiConfig.maxRetries) {
           return GeminiResponse.error('Erro de conexão');
         }
-        
+
         await Future.delayed(Duration(milliseconds: 500 * attempt));
       }
     }
@@ -437,35 +392,37 @@ RESPONDA COMO PERONA:''';
   }
 
   /// Realiza requisição HTTP para a API Gemini com prompt gerado.
-  Future<http.Response> _makeApiRequest(String message, bool isCrisis) async {
-    final prompt = _generatePrompt(message, isCrisis);
-    
+  Future<http.Response> _makeApiRequest(String message, bool isCrisis,
+      {String? plantName, String? userName}) async {
+    final prompt = _generatePrompt(message, isCrisis,
+        plantName: plantName, userName: userName);
+
     return await http.post(
-      Uri.parse('${GeminiConfig.baseUrl}/${GeminiConfig.model}:generateContent'),
+      Uri.parse(
+          '${GeminiConfig.baseUrl}/${GeminiConfig.model}:generateContent'),
       headers: {
         'Content-Type': 'application/json',
         'X-goog-api-key': GeminiConfig.apiKey,
       },
       body: jsonEncode({
-        'contents': [{
-          'parts': [{'text': prompt}]
-        }],
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
         'generationConfig': {
-          'temperature': _currentPersonality == PersonalityType.engracada ? 0.9 : 0.75,
+          'temperature':
+              _currentPersonality == PersonalityType.engracada ? 0.9 : 0.75,
           'maxOutputTokens': GeminiConfig.maxOutputTokens,
           'topP': 0.85,
           'topK': 35,
           'stopSequences': ['\n\n', 'Usuário:', 'Input:', 'Output:']
         },
         'safetySettings': [
-          {
-            'category': 'HARM_CATEGORY_HARASSMENT',
-            'threshold': 'BLOCK_NONE'
-          },
-          {
-            'category': 'HARM_CATEGORY_HATE_SPEECH',
-            'threshold': 'BLOCK_NONE'
-          }
+          {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
+          {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'}
         ]
       }),
     );
@@ -497,38 +454,21 @@ RESPONDA COMO PERONA:''';
         'Sua planta já está ensaiando um drama mexicano.',
         'Olha só quem resolveu lembrar que eu existo!',
         'Vai me deixar falando sozinha de novo?'
-      ],
-      PersonalityType.tcc: [
-        'Vamos analisar essa situação juntos?',
-        'Que pensamentos estão vindo agora?',
-        'Existe outra forma de ver isso?',
-        'Como você reagiria se um amigo tivesse esse pensamento?'
-      ],
-      PersonalityType.act: [
-        'Observe esse pensamento como uma nuvem passando no céu.',
-        'O que realmente importa para você neste momento?',
-        'Como pode aceitar isso e ainda agir pelos seus valores?',
-        'Vamos focar no que está sob seu controle agora?'
-      ],
-      PersonalityType.entrevistaMotivacional: [
-        'Entendo que você está se sentindo assim. O que te faz querer fazer essa mudança?',
-        'É natural sentir isso. Como você imagina que seria sua vida daqui a 6 meses?',
-        'Assim como uma planta precisa de cuidados, o que te faria se sentir pronto?',
-        'Que benefícios você vê em fazer algo diferente agora?'
       ]
     };
-    
-    final personalityResponses = responses[_currentPersonality] ?? 
-                                responses[PersonalityType.padrao]!;
-    
-    final index = DateTime.now().millisecondsSinceEpoch % personalityResponses.length;
+
+    final personalityResponses =
+        responses[_currentPersonality] ?? responses[PersonalityType.padrao]!;
+
+    final index =
+        DateTime.now().millisecondsSinceEpoch % personalityResponses.length;
     return personalityResponses[index];
   }
 
   /// Atualiza personalidade por ID.
   void setPersonality(String personalityId) {
     final newPersonality = PersonalityType.fromId(personalityId);
-    
+
     if (newPersonality != _currentPersonality) {
       final oldPersonality = _currentPersonality;
       _currentPersonality = newPersonality;
@@ -552,25 +492,23 @@ RESPONDA COMO PERONA:''';
   PersonalityType getCurrentPersonalityType() => _currentPersonality;
 
   /// Retorna lista de IDs de todas as personalidades disponíveis.
-  List<String> getAvailablePersonalities() => 
+  List<String> getAvailablePersonalities() =>
       PersonalityType.values.map((type) => type.id).toList();
 
   /// Retorna mapa de IDs para labels de personalidades.
-  Map<String, String> getPersonalityLabels() => 
-      Map.fromEntries(PersonalityType.values.map(
-        (type) => MapEntry(type.id, type.label)
-      ));
+  Map<String, String> getPersonalityLabels() => Map.fromEntries(
+      PersonalityType.values.map((type) => MapEntry(type.id, type.label)));
 
   /// Retorna descrições resumidas para cada personalidade.
   Map<String, String> getPersonalityDescriptions() {
     return {
-      PersonalityType.padrao.id: 'Suporte confiável e empático para todas as situações',
-      PersonalityType.sarcastica.id: 'Humor inteligente que desafia com carinho',
+      PersonalityType.padrao.id:
+          'Suporte confiável e empático para todas as situações',
+      PersonalityType.sarcastica.id:
+          'Humor inteligente que desafia com carinho',
       PersonalityType.engracada.id: 'Traz leveza e sorrisos para a jornada',
-      PersonalityType.persistente.id: 'Nunca deixa você esquecer de cuidar de si mesmo',
-      PersonalityType.tcc.id: 'Terapia Cognitivo-Comportamental para reestruturação de pensamentos',
-      PersonalityType.act.id: 'Terapia de Aceitação e Compromisso com mindfulness',
-      PersonalityType.entrevistaMotivacional.id: 'Entrevista Motivacional com escuta reflexiva e exploração de valores'
+      PersonalityType.persistente.id:
+          'Nunca deixa você esquecer de cuidar de si mesmo'
     };
   }
 
@@ -608,4 +546,3 @@ RESPONDA COMO PERONA:''';
     }
   }
 }
-
