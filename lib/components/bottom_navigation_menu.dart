@@ -27,6 +27,7 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'dart:io';
 
 class BottomNavigationMenu extends StatelessWidget {
   final int activeIndex;
@@ -137,7 +138,7 @@ class BottomNavigationMenu extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildNavItem(
@@ -163,7 +164,7 @@ class BottomNavigationMenu extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildNavItem(
@@ -316,10 +317,10 @@ class BottomNavigationMenu extends StatelessWidget {
 
     final horizontalPadding = ResponsiveValue<double>(
       context,
-      defaultValue: 16.0,
+      defaultValue: 4.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 8.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
       ],
     ).value;
 
@@ -394,7 +395,24 @@ void _showExitConfirmation(BuildContext context) {
     confirmText: 'Sair',
     cancelText: 'Cancelar',
     onConfirm: () {
-      SystemNavigator.pop(); // Fecha o app
+      _exitApp();
     },
   );
+}
+
+/// Fecha o aplicativo de forma segura
+void _exitApp() {
+  try {
+    if (Platform.isAndroid) {
+      SystemNavigator.pop();
+    } else if (Platform.isIOS) {
+      exit(0);
+    } else {
+      // Para outras plataformas (Web, Desktop)
+      SystemNavigator.pop();
+    }
+  } catch (e) {
+    // Fallback caso o método principal falhe
+    exit(0);
+  }
 }
