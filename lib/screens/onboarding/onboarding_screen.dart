@@ -47,10 +47,10 @@ class OnboardingScreen extends StatelessWidget {
 
     final logoTopSpacing = ResponsiveValue<double>(
       context,
-      defaultValue: 150.0,
+      defaultValue: 60.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 80.0),
-        Condition.largerThan(name: TABLET, value: 200.0),
+        Condition.smallerThan(name: MOBILE, value: 30.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
       ],
     ).value;
 
@@ -65,10 +65,10 @@ class OnboardingScreen extends StatelessWidget {
 
     final spacingAfterText = ResponsiveValue<double>(
       context,
-      defaultValue: 60.0,
+      defaultValue: 40.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 40.0),
-        Condition.largerThan(name: TABLET, value: 80.0),
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 60.0),
       ],
     ).value;
 
