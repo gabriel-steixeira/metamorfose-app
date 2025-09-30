@@ -1,25 +1,23 @@
-/**
- * File: plant_care_screen.dart
- * Description: Tela de cuidados da planta
- *
- * Responsabilidades:
- * - Exibir informações da planta
- * - Exibir diário visual
- * - Exibir tarefas do dia
- * - Permitir tirar fotos e compartilhar progresso
- * - Usar BLoC pattern para gerenciamento de estado
- *
- * Author: Evelin Cordeiro
- * Created on: 06-08-2025
- * Last modified: 31-08-2025
- * 
- * Changes:
- * - UI Ajustada. (Evelin Cordeiro)
- * 
- * 
- * Version: 1.0.0 (BLoC)
- * Squad: Metamorfose
- */
+/// File: plant_care_screen.dart
+/// Description: Tela de cuidados da planta
+///
+/// Responsabilidades:
+/// - Exibir informações da planta
+/// - Exibir diário visual
+/// - Exibir tarefas do dia
+/// - Permitir tirar fotos e compartilhar progresso
+/// - Usar BLoC pattern para gerenciamento de estado
+///
+/// Author: Evelin Cordeiro
+/// Created on: 06-08-2025
+/// Last modified: 31-08-2025
+/// 
+/// Changes:
+/// - UI Ajustada. (Evelin Cordeiro)
+/// 
+/// 
+/// Version: 1.0.0 (BLoC)
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -29,7 +27,6 @@ import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
-import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/components/custom_button.dart';
 import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
 import 'package:metamorfose_flutter/state/plant_care/plant_care_state.dart';
@@ -46,27 +43,37 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicializar o BLoC
     context.read<PlantCareBloc>().add(InitializePlantCareEvent());
   }
 
   /// Retorna o BoxDecoration padrão com shadow para os cards
-  BoxDecoration get _cardDecoration => BoxDecoration(
-        color: MetamorfoseColors.whiteLight,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: MetamorfoseColors.greyLightest2,
-          width: 1,
+  BoxDecoration _getCardDecoration(BuildContext context) {
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    return BoxDecoration(
+      color: MetamorfoseColors.whiteLight,
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: MetamorfoseColors.greyLightest2,
+        width: 1,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: MetamorfoseColors.defaultButtonShadow,
+          blurRadius: 0,
+          offset: const Offset(0, 4),
+          spreadRadius: 0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: MetamorfoseColors.defaultButtonShadow,
-            blurRadius: 0,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
-      );
+      ],
+    );
+  }
 
   /// Retorna o caminho do SVG baseado na cor da planta
   String _getPlantSvgAsset(int? colorValue) {
@@ -79,7 +86,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
     if (colorValue == MetamorfoseColors.pinkNormal.value) {
       return 'assets/images/plantsetup/plantsetup_pink.svg';
     }
-    return 'assets/images/plantsetup/plantsetup.svg'; // Roxo padrão
+    return 'assets/images/plantsetup/plantsetup.svg';
   }
 
   /// Header
@@ -97,71 +104,133 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
       return _buildErrorCard('Nenhuma planta encontrada');
     }
 
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final plantIconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 56.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 48.0),
+        Condition.largerThan(name: TABLET, value: 64.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final subtitleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
+    final largeSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Seção superior: Ícone da planta + Nome
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
+                width: plantIconSize,
+                height: plantIconSize,
+                decoration: const BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
                 ),
                 child: SvgPicture.asset(
                   _getPlantSvgAsset(plantInfo['potColorValue']),
-                  width: 56,
-                  height: 56,
+                  width: plantIconSize,
+                  height: plantIconSize,
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: spacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       plantInfo['name'] ?? 'Minha Planta',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'DinNext',
-                        fontSize: 20,
+                        fontSize: titleFontSize,
                         fontWeight: FontWeight.bold,
                         color: MetamorfoseColors.greyMedium,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: smallSpacing),
                     Text(
                       plantInfo['species'] ?? 'Planta',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'DinNext',
-                        fontSize: 16,
+                        fontSize: subtitleFontSize,
                         fontWeight: FontWeight.normal,
                         color: MetamorfoseColors.greyMedium,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
                     ),
                   ],
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 20),
-
-          // Separador
+          SizedBox(height: largeSpacing),
           Container(
             height: 1,
             color: MetamorfoseColors.greyLightest2,
           ),
-
-          const SizedBox(height: 16),
-
-          // Seção inferior: Informações detalhadas
+          SizedBox(height: spacing),
           Column(
             children: [
               _buildInfoRow(
@@ -169,7 +238,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
                 label: 'Data de início',
                 value: plantInfo['startDate'] ?? 'N/A',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _buildInfoRow(
                 icon: Icons.palette,
                 label: 'Cor do vaso',
@@ -189,9 +258,63 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
       return const SizedBox.shrink();
     }
 
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final verticalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final horizontalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -200,21 +323,24 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               Icon(
                 Icons.favorite,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Cuidados',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: verticalSpacing),
           Row(
             children: [
               Expanded(
@@ -224,7 +350,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
                   value: plantInfo['location'] ?? 'N/A',
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: horizontalSpacing),
               Expanded(
                 child: _buildCareItem(
                   icon: Icons.wb_sunny,
@@ -234,7 +360,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: verticalSpacing),
           Row(
             children: [
               Expanded(
@@ -244,7 +370,7 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
                   value: plantInfo['difficulty'] ?? 'N/A',
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: horizontalSpacing),
               Expanded(
                 child: _buildCareItem(
                   icon: Icons.water_drop,
@@ -261,9 +387,108 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Diário visual
   Widget _buildVisualDiary(PlantCareState state) {
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final smallFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final verticalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final buttonPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final buttonIconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final emptyIconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 48.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 56.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -272,72 +497,77 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               Icon(
                 Icons.camera_alt,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Diário Visual',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
               const Spacer(),
               GestureDetector(
                 onTap: () => context.go('/calendar'),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(buttonPadding),
                   decoration: BoxDecoration(
                     color: MetamorfoseColors.purpleLight,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(borderRadius),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_forward_ios,
                     color: MetamorfoseColors.whiteLight,
-                    size: 16,
+                    size: buttonIconSize,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-
-          // Estado vazio
+          SizedBox(height: verticalSpacing),
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(cardPadding),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.camera_alt_outlined,
-                    size: 48,
+                    size: emptyIconSize,
                     color: MetamorfoseColors.greyLight,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   Text(
                     'Nenhuma foto ainda!',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 16,
+                      fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                       color: MetamorfoseColors.greyMedium,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: smallSpacing),
                   Text(
                     'Tire a primeira foto do seu progresso! 📸🌱',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 14,
+                      fontSize: smallFontSize,
                       fontWeight: FontWeight.normal,
                       color: MetamorfoseColors.greyMedium,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -350,9 +580,54 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Tarefas do dia
   Widget _buildTodayTasks(PlantCareState state) {
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final verticalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -361,21 +636,24 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               Icon(
                 Icons.eco,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Tarefa de hoje',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: verticalSpacing),
           if (state.isTodayTasksLoading)
             const Center(
               child: CircularProgressIndicator(
@@ -397,32 +675,65 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
     required String label,
     required String value,
   }) {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
     return Row(
       children: [
         Icon(
           icon,
           color: MetamorfoseColors.purpleLight,
-          size: 20,
+          size: iconSize,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: spacing),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 16,
+            fontSize: fontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.start,
         ),
         const Spacer(),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 16,
+            fontSize: fontSize,
             fontWeight: FontWeight.normal,
             color: MetamorfoseColors.greyMedium,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.end,
         ),
       ],
     );
@@ -434,6 +745,42 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
     required String label,
     required String value,
   }) {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final smallFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -442,27 +789,34 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
             Icon(
               icon,
               color: MetamorfoseColors.purpleLight,
-              size: 20,
+              size: iconSize,
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: spacing),
             Text(
               label,
               style: AppTextStyles.bodySmall.copyWith(
                 color: MetamorfoseColors.greyMedium,
                 fontFamily: 'DinNext',
+                fontSize: smallFontSize,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: spacing),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 16,
+            fontSize: fontSize,
             fontWeight: FontWeight.normal,
             color: MetamorfoseColors.greyMedium,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.start,
         ),
       ],
     );
@@ -470,9 +824,35 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Constrói lista de tarefas
   Widget _buildTasksList(List<dynamic> tasks) {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
     return Row(
       children: tasks.asMap().entries.map((entry) {
-        final index = entry.key;
         final task = entry.value;
 
         return Expanded(
@@ -481,17 +861,20 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               Icon(
                 task['type'] == 'water' ? Icons.water_drop : Icons.eco,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 task['name'] ?? 'Tarefa',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.normal,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
             ],
           ),
@@ -502,37 +885,95 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Constrói estado vazio de tarefas
   Widget _buildEmptyTasks() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 48.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 56.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final smallFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(padding),
         child: Column(
           children: [
             Icon(
               Icons.task_alt,
-              size: 48,
+              size: iconSize,
               color: MetamorfoseColors.greyLight,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: spacing),
             Text(
               'Nenhuma tarefa hoje!',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 16,
+                fontSize: fontSize,
                 fontWeight: FontWeight.bold,
                 color: MetamorfoseColors.greyMedium,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: smallSpacing),
             Text(
               'Sua planta está bem cuidada! 🌿✨',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 14,
+                fontSize: smallFontSize,
                 fontWeight: FontWeight.normal,
                 color: MetamorfoseColors.greyMedium,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -542,9 +983,36 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos globais
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final cardSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final bottomSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return BlocConsumer<PlantCareBloc, PlantCareState>(
       listener: (context, state) {
-        // Tratar erros se necessário
         if (state.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -552,11 +1020,9 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               backgroundColor: MetamorfoseColors.redNormal,
             ),
           );
-          // Limpar erro após mostrar
           context.read<PlantCareBloc>().add(ClearErrorEvent());
         }
 
-        // Tratar sucessos
         if (state.hasSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -564,7 +1030,6 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
               backgroundColor: MetamorfoseColors.greenNormal,
             ),
           );
-          // Limpar sucesso após mostrar
           context.read<PlantCareBloc>().add(ClearErrorEvent());
         }
       },
@@ -573,31 +1038,18 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
           backgroundColor: MetamorfoseColors.whiteLight,
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Informações da planta
                   _buildPlantInfo(state),
-
-                  const SizedBox(height: 16),
-
-                  // Cuidados
+                  SizedBox(height: cardSpacing),
                   _buildCareInfo(state),
-
-                  const SizedBox(height: 16),
-
-                  // Diário visual
+                  SizedBox(height: cardSpacing),
                   _buildVisualDiary(state),
-
-                  const SizedBox(height: 16),
-
-                  // Tarefas do dia
+                  SizedBox(height: cardSpacing),
                   _buildTodayTasks(state),
-
-                  const SizedBox(height: 24),
-
-                  // Botão de compartilhar progresso
+                  SizedBox(height: bottomSpacing),
                   Container(
                     width: double.infinity,
                     child: CustomButton(
@@ -627,9 +1079,18 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Constrói card de loading
   Widget _buildLoadingCard() {
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context),
       child: const Center(
         child: CircularProgressIndicator(
           color: MetamorfoseColors.purpleNormal,
@@ -640,9 +1101,18 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
 
   /// Constrói card de erro
   Widget _buildErrorCard(String message) {
+    final cardPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration.copyWith(
+      padding: EdgeInsets.all(cardPadding),
+      decoration: _getCardDecoration(context).copyWith(
         border: Border.all(
           color: MetamorfoseColors.redLight,
           width: 1,
@@ -656,6 +1126,8 @@ class _PlantCareScreenState extends State<PlantCareScreen> {
             fontFamily: 'DinNext',
           ),
           textAlign: TextAlign.center,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

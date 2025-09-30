@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
   final Color shadowColor;
   final Color strokeColor;
   final Widget? child;
+  final double? fontSize;
 
   const CustomButton({
     Key? key,
@@ -20,12 +21,13 @@ class CustomButton extends StatelessWidget {
     required this.shadowColor,
     required this.strokeColor,
     this.child,
+    this.fontSize,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Valores responsivos baseados no breakpoint
-    final fontSize = ResponsiveValue<double>(
+    final responsiveFontSize = ResponsiveValue<double>(
       context,
       defaultValue: 15.0,
       conditionalValues: [
@@ -34,21 +36,24 @@ class CustomButton extends StatelessWidget {
       ],
     ).value;
 
+    // Usar fontSize personalizado se fornecido, senão usar o responsivo
+    final finalFontSize = fontSize ?? responsiveFontSize;
+
     final horizontalPadding = ResponsiveValue<double>(
       context,
-      defaultValue: 16.0,
+      defaultValue: 12.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 24.0),
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
       ],
     ).value;
 
     final verticalPadding = ResponsiveValue<double>(
       context,
-      defaultValue: 12.0,
+      defaultValue: 8.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 10.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
       ],
     ).value;
 
@@ -96,12 +101,13 @@ class CustomButton extends StatelessWidget {
             if (child != null)
               Center(child: child)
             else
-              Text(
-                text.toUpperCase(),
-                textAlign: TextAlign.center,
+              Flexible(
+                child: Text(
+                  text.toUpperCase(),
+                  textAlign: TextAlign.center,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: fontSize,
+                  fontSize: finalFontSize,
                   fontFamily: 'DinNext',
                   fontWeight: FontWeight.w700,
                   height: 1.27,
@@ -112,6 +118,8 @@ class CustomButton extends StatelessWidget {
                       color: MetamorfoseColors.shadowText,
                     ),
                   ],
+                ),
+
                 ),
               ),
           ],

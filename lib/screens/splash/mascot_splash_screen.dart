@@ -1,18 +1,16 @@
-/**
- * File: mascot_splash_screen.dart
- * Description: Tela de splash com o mascote do aplicativo.
- *
- * Responsabilidades:
- * - Exibir mascote e animações
- * - Fazer transição para próxima tela
- * - Apresentar personalidade da aplicação
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 29-05-2025
- * Last modified: 29-05-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: mascot_splash_screen.dart
+/// Description: Tela de splash com o mascote do aplicativo.
+///
+/// Responsabilidades:
+/// - Exibir mascote e animações
+/// - Fazer transição para próxima tela
+/// - Apresentar personalidade da aplicação
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 29-05-2025
+/// Last modified: 29-05-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -48,10 +46,8 @@ class _MascotSplashScreenState extends State<MascotSplashScreen> with SingleTick
       curve: Curves.easeIn,
     );
 
-    // Temporizador para navegar para o onboarding após 3 segundos
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        // Navegar para a tela de onboarding inicial
         context.go(Routes.onboarding);
       }
     });
@@ -65,24 +61,61 @@ class _MascotSplashScreenState extends State<MascotSplashScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final mascotWidth = ResponsiveValue<double>(
+      context,
+      defaultValue: 0.65,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 0.70),
+        Condition.largerThan(name: TABLET, value: 0.60),
+      ],
+    ).value;
+
+    final mascotHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 0.25,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 0.30),
+        Condition.largerThan(name: TABLET, value: 0.22),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
 
     return Scaffold(
       backgroundColor: MetamorfoseColors.purpleLight,
-      body: Stack(
-        children: [
-          // Mascote centralizado
-          Center(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SvgPicture.asset(
-                'assets/images/splashscreen/ivy_face.svg',
-                width: screenSize.width * 0.65,
-                height: screenSize.height * 0.25,
-              ),
+      body: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SvgPicture.asset(
+              'assets/images/splashscreen/ivy_face.svg',
+              width: MediaQuery.of(context).size.width * mascotWidth,
+              height: MediaQuery.of(context).size.height * mascotHeight,
+              fit: BoxFit.contain,
             ),
           ),
-        ],
+        ),
       ),
     );
   }

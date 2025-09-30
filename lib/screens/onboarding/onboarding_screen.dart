@@ -1,18 +1,16 @@
-/**
- * File: onboarding_screen.dart
- * Description: Tela inicial do onboarding do aplicativo.
- *
- * Responsabilidades:
- * - Exibir a primeira tela do onboarding
- * - Gerenciar a navegação para as próximas telas
- * - Apresentar a proposta do aplicativo
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 29-05-2025
- * Last modified: 29-05-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: onboarding_screen.dart
+/// Description: Tela inicial do onboarding do aplicativo.
+///
+/// Responsabilidades:
+/// - Exibir a primeira tela do onboarding
+/// - Gerenciar a navegação para as próximas telas
+/// - Apresentar a proposta do aplicativo
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 29-05-2025
+/// Last modified: 29-05-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -39,7 +37,7 @@ class OnboardingScreen extends StatelessWidget {
     final horizontalPadding = ResponsiveValue<double>(
       context,
       defaultValue: 50.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 24.0),
         Condition.largerThan(name: TABLET, value: 80.0),
       ],
@@ -48,7 +46,7 @@ class OnboardingScreen extends StatelessWidget {
     final logoTopSpacing = ResponsiveValue<double>(
       context,
       defaultValue: 60.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 30.0),
         Condition.largerThan(name: TABLET, value: 80.0),
       ],
@@ -57,7 +55,7 @@ class OnboardingScreen extends StatelessWidget {
     final spacingAfterLogo = ResponsiveValue<double>(
       context,
       defaultValue: 24.94,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 16.0),
         Condition.largerThan(name: TABLET, value: 32.0),
       ],
@@ -66,7 +64,7 @@ class OnboardingScreen extends StatelessWidget {
     final spacingAfterText = ResponsiveValue<double>(
       context,
       defaultValue: 40.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 24.0),
         Condition.largerThan(name: TABLET, value: 60.0),
       ],
@@ -75,7 +73,7 @@ class OnboardingScreen extends StatelessWidget {
     final buttonSpacing = ResponsiveValue<double>(
       context,
       defaultValue: 16.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 12.0),
         Condition.largerThan(name: TABLET, value: 20.0),
       ],
@@ -84,7 +82,7 @@ class OnboardingScreen extends StatelessWidget {
     final bottomSpacing = ResponsiveValue<double>(
       context,
       defaultValue: 36.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 24.0),
         Condition.largerThan(name: TABLET, value: 48.0),
       ],
@@ -93,10 +91,10 @@ class OnboardingScreen extends StatelessWidget {
     // Valores responsivos para tamanhos de fonte
     final titleFontSize = ResponsiveValue<double>(
       context,
-      defaultValue: 36.0,
-      conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 28.0),
-        Condition.largerThan(name: TABLET, value: 44.0),
+      defaultValue: 34.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 29.0),
+        Condition.largerThan(name: TABLET, value: 39.0),
       ],
     ).value;
 
@@ -104,7 +102,7 @@ class OnboardingScreen extends StatelessWidget {
     final butterflyWidth = ResponsiveValue<double>(
       context,
       defaultValue: 267.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 200.0),
         Condition.largerThan(name: TABLET, value: 350.0),
       ],
@@ -114,22 +112,17 @@ class OnboardingScreen extends StatelessWidget {
 
     // Detecção de dispositivo para layout condicional
     final isMobile = ResponsiveBreakpoints.of(context).isMobile;
-    final isTablet = ResponsiveBreakpoints.of(context).isTablet;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MetamorfoseColors.whiteLight,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 
-                         MediaQuery.of(context).padding.top - 
-                         MediaQuery.of(context).padding.bottom,
-            ),
-            child: IntrinsicHeight(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            children: [
+              Expanded(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: logoTopSpacing),
                     SvgPicture.asset(
@@ -140,6 +133,8 @@ class OnboardingScreen extends StatelessWidget {
                     SizedBox(height: spacingAfterLogo),
                     RichText(
                       textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                       text: TextSpan(
                         style: TextStyle(
                           fontSize: titleFontSize,
@@ -184,79 +179,77 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: spacingAfterText),
-                    _buildResponsiveButtons(context, isMobile, isTablet),
-                    SizedBox(height: buttonSpacing),
-                    _buildSecondaryButton(context, isMobile, isTablet),
-                    SizedBox(height: bottomSpacing),
                   ],
                 ),
               ),
-            ),
+              _buildResponsiveButtons(context, isMobile),
+              SizedBox(height: buttonSpacing),
+              _buildSecondaryButton(context, isMobile),
+              SizedBox(height: bottomSpacing),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildResponsiveButtons(BuildContext context, bool isMobile, bool isTablet) {
+  Widget _buildResponsiveButtons(BuildContext context, bool isMobile) {
     // Valores responsivos para largura máxima dos botões
     final maxButtonWidth = ResponsiveValue<double>(
       context,
       defaultValue: 358.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: double.infinity),
         Condition.largerThan(name: TABLET, value: 400.0),
       ],
     ).value;
 
+    final buttonWidget = MetamorfosePrimaryButton(
+      text: 'Começar agora',
+      onPressed: () => context.go(Routes.onboardingWelcome),
+    );
+
     if (isMobile) {
       return SizedBox(
         width: double.infinity,
-        child: MetamorfosePrimaryButton(
-          text: 'Começar agora',
-          onPressed: () => context.go(Routes.onboardingWelcome),
-        ),
+        child: buttonWidget,
       );
     } else {
       return Center(
         child: SizedBox(
           width: maxButtonWidth,
-          child: MetamorfosePrimaryButton(
-            text: 'Começar agora',
-            onPressed: () => context.go(Routes.onboardingWelcome),
-          ),
+          child: buttonWidget,
         ),
       );
     }
   }
 
-  Widget _buildSecondaryButton(BuildContext context, bool isMobile, bool isTablet) {
+  Widget _buildSecondaryButton(BuildContext context, bool isMobile) {
     // Valores responsivos para largura máxima dos botões
     final maxButtonWidth = ResponsiveValue<double>(
       context,
       defaultValue: 358.0,
-      conditionalValues: [
+      conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: double.infinity),
         Condition.largerThan(name: TABLET, value: 400.0),
       ],
     ).value;
 
+    final buttonWidget = MetamorfeseSecondaryButton(
+      text: 'Já tenho uma conta',
+      onPressed: () => context.go(Routes.auth),
+    );
+
     if (isMobile) {
       return SizedBox(
         width: double.infinity,
-        child: MetamorfeseSecondaryButton(
-          text: 'Já tenho uma conta',
-          onPressed: () => context.go(Routes.auth),
-        ),
+        child: buttonWidget,
       );
     } else {
       return Center(
         child: SizedBox(
           width: maxButtonWidth,
-          child: MetamorfeseSecondaryButton(
-            text: 'Já tenho uma conta',
-            onPressed: () => context.go(Routes.auth),
-          ),
+          child: buttonWidget,
         ),
       );
     }

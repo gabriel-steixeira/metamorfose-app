@@ -63,10 +63,13 @@ dev_dependencies:
   build_runner: ^2.4.8
   freezed: ^2.4.7
   json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/icons/
     - assets/images/onboarding/
     - assets/images/splashscreen/
     - assets/images/plantsetup/
@@ -83,3 +86,33 @@ flutter:
         - asset: assets/fonts/din_next_regular.otf
         - asset: assets/fonts/din_next_bold.otf
           weight: 700
+
+flutter_launcher_icons:
+  android: "adaptive"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#B18EF2"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    background_color: "#B18EF2"
+    theme_color: "#B18EF2"
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+  color: "#B18EF2"
+  android_12:
+    color: "#B18EF2"
+  fullscreen: true

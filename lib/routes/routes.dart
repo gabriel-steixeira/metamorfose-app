@@ -24,7 +24,6 @@ class Routes {
   static const brandSplash = '/';
   static const mascotSplash = '/mascot-splash';
   static const onboarding = '/onboarding';
-  static const onboardingCarousel = '/onboarding-carousel';
   static const onboardingWelcome = '/onboarding-welcome';
   static const onboardingPlant = '/onboarding-plant';
   static const onboardingEgg = '/onboarding-egg';

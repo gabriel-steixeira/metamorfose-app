@@ -1,36 +1,31 @@
-/**
- * File: chat_screen.dart
- * Description: Tela de chat híbrido (voz e texto) com integração completa de IA.
- *
- * Responsabilidades:
- * - Interface de chat híbrido (voz e texto)
- * - Integração com personalidades
- *
- * Author: Evelin Cordeiro
- * Created on: 31-08-2025
- * Last modified: 31-08-2025
- *
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: chat_screen.dart
+/// Description: Tela de chat híbrido (voz e texto) com integração completa de IA.
+///
+/// Responsabilidades:
+/// - Interface de chat híbrido (voz e texto)
+/// - Integração com personalidades
+///
+/// Author: Evelin Cordeiro
+/// Created on: 31-08-2025
+/// Last modified: 31-08-2025
+///
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:responsive_framework/responsive_framework.dart' as rf;
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
-import 'package:metamorfose_flutter/utils/responsive_utils.dart';
 import 'package:metamorfose_flutter/utils/app_constants.dart';
 import 'package:metamorfose_flutter/components/chat_bubble.dart';
 import 'package:metamorfose_flutter/components/avatar.dart';
 
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/text_chat_bloc.dart';
-import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
-import 'package:metamorfose_flutter/state/plant_care/plant_care_state.dart';
 import 'package:metamorfose_flutter/services/gemini_service.dart';
 import 'package:metamorfose_flutter/services/plant_care_service.dart';
 import 'package:metamorfose_flutter/services/hybrid_auth_service.dart';
@@ -255,11 +250,66 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Header responsivo com navegação, nome da planta, toggle e seletor de personalidade
   Widget _buildHeader(VoiceChatState state) {
+    // Valores responsivos
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final topPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final bottomPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
     return SafeArea(
       child: Padding(
-        padding: context.responsiveHorizontalPadding.copyWith(
-          top: ResponsiveUtils.getResponsiveSpacing(context, 12),
-          bottom: ResponsiveUtils.getResponsiveSpacing(context, 20),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding).copyWith(
+          top: topPadding,
+          bottom: bottomPadding,
         ),
         child: Row(
           children: [
@@ -268,12 +318,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               onPressed: () => context.go('/home'),
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: Colors.white,
-                size: ResponsiveUtils.getResponsiveSpacing(context, 20),
+                color: MetamorfoseColors.whiteLight,
+                size: iconSize,
               ),
             ),
 
-            SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+            SizedBox(width: spacing),
 
             // Nome da planta responsivo
             Flexible(
@@ -281,11 +331,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 _plantInfo?['name'] ?? 'Chat',
                 style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 18,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: MetamorfoseColors.whiteLight,
                 ),
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textAlign: TextAlign.start,
               ),
             ),
 
@@ -306,16 +358,48 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Toggle responsivo entre Voice e Text
   Widget _buildChatModeToggle() {
-    final toggleWidth = ResponsiveUtils.getResponsiveSpacing(context, 110);
-    final toggleHeight = ResponsiveUtils.getResponsiveSpacing(context, 40);
-    final borderRadius = ResponsiveUtils.getResponsiveBorderRadius(context, 12);
+    final toggleWidth = ResponsiveValue<double>(
+      context,
+      defaultValue: 110.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 120.0),
+      ],
+    ).value;
+
+    final toggleHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 3.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 4.0),
+      ],
+    ).value;
 
     return Container(
       width: toggleWidth,
       height: toggleHeight,
-      padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 3)),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.3),
+        color: MetamorfoseColors.whiteLight.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Row(
@@ -331,20 +415,36 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildToggleOption(IconData icon, bool isVoice, bool isSelected) {
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 9.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
     return GestureDetector(
       onTap: () => _handleToggleChange(isVoice),
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(
-            ResponsiveUtils.getResponsiveBorderRadius(context, 9),
-          ),
+          color: isSelected ? MetamorfoseColors.whiteLight : Colors.transparent,
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Center(
           child: Icon(
             icon,
-            size: 20,
-            color: isSelected ? MetamorfoseColors.purpleNormal : Colors.white,
+            size: iconSize,
+            color: isSelected ? MetamorfoseColors.purpleNormal : MetamorfoseColors.whiteLight,
           ),
         ),
       ),
@@ -373,28 +473,88 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Seletor de personalidade responsivo
   Widget _buildPersonalitySelector(VoiceChatState state) {
-    final selectorSize = ResponsiveUtils.getResponsiveSpacing(context, 50);
-    final borderRadius = ResponsiveUtils.getResponsiveBorderRadius(context, 12);
+    final selectorSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 50.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 45.0),
+        Condition.largerThan(name: TABLET, value: 55.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final offset = ResponsiveValue<double>(
+      context,
+      defaultValue: 50.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 45.0),
+        Condition.largerThan(name: TABLET, value: 55.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
 
     return Container(
       width: selectorSize,
-      height: ResponsiveUtils.getResponsiveSpacing(context, 40),
+      height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.3),
+        color: MetamorfoseColors.whiteLight.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: PopupMenuButton<PersonalityType>(
         initialValue: state.currentPersonality,
         icon: Icon(
           Icons.psychology,
-          color: Colors.white,
-          size: 20,
+          color: MetamorfoseColors.whiteLight,
+          size: iconSize,
         ),
-        offset: Offset(0, ResponsiveUtils.getResponsiveSpacing(context, 50)),
+        offset: Offset(0, offset),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        color: Colors.white,
+        color: MetamorfoseColors.whiteLight,
         onSelected: (PersonalityType personality) {
           context.read<VoiceChatBloc>().add(
                 VoiceChatChangePersonalityEvent(personality, silent: false),
@@ -409,18 +569,20 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   Icon(
                     _getPersonalityIcon(personality),
                     color: MetamorfoseColors.purpleNormal,
-                    size: 20,
+                    size: iconSize,
                   ),
-                  SizedBox(
-                      width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                  SizedBox(width: spacing),
                   Text(
                     _getPersonalityLabel(personality),
                     style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize:
-                          ResponsiveUtils.getResponsiveFontSize(context, 16),
+                      fontSize: fontSize,
                       fontWeight: FontWeight.w500,
+                      color: MetamorfoseColors.greyMedium,
                     ),
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -459,8 +621,44 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Interface de voz com design baseado na referência
   Widget _buildVoiceInterface(VoiceChatState state) {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 60.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
+    final textHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 80.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 60.0),
+        Condition.largerThan(name: TABLET, value: 100.0),
+      ],
+    ).value;
+
+    final bottomSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(padding),
       child: Column(
         children: [
           const Spacer(flex: 1),
@@ -468,11 +666,11 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           // Foto da planta - posição fixa
           _buildPlantImage(),
 
-          const SizedBox(height: 60), // Mais espaço fixo
+          SizedBox(height: spacing),
 
           // Container com altura fixa para o texto
-          Container(
-            height: 80, // Altura fixa para evitar movimento
+          SizedBox(
+            height: textHeight,
             child: Center(
               child: _buildWelcomeMessage(),
             ),
@@ -483,7 +681,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           // Input de texto estilo referência
           _buildTextInput(),
 
-          const SizedBox(height: 20),
+          SizedBox(height: bottomSpacing),
         ],
       ),
     );
@@ -491,6 +689,60 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Interface de texto moderna
   Widget _buildTextInterface(VoiceChatState state) {
+    final listPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final loadingPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final loadingVerticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Column(
       children: [
         // Lista de mensagens ocupando todo espaço
@@ -502,16 +754,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 return _buildInitialTextMessage();
               }
 
-              return Container(
-                // Sem cor de fundo - gradiente já está na tela
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: textChatState.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = textChatState.messages[index];
-                    return _buildMessageBubble(message);
-                  },
-                ),
+              return ListView.builder(
+                padding: EdgeInsets.all(listPadding),
+                itemCount: textChatState.messages.length,
+                itemBuilder: (context, index) {
+                  final message = textChatState.messages[index];
+                  return _buildMessageBubble(message);
+                },
               );
             },
           ),
@@ -522,28 +771,34 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           builder: (context, textChatState) {
             if (textChatState.isLoading) {
               return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: loadingPadding,
+                  vertical: loadingVerticalPadding,
+                ),
+                color: MetamorfoseColors.whiteLight,
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
+                      width: iconSize,
+                      height: iconSize,
+                      child: const CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
                             MetamorfoseColors.purpleNormal),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: spacing),
                     Text(
                       '${_plantInfo?['name'] ?? AppConstants.defaultPlantName} ${AppConstants.loadingMessage}',
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: MetamorfoseColors.greyMedium,
                         fontStyle: FontStyle.italic,
                         fontFamily: 'DinNext',
+                        fontSize: fontSize,
                       ),
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -610,7 +865,52 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget _buildInitialTextMessage() {
     final greeting = AssetUtils.getGreetingByTime();
 
-    return Container(
+    final imageSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 120.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 140.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 56.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 22.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final blurRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 15.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: Center(
@@ -620,14 +920,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           children: [
             // Planta do usuário centralizada
             Container(
-              width: 120,
-              height: 120,
+              width: imageSize,
+              height: imageSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: MetamorfoseColors.purpleNormal.withOpacity(0.2),
-                    blurRadius: 15,
+                    color: MetamorfoseColors.purpleNormal.withValues(alpha: 0.2),
+                    blurRadius: blurRadius,
                     offset: const Offset(0, 5),
                   ),
                 ],
@@ -635,18 +935,21 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               child: _buildSmallPlantImage(),
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: spacing),
 
             // Texto de boas-vindas centralizado
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
                 'Como posso ajudar você esta $greeting?',
                 textAlign: TextAlign.center,
                 style: AppTypography.displayMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: MetamorfoseColors.greyMedium,
+                  fontSize: fontSize,
                 ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -656,12 +959,30 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildPlantImage() {
+    final containerSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 280.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 240.0),
+        Condition.largerThan(name: TABLET, value: 320.0),
+      ],
+    ).value;
+
+    final plantSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 200.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 160.0),
+        Condition.largerThan(name: TABLET, value: 240.0),
+      ],
+    ).value;
+
     return AnimatedBuilder(
       animation: Listenable.merge([_pulseController, _circleController]),
       builder: (context, child) {
-        return Container(
-          width: 280,
-          height: 280,
+        return SizedBox(
+          width: containerSize,
+          height: containerSize,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -674,13 +995,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   child: Transform.scale(
                     scale: 1.0 + 0.1 * _pulseController.value,
                     child: Container(
-                      width: 260,
-                      height: 260,
+                      width: containerSize - 20,
+                      height: containerSize - 20,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
                           color:
-                              MetamorfoseColors.purpleNormal.withOpacity(0.8),
+                              MetamorfoseColors.purpleNormal.withValues(alpha: 0.8),
                           width: 3,
                         ),
                       ),
@@ -693,12 +1014,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   child: Transform.scale(
                     scale: 1.0 + 0.15 * (1 - _pulseController.value),
                     child: Container(
-                      width: 240,
-                      height: 240,
+                      width: containerSize - 40,
+                      height: containerSize - 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.greenLight.withOpacity(0.7),
+                          color: MetamorfoseColors.greenLight.withValues(alpha: 0.7),
                           width: 2,
                         ),
                       ),
@@ -711,12 +1032,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   child: Transform.scale(
                     scale: 1.0 + 0.2 * _pulseController.value,
                     child: Container(
-                      width: 220,
-                      height: 220,
+                      width: containerSize - 60,
+                      height: containerSize - 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.purpleLight.withOpacity(0.5),
+                          color: MetamorfoseColors.purpleLight.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
@@ -729,12 +1050,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   child: Transform.scale(
                     scale: 1.0 + 0.1 * (1 - _pulseController.value),
                     child: Container(
-                      width: 200,
-                      height: 200,
+                      width: containerSize - 80,
+                      height: containerSize - 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.greenNormal.withOpacity(0.4),
+                          color: MetamorfoseColors.greenNormal.withValues(alpha: 0.4),
                           width: 1,
                         ),
                       ),
@@ -745,14 +1066,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
               // Planta no centro
               Container(
-                width: 200,
-                height: 200,
+                width: plantSize,
+                height: plantSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
                       color: MetamorfoseColors.purpleNormal
-                          .withOpacity(0.2 + 0.1 * _pulseController.value),
+                          .withValues(alpha: 0.2 + 0.1 * _pulseController.value),
                       blurRadius: 15 + 10 * _pulseController.value,
                       offset: const Offset(0, 5),
                     ),
@@ -769,16 +1090,34 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Constrói o widget da imagem da planta (foto real ou SVG)
   Widget _buildPlantImageWidget() {
+    final plantSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 200.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 160.0),
+        Condition.largerThan(name: TABLET, value: 240.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 70.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 50.0),
+        Condition.largerThan(name: TABLET, value: 90.0),
+      ],
+    ).value;
+
     if (_plantInfo == null) {
       return Container(
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: MetamorfoseColors.purpleLight,
         ),
-        child: const Icon(
+        child: Icon(
           Icons.eco,
-          size: 70,
-          color: Colors.white,
+          size: iconSize,
+          color: MetamorfoseColors.whiteLight,
         ),
       );
     }
@@ -789,8 +1128,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       return ClipOval(
         child: Image.network(
           plantImageUrl,
-          width: 200,
-          height: 200,
+          width: plantSize,
+          height: plantSize,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             // Fallback para SVG se a foto falhar
@@ -808,7 +1147,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               ),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: MetamorfoseColors.whiteLight,
                 ),
               ),
             );
@@ -826,16 +1165,34 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   /// Constrói a imagem pequena da planta para o texto inicial
   Widget _buildSmallPlantImage() {
+    final imageSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 120.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 140.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 50.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 60.0),
+      ],
+    ).value;
+
     if (_plantInfo == null) {
       return Container(
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: MetamorfoseColors.purpleLight,
         ),
-        child: const Icon(
+        child: Icon(
           Icons.eco,
-          size: 50,
-          color: Colors.white,
+          size: iconSize,
+          color: MetamorfoseColors.whiteLight,
         ),
       );
     }
@@ -846,8 +1203,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       return ClipOval(
         child: Image.network(
           plantImageUrl,
-          width: 120,
-          height: 120,
+          width: imageSize,
+          height: imageSize,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             // Fallback para SVG se a foto falhar
@@ -865,7 +1222,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               ),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: MetamorfoseColors.whiteLight,
                 ),
               ),
             );
@@ -884,6 +1241,24 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget _buildWelcomeMessage() {
     final userName = _currentUser?.name ?? _currentUser?.completeName ?? 'você';
 
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     // Se está ouvindo, mostrar "Ouvindo..."
     if (_isListening) {
       return Text(
@@ -892,21 +1267,27 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         style: AppTypography.displayMedium.copyWith(
           fontWeight: FontWeight.w600,
           color: MetamorfoseColors.greyMedium,
+          fontSize: fontSize,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       );
     }
 
     // Se tem status text (planta falando), mostrar com animação
     if (_currentStatusText.isNotEmpty && _currentStatusText != 'Ouvindo...') {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Text(
           _currentStatusText,
           textAlign: TextAlign.center,
           style: AppTypography.displayMedium.copyWith(
             fontWeight: FontWeight.w700,
             color: MetamorfoseColors.greyMedium,
+            fontSize: fontSize,
           ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
         ),
       );
     }
@@ -914,6 +1295,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     // Mensagem padrão
     return RichText(
       textAlign: TextAlign.center,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
       text: TextSpan(
         children: [
           TextSpan(
@@ -921,6 +1304,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             style: AppTypography.displayMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: MetamorfoseColors.greenLight,
+              fontSize: fontSize,
             ),
           ),
           TextSpan(
@@ -928,6 +1312,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             style: AppTypography.displayMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: MetamorfoseColors.greyMedium,
+              fontSize: fontSize,
             ),
           ),
         ],
@@ -938,17 +1323,53 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget _buildTextInput() {
     if (_isVoiceMode) {
       // Microfone igual ao bottom navigation
+      final buttonSize = ResponsiveValue<double>(
+        context,
+        defaultValue: 80.0,
+        conditionalValues: const [
+          Condition.smallerThan(name: MOBILE, value: 70.0),
+          Condition.largerThan(name: TABLET, value: 90.0),
+        ],
+      ).value;
+
+      final borderRadius = ResponsiveValue<double>(
+        context,
+        defaultValue: 28.0,
+        conditionalValues: const [
+          Condition.smallerThan(name: MOBILE, value: 24.0),
+          Condition.largerThan(name: TABLET, value: 32.0),
+        ],
+      ).value;
+
+      final iconSize = ResponsiveValue<double>(
+        context,
+        defaultValue: 40.0,
+        conditionalValues: const [
+          Condition.smallerThan(name: MOBILE, value: 35.0),
+          Condition.largerThan(name: TABLET, value: 45.0),
+        ],
+      ).value;
+
+      final blurRadius = ResponsiveValue<double>(
+        context,
+        defaultValue: 8.0,
+        conditionalValues: const [
+          Condition.smallerThan(name: MOBILE, value: 6.0),
+          Condition.largerThan(name: TABLET, value: 10.0),
+        ],
+      ).value;
+
       return Center(
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: _toggleListening,
-            borderRadius: BorderRadius.circular(28),
-            splashColor: Colors.white.withOpacity(0.2),
-            highlightColor: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(borderRadius),
+            splashColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.2),
+            highlightColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.1),
             child: Container(
-              width: 80,
-              height: 80,
+              width: buttonSize,
+              height: buttonSize,
               decoration: BoxDecoration(
                 gradient: _isListening
                     ? LinearGradient(
@@ -956,7 +1377,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         end: Alignment.bottomCenter,
                         colors: [
                           MetamorfoseColors.redNormal,
-                          MetamorfoseColors.redNormal.withOpacity(0.8),
+                          MetamorfoseColors.redNormal.withValues(alpha: 0.8),
                         ],
                       )
                     : const LinearGradient(
@@ -970,8 +1391,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
+                    color: MetamorfoseColors.blackNormal.withValues(alpha: 0.2),
+                    blurRadius: blurRadius,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -988,8 +1409,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       _isListening
                           ? Icons.fiber_manual_record
                           : Icons.mic_rounded,
-                      size: 40,
-                      color: Colors.white,
+                      size: iconSize,
+                      color: MetamorfoseColors.whiteLight,
                     ),
                   );
                 },
@@ -1001,13 +1422,94 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     }
 
     // Input estilo referência para modo texto
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final minHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
+    final maxHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 120.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 140.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final buttonSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final buttonPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+        color: MetamorfoseColors.whiteLight,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(borderRadius),
+          topRight: Radius.circular(borderRadius),
         ),
         border: Border.all(
           color: MetamorfoseColors.greyLight,
@@ -1017,42 +1519,42 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Campo de texto expandido
               Container(
                 width: double.infinity,
-                constraints: const BoxConstraints(
-                  minHeight: 40,
-                  maxHeight: 120,
+                constraints: BoxConstraints(
+                  minHeight: minHeight,
+                  maxHeight: maxHeight,
                 ),
                 child: TextField(
                   controller: _textController,
                   maxLines: null,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
+                  style: TextStyle(
+                    color: MetamorfoseColors.blackNormal,
+                    fontSize: fontSize,
                     fontFamily: 'DinNext',
                     fontWeight: FontWeight.w400,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Digite uma mensagem...',
                     hintStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 16,
+                      color: MetamorfoseColors.greyMedium,
+                      fontSize: fontSize,
                       fontFamily: 'DinNext',
                       fontWeight: FontWeight.w400,
                     ),
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 8,
-                      bottom: 10,
+                    contentPadding: EdgeInsets.only(
+                      left: padding,
+                      right: padding,
+                      top: buttonPadding,
+                      bottom: buttonPadding + 2,
                     ),
                   ),
                   onSubmitted: (value) => _handleTextSubmission(value),
@@ -1068,19 +1570,19 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: _toggleListening,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(borderRadius),
                       child: Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(buttonPadding),
                         child: Icon(
                           Icons.mic_rounded,
-                          size: 20,
+                          size: iconSize,
                           color: MetamorfoseColors.greyMedium,
                         ),
                       ),
                     ),
                   ),
 
-                  const SizedBox(width: 12),
+                  SizedBox(width: spacing),
 
                   // Botão de enviar com cor purple
                   BlocConsumer<TextChatBloc, TextChatState>(
@@ -1090,27 +1592,27 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () => _sendTextMessageWithContext(context),
-                          borderRadius: BorderRadius.circular(20),
-                          splashColor: Colors.white.withOpacity(0.2),
-                          highlightColor: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(borderRadius),
+                          splashColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.2),
+                          highlightColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.1),
                           child: Container(
-                            width: 40,
-                            height: 40,
+                            width: buttonSize,
+                            height: buttonSize,
                             decoration: BoxDecoration(
                               color: MetamorfoseColors.purpleNormal,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: MetamorfoseColors.blackNormal.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.send_rounded,
-                              size: 20,
-                              color: Colors.white,
+                              size: iconSize,
+                              color: MetamorfoseColors.whiteLight,
                             ),
                           ),
                         ),

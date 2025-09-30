@@ -40,6 +40,9 @@ class MetamorfosePrimaryButton extends StatelessWidget {
   /// Cor da sombra personalizada (opcional)
   final Color? shadowColor;
 
+  /// Tamanho da fonte personalizado (opcional)
+  final double? fontSize;
+
   /// Construtor do botão primário Metamorfose
   /// 
   /// @param text O texto exibido no botão.
@@ -48,6 +51,7 @@ class MetamorfosePrimaryButton extends StatelessWidget {
   /// @param backgroundColor Cor de fundo personalizada (opcional).
   /// @param borderColor Cor da borda personalizada (opcional).
   /// @param shadowColor Cor da sombra personalizada (opcional).
+  /// @param fontSize Tamanho da fonte personalizado (opcional).
   const MetamorfosePrimaryButton({
     Key? key,
     required this.text,
@@ -56,6 +60,7 @@ class MetamorfosePrimaryButton extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
     this.shadowColor,
+    this.fontSize,
   }) : super(key: key);
 
   @override
@@ -70,6 +75,7 @@ class MetamorfosePrimaryButton extends StatelessWidget {
         shadowColor: shadowColor ?? MetamorfoseColors.purpleDark,
         strokeColor: borderColor ?? MetamorfoseColors.purpleNormal,
         child: icon,
+        fontSize: fontSize,
       ),
     );
   }

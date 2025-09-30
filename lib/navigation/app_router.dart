@@ -43,7 +43,6 @@ import 'package:metamorfose_flutter/blocs/plant_config_bloc.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/blocs/community_bloc.dart';
 import 'package:metamorfose_flutter/blocs/plant_care_bloc.dart';
-import 'package:metamorfose_flutter/blocs/text_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
 import 'package:metamorfose_flutter/blocs/calendar_bloc.dart';
@@ -52,7 +51,6 @@ import 'package:metamorfose_flutter/services/gemini_service.dart'
 
 // Telas de Onboarding
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
-import 'package:metamorfose_flutter/screens/onboarding/onboarding_carousel_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_egg_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_final_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_plant_screen.dart';
@@ -93,10 +91,6 @@ class AppRouter {
       GoRoute(
         path: Routes.onboarding,
         builder: (context, state) => const OnboardingScreen(),
-      ),
-      GoRoute(
-        path: Routes.onboardingCarousel,
-        builder: (context, state) => const OnboardingCarouselScreen(),
       ),
       GoRoute(
         path: Routes.onboardingWelcome,

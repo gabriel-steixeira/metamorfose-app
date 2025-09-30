@@ -8,18 +8,6 @@ import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 
-/// Constantes de layout
-class _LayoutConstants {
-  static const double buttonHeight = 43;
-  static const double buttonWidth = 358;
-  static const double horizontalPadding = 16;
-  static const double bottomPadding = 36;
-  static const double statusBarExtra = 8;
-  static const double ivyWidthFactor = 0.8;
-  static const double textFontSize = 18;
-  static const double backgroundTopPadding = 5;
-}
-
 /// Tela final do onboarding
 class OnboardingFinalScreen extends StatelessWidget {
   const OnboardingFinalScreen({super.key});
@@ -29,29 +17,120 @@ class OnboardingFinalScreen extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final double topPadding = MediaQuery.of(context).padding.top;
 
+    // Valores responsivos
+    final buttonHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final buttonWidth = ResponsiveValue<double>(
+      context,
+      defaultValue: 358.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: double.infinity),
+        Condition.largerThan(name: TABLET, value: 400.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final bottomPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 36.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 48.0),
+      ],
+    ).value;
+
+    final statusBarExtra = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final ivyWidthFactor = ResponsiveValue<double>(
+      context,
+      defaultValue: 0.8,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 0.75),
+        Condition.largerThan(name: TABLET, value: 0.85),
+      ],
+    ).value;
+
+    final textFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final speechBubbleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 34.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 30.0),
+        Condition.largerThan(name: TABLET, value: 38.0),
+      ],
+    ).value;
+
+    final backgroundTopPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 5.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 3.0),
+        Condition.largerThan(name: TABLET, value: 7.0),
+      ],
+    ).value;
+
+    final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Color(0xFF9D68FF),
+        statusBarColor: MetamorfoseColors.purpleNormal,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.white,
+        systemNavigationBarColor: MetamorfoseColors.whiteLight,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: MetamorfoseColors.whiteLight,
         body: Stack(
           children: [
-            // Fundo roxo da status bar
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              height: topPadding + _LayoutConstants.statusBarExtra,
-              child: Container(color: Color(0xFF9D68FF)),
+              height: topPadding + statusBarExtra,
+              child: Container(color: MetamorfoseColors.purpleNormal),
             ),
-            // Background SVG
             Positioned(
-              top: _LayoutConstants.backgroundTopPadding,
+              top: backgroundTopPadding,
               left: 0,
               right: 0,
               child: ConstrainedBox(
@@ -65,83 +144,92 @@ class OnboardingFinalScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Conteúdo principal
             SafeArea(
               child: Column(
                 children: [
-                  // Botão voltar SVG igual ao padrão
                   Align(
                     alignment: Alignment.topLeft,
                     child: IconButton(
                       icon: SvgPicture.asset(
                         'assets/images/arrow_back.svg',
-                        width: 34,
-                        height: 34,
+                        width: iconSize,
+                        height: iconSize,
                       ),
                       onPressed: () => context.go(Routes.onboardingButterfly),
-                      color: Colors.black,
+                      color: MetamorfoseColors.blackNormal,
                     ),
                   ),
                   const Spacer(flex: 1),
-                  // Balão de fala acima do Ivy
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: _LayoutConstants.horizontalPadding),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                     child: SpeechBubble(
                       width: screenSize.width * 0.85,
-                      borderColor: MetamorfoseColors.purpleLight, // roxo claro
-                      child: const Text(
+                      borderColor: MetamorfoseColors.purpleLight,
+                      child: Text(
                         'Está pronto para sua metamorfose?',
                         style: TextStyle(
                           color: MetamorfoseColors.greyMedium,
-                          fontSize: 20,
+                          fontSize: speechBubbleFontSize,
                           fontFamily: 'DinNext',
                           fontWeight: FontWeight.w700,
                           height: 1.40,
                         ),
                         textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Ivy image
                   Expanded(
                     flex: 2,
                     child: Image.asset(
                       'assets/images/onboarding/ivy_stars_eyes.png',
-                      width: screenSize.width * _LayoutConstants.ivyWidthFactor,
+                      width: screenSize.width * ivyWidthFactor,
                     ),
                   ),
-                  // Texto extra entre Ivy e botão
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: _LayoutConstants.horizontalPadding, vertical: 16),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
                     child: Text(
                       'Clique em SIM! para iniciar\n sua jornada',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: MetamorfoseColors.greyMedium,
-                        fontSize: _LayoutConstants.textFontSize,
+                        fontSize: textFontSize,
                         fontFamily: 'DinNext',
                         fontWeight: FontWeight.w700,
                         height: 1.40,
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const Spacer(flex: 1),
-                  // Bottom button
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: _LayoutConstants.horizontalPadding,
-                      right: _LayoutConstants.horizontalPadding,
-                      bottom: _LayoutConstants.bottomPadding,
+                    padding: EdgeInsets.only(
+                      left: horizontalPadding,
+                      right: horizontalPadding,
+                      bottom: bottomPadding,
                     ),
-                    child: SizedBox(
-                      width: _LayoutConstants.buttonWidth,
-                      height: _LayoutConstants.buttonHeight,
-                      child: MetamorfosePrimaryButton(
-                        text: 'SIM!',
-                        onPressed: () => context.go(Routes.selectionActivityWelcome),
-                      ),
-                    ),
+                    child: isMobile
+                        ? SizedBox(
+                            width: double.infinity,
+                            height: buttonHeight,
+                            child: MetamorfosePrimaryButton(
+                              text: 'SIM!',
+                              onPressed: () => context.go(Routes.selectionActivityWelcome),
+                            ),
+                          )
+                        : Center(
+                            child: SizedBox(
+                              width: buttonWidth,
+                              height: buttonHeight,
+                              child: MetamorfosePrimaryButton(
+                                text: 'SIM!',
+                                onPressed: () => context.go(Routes.selectionActivityWelcome),
+                              ),
+                            ),
+                          ),
                   ),
                 ],
               ),

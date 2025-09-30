@@ -1,23 +1,21 @@
-/**
- * File: auth_screen.dart
- * Description: Tela de autenticação do aplicativo Metamorfose com BLoC.
- *
- * Responsabilidades:
- * - Exibir interface de login e cadastro usando BLoC
- * - Gerenciar entrada de dados do usuário via BLoC
- * - Integrar com autenticação social
- * - Preservar design original exatamente
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 29-05-2025
- * Last modified: 31-08-2025
- * 
- * Changes:
- * - UI Ajustada. (Evelin Cordeiro)
- * 
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: auth_screen.dart
+/// Description: Tela de autenticação do aplicativo Metamorfose com BLoC.
+///
+/// Responsabilidades:
+/// - Exibir interface de login e cadastro usando BLoC
+/// - Gerenciar entrada de dados do usuário via BLoC
+/// - Integrar com autenticação social
+/// - Preservar design original exatamente
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 29-05-2025
+/// Last modified: 31-08-2025
+/// 
+/// Changes:
+/// - UI Ajustada. (Evelin Cordeiro)
+/// 
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +23,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/index.dart';
-import 'package:metamorfose_flutter/components/input_field.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
 import 'package:metamorfose_flutter/state/auth/auth_state.dart';
@@ -166,7 +163,7 @@ class _AuthScreenState extends State<AuthScreen> {
             borderRadius: BorderRadius.circular(ResponsiveValue<double>(
               context,
               defaultValue: 16.0,
-              conditionalValues: [
+              conditionalValues: const [
                 Condition.smallerThan(name: MOBILE, value: 12.0),
                 Condition.largerThan(name: TABLET, value: 20.0),
               ],
@@ -179,7 +176,7 @@ class _AuthScreenState extends State<AuthScreen> {
               fontSize: ResponsiveValue<double>(
                 context,
                 defaultValue: 18.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 20.0),
                 ],
@@ -187,6 +184,9 @@ class _AuthScreenState extends State<AuthScreen> {
               fontFamily: 'DIN Next for Duolingo',
               fontWeight: FontWeight.w700,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -198,7 +198,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontSize: ResponsiveValue<double>(
                     context,
                     defaultValue: 14.0,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 12.0),
                       Condition.largerThan(name: TABLET, value: 16.0),
                     ],
@@ -206,11 +206,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w400,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 16.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 12.0),
                   Condition.largerThan(name: TABLET, value: 20.0),
                 ],
@@ -222,7 +225,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   padding: EdgeInsets.all(ResponsiveValue<double>(
                     context,
                     defaultValue: 12.0,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 10.0),
                       Condition.largerThan(name: TABLET, value: 16.0),
                     ],
@@ -232,7 +235,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     width: ResponsiveValue<double>(
                       context,
                       defaultValue: 22.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 20.0),
                         Condition.largerThan(name: TABLET, value: 24.0),
                       ],
@@ -240,7 +243,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     height: ResponsiveValue<double>(
                       context,
                       defaultValue: 22.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 20.0),
                         Condition.largerThan(name: TABLET, value: 24.0),
                       ],
@@ -266,7 +269,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontSize: ResponsiveValue<double>(
                     context,
                     defaultValue: 14.0,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 12.0),
                       Condition.largerThan(name: TABLET, value: 16.0),
                     ],
@@ -274,6 +277,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w500,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             TextButton(
@@ -295,7 +301,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: ResponsiveValue<double>(
                             context,
                             defaultValue: 14.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 12.0),
                               Condition.largerThan(name: TABLET, value: 16.0),
                             ],
@@ -314,7 +320,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontSize: ResponsiveValue<double>(
                     context,
                     defaultValue: 14.0,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 12.0),
                       Condition.largerThan(name: TABLET, value: 16.0),
                     ],
@@ -322,6 +328,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w700,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -349,7 +358,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final height = ResponsiveValue<double>(
           context,
           defaultValue: 43.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 40.0),
             Condition.largerThan(name: TABLET, value: 52.0),
           ],
@@ -358,7 +367,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final horizontalMargin = ResponsiveValue<double>(
           context,
           defaultValue: 24.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 16.0),
             Condition.largerThan(name: TABLET, value: 32.0),
           ],
@@ -367,7 +376,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final padding = ResponsiveValue<double>(
           context,
           defaultValue: 4.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 3.0),
             Condition.largerThan(name: TABLET, value: 6.0),
           ],
@@ -376,7 +385,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final borderRadius = ResponsiveValue<double>(
           context,
           defaultValue: 12.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 10.0),
             Condition.largerThan(name: TABLET, value: 16.0),
           ],
@@ -385,7 +394,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final fontSize = ResponsiveValue<double>(
           context,
           defaultValue: 16.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 14.0),
             Condition.largerThan(name: TABLET, value: 18.0),
           ],
@@ -417,7 +426,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       horizontal: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 12.0),
                           Condition.largerThan(name: TABLET, value: 20.0),
                         ],
@@ -425,7 +434,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       vertical: ResponsiveValue<double>(
                         context,
                         defaultValue: 8.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 6.0),
                           Condition.largerThan(name: TABLET, value: 10.0),
                         ],
@@ -470,7 +479,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: ResponsiveValue<double>(
                   context,
                   defaultValue: 4.0,
-                  conditionalValues: [
+                  conditionalValues: const [
                     Condition.smallerThan(name: MOBILE, value: 3.0),
                     Condition.largerThan(name: TABLET, value: 6.0),
                   ],
@@ -488,7 +497,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       horizontal: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 12.0),
                           Condition.largerThan(name: TABLET, value: 20.0),
                         ],
@@ -496,7 +505,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       vertical: ResponsiveValue<double>(
                         context,
                         defaultValue: 8.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 6.0),
                           Condition.largerThan(name: TABLET, value: 10.0),
                         ],
@@ -552,7 +561,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final topSpacing = ResponsiveValue<double>(
           context,
           defaultValue: 32.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 24.0),
             Condition.largerThan(name: TABLET, value: 40.0),
           ],
@@ -561,7 +570,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final horizontalPadding = ResponsiveValue<double>(
           context,
           defaultValue: 24.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 16.0),
             Condition.largerThan(name: TABLET, value: 32.0),
           ],
@@ -570,7 +579,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final fieldSpacing = ResponsiveValue<double>(
           context,
           defaultValue: 16.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 12.0),
             Condition.largerThan(name: TABLET, value: 20.0),
           ],
@@ -579,7 +588,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final iconSize = ResponsiveValue<double>(
           context,
           defaultValue: 20.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 18.0),
             Condition.largerThan(name: TABLET, value: 24.0),
           ],
@@ -658,7 +667,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         fontSize: ResponsiveValue<double>(
                           context,
                           defaultValue: 14.0,
-                          conditionalValues: [
+                          conditionalValues: const [
                             Condition.smallerThan(name: MOBILE, value: 12.0),
                             Condition.largerThan(name: TABLET, value: 16.0),
                           ],
@@ -666,6 +675,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         fontFamily: 'DIN Next for Duolingo',
                         fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -674,7 +686,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 32.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 24.0),
                   Condition.largerThan(name: TABLET, value: 40.0),
                 ],
@@ -706,7 +718,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     padding: EdgeInsets.all(ResponsiveValue<double>(
                       context,
                       defaultValue: 12.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 10.0),
                         Condition.largerThan(name: TABLET, value: 16.0),
                       ],
@@ -716,7 +728,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       borderRadius: BorderRadius.circular(ResponsiveValue<double>(
                         context,
                         defaultValue: 8.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 6.0),
                           Condition.largerThan(name: TABLET, value: 12.0),
                         ],
@@ -733,7 +745,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         SizedBox(width: ResponsiveValue<double>(
                           context,
                           defaultValue: 8.0,
-                          conditionalValues: [
+                          conditionalValues: const [
                             Condition.smallerThan(name: MOBILE, value: 6.0),
                             Condition.largerThan(name: TABLET, value: 12.0),
                           ],
@@ -746,7 +758,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               fontSize: ResponsiveValue<double>(
                                 context,
                                 defaultValue: 14.0,
-                                conditionalValues: [
+                                conditionalValues: const [
                                   Condition.smallerThan(name: MOBILE, value: 12.0),
                                   Condition.largerThan(name: TABLET, value: 16.0),
                                 ],
@@ -766,7 +778,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -787,7 +799,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       padding: EdgeInsets.symmetric(horizontal: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 12.0),
                           Condition.largerThan(name: TABLET, value: 20.0),
                         ],
@@ -799,7 +811,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: ResponsiveValue<double>(
                             context,
                             defaultValue: 14.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 12.0),
                               Condition.largerThan(name: TABLET, value: 16.0),
                             ],
@@ -807,6 +819,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: FontWeight.w400,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Expanded(
@@ -822,7 +837,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -850,7 +865,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     SizedBox(width: ResponsiveValue<double>(
                       context,
                       defaultValue: 50.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 32.0),
                         Condition.largerThan(name: TABLET, value: 64.0),
                       ],
@@ -876,7 +891,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -893,7 +908,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       fontSize: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 14.0),
                           Condition.largerThan(name: TABLET, value: 18.0),
                         ],
@@ -929,7 +944,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -950,7 +965,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final topSpacing = ResponsiveValue<double>(
           context,
           defaultValue: 32.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 24.0),
             Condition.largerThan(name: TABLET, value: 40.0),
           ],
@@ -959,7 +974,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final horizontalPadding = ResponsiveValue<double>(
           context,
           defaultValue: 24.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 16.0),
             Condition.largerThan(name: TABLET, value: 32.0),
           ],
@@ -968,7 +983,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final fieldSpacing = ResponsiveValue<double>(
           context,
           defaultValue: 16.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 12.0),
             Condition.largerThan(name: TABLET, value: 20.0),
           ],
@@ -977,7 +992,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final iconSize = ResponsiveValue<double>(
           context,
           defaultValue: 20.0,
-          conditionalValues: [
+          conditionalValues: const [
             Condition.smallerThan(name: MOBILE, value: 18.0),
             Condition.largerThan(name: TABLET, value: 24.0),
           ],
@@ -1124,7 +1139,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 32.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 24.0),
                   Condition.largerThan(name: TABLET, value: 40.0),
                 ],
@@ -1160,7 +1175,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     padding: EdgeInsets.all(ResponsiveValue<double>(
                       context,
                       defaultValue: 12.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 10.0),
                         Condition.largerThan(name: TABLET, value: 16.0),
                       ],
@@ -1170,7 +1185,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       borderRadius: BorderRadius.circular(ResponsiveValue<double>(
                         context,
                         defaultValue: 8.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 6.0),
                           Condition.largerThan(name: TABLET, value: 12.0),
                         ],
@@ -1187,7 +1202,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         SizedBox(width: ResponsiveValue<double>(
                           context,
                           defaultValue: 8.0,
-                          conditionalValues: [
+                          conditionalValues: const [
                             Condition.smallerThan(name: MOBILE, value: 6.0),
                             Condition.largerThan(name: TABLET, value: 12.0),
                           ],
@@ -1200,7 +1215,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               fontSize: ResponsiveValue<double>(
                                 context,
                                 defaultValue: 14.0,
-                                conditionalValues: [
+                                conditionalValues: const [
                                   Condition.smallerThan(name: MOBILE, value: 12.0),
                                   Condition.largerThan(name: TABLET, value: 16.0),
                                 ],
@@ -1220,7 +1235,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -1240,7 +1255,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       padding: EdgeInsets.symmetric(horizontal: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 12.0),
                           Condition.largerThan(name: TABLET, value: 20.0),
                         ],
@@ -1252,7 +1267,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: ResponsiveValue<double>(
                             context,
                             defaultValue: 14.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 12.0),
                               Condition.largerThan(name: TABLET, value: 16.0),
                             ],
@@ -1260,6 +1275,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: FontWeight.w400,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Expanded(
@@ -1274,7 +1292,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -1301,7 +1319,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     SizedBox(width: ResponsiveValue<double>(
                       context,
                       defaultValue: 50.0,
-                      conditionalValues: [
+                      conditionalValues: const [
                         Condition.smallerThan(name: MOBILE, value: 32.0),
                         Condition.largerThan(name: TABLET, value: 64.0),
                       ],
@@ -1326,7 +1344,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -1342,7 +1360,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       fontSize: ResponsiveValue<double>(
                         context,
                         defaultValue: 16.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: 14.0),
                           Condition.largerThan(name: TABLET, value: 18.0),
                         ],
@@ -1377,7 +1395,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: ResponsiveValue<double>(
                 context,
                 defaultValue: 24.0,
-                conditionalValues: [
+                conditionalValues: const [
                   Condition.smallerThan(name: MOBILE, value: 16.0),
                   Condition.largerThan(name: TABLET, value: 32.0),
                 ],
@@ -1413,12 +1431,12 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               children: [
                 // Header com botão voltar
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: ResponsiveValue<double>(
                     context,
                     defaultValue: 56.0,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 48.0),
                       Condition.largerThan(name: TABLET, value: 64.0),
                     ],
@@ -1431,7 +1449,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           width: ResponsiveValue<double>(
                             context,
                             defaultValue: 34.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 28.0),
                               Condition.largerThan(name: TABLET, value: 40.0),
                             ],
@@ -1439,7 +1457,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           height: ResponsiveValue<double>(
                             context,
                             defaultValue: 34.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 28.0),
                               Condition.largerThan(name: TABLET, value: 40.0),
                             ],
@@ -1456,7 +1474,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   flex: ResponsiveValue<int>(
                     context,
                     defaultValue: 2,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 1),
                       Condition.largerThan(name: TABLET, value: 3),
                     ],
@@ -1487,7 +1505,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       final bottomOffset = ResponsiveValue<double>(
                         context,
                         defaultValue: -50.0,
-                        conditionalValues: [
+                        conditionalValues: const [
                           Condition.smallerThan(name: MOBILE, value: -40.0),
                           Condition.largerThan(name: TABLET, value: -60.0),
                         ],
@@ -1518,7 +1536,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   flex: ResponsiveValue<int>(
                     context,
                     defaultValue: isSmallScreen ? 4 : 5,
-                    conditionalValues: [
+                    conditionalValues: const [
                       Condition.smallerThan(name: MOBILE, value: 3),
                       Condition.largerThan(name: TABLET, value: 6),
                     ],
@@ -1532,7 +1550,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           topLeft: Radius.circular(ResponsiveValue<double>(
                             context,
                             defaultValue: 32.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 24.0),
                               Condition.largerThan(name: TABLET, value: 40.0),
                             ],
@@ -1540,7 +1558,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           topRight: Radius.circular(ResponsiveValue<double>(
                             context,
                             defaultValue: 32.0,
-                            conditionalValues: [
+                            conditionalValues: const [
                               Condition.smallerThan(name: MOBILE, value: 24.0),
                               Condition.largerThan(name: TABLET, value: 40.0),
                             ],
@@ -1553,7 +1571,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         SizedBox(height: ResponsiveValue<double>(
                           context,
                           defaultValue: 32.0,
-                          conditionalValues: [
+                          conditionalValues: const [
                             Condition.smallerThan(name: MOBILE, value: 24.0),
                             Condition.largerThan(name: TABLET, value: 40.0),
                           ],

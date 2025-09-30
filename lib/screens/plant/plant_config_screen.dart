@@ -1,19 +1,17 @@
-/**
- * File: plant_config_screen.dart
- * Description: Versão BLoC da tela de configuração da planta virtual.
- *
- * Responsabilidades:
- * - Permitir personalização da planta virtual
- * - Configurar nome e aparência da planta
- * - Criar conexão emocional com o usuário
- * - Usar BLoC pattern para gerenciamento de estado
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 29-05-2025
- * Last modified: 29-05-2025
- * Version: 2.0.0 (BLoC)
- * Squad: Metamorfose
- */
+/// File: plant_config_screen.dart
+/// Description: Versão BLoC da tela de configuração da planta virtual.
+///
+/// Responsabilidades:
+/// - Permitir personalização da planta virtual
+/// - Configurar nome e aparência da planta
+/// - Criar conexão emocional com o usuário
+/// - Usar BLoC pattern para gerenciamento de estado
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 29-05-2025
+/// Last modified: 29-05-2025
+/// Version: 2.0.0 (BLoC)
+/// Squad: Metamorfose  
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -59,31 +57,31 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
     );
   }
 
-  final List<SelectOption<String>> _plantOptions = [
-    const SelectOption(
+  List<SelectOption<String>> _getPlantOptions(double iconSize) => [
+    SelectOption(
       value: 'suculenta',
       label: 'Suculenta',
-      icon: Icon(Icons.spa, color: MetamorfoseColors.purpleLight, size: 20),
+      icon: Icon(Icons.spa, color: MetamorfoseColors.purpleLight, size: iconSize),
     ),
-    const SelectOption(
+    SelectOption(
       value: 'samambaia',
       label: 'Samambaia',
-      icon: Icon(Icons.eco, color: MetamorfoseColors.purpleLight, size: 20),
+      icon: Icon(Icons.eco, color: MetamorfoseColors.purpleLight, size: iconSize),
     ),
-    const SelectOption(
+    SelectOption(
       value: 'cacto',
       label: 'Cacto',
-      icon: Icon(Icons.park, color: MetamorfoseColors.purpleLight, size: 20),
+      icon: Icon(Icons.park, color: MetamorfoseColors.purpleLight, size: iconSize),
     ),
   ];
 
-  final List<SelectOption<Color>> _colorOptions = [
+  List<SelectOption<Color>> _getColorOptions(double iconSize) => [
     SelectOption(
       value: MetamorfoseColors.purpleNormal,
       label: 'Roxo',
       icon: Container(
-        width: 20,
-        height: 20,
+        width: iconSize,
+        height: iconSize,
         decoration: const ShapeDecoration(
           color: MetamorfoseColors.purpleNormal,
           shape: OvalBorder(),
@@ -94,8 +92,8 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
       value: MetamorfoseColors.greenNormal,
       label: 'Verde',
       icon: Container(
-        width: 20,
-        height: 20,
+        width: iconSize,
+        height: iconSize,
         decoration: const ShapeDecoration(
           color: MetamorfoseColors.greenNormal,
           shape: OvalBorder(),
@@ -106,8 +104,8 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
       value: MetamorfoseColors.blueNormal,
       label: 'Azul',
       icon: Container(
-        width: 20,
-        height: 20,
+        width: iconSize,
+        height: iconSize,
         decoration: const ShapeDecoration(
           color: MetamorfoseColors.blueNormal,
           shape: OvalBorder(),
@@ -118,8 +116,8 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
       value: MetamorfoseColors.pinkNormal,
       label: 'Rosa',
       icon: Container(
-        width: 20,
-        height: 20,
+        width: iconSize,
+        height: iconSize,
         decoration: const ShapeDecoration(
           color: MetamorfoseColors.pinkNormal,
           shape: OvalBorder(),
@@ -131,10 +129,7 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicializar o BLoC
     context.read<PlantConfigBloc>().add(InitializePlantConfigEvent());
-
-    // Adicionar listener ao controller para detectar mudanças manuais
     _nameController.addListener(_onControllerChanged);
   }
 
@@ -148,8 +143,6 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
   void _onControllerChanged() {
     if (!_isUpdatingController && _nameController.text != _lastKnownText) {
       _lastKnownText = _nameController.text;
-      print('📝 Nome da planta alterado: "${_nameController.text}"');
-      // Só enviar evento se a mudança veio do usuário
       context.read<PlantConfigBloc>().add(
             UpdatePlantNameEvent(_nameController.text),
           );
@@ -170,30 +163,107 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final headerHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 48.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 44.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final plantIconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
+
+    final containerPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacingSmall = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacingMedium = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final spacingLarge = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final spacingBottom = ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
 
     return BlocConsumer<PlantConfigBloc, PlantConfigState>(
       listener: (context, state) {
-        // Navegar quando o processamento for concluído
         if (state.loadingState == LoadingState.navigating) {
-          // Pequeno delay para mostrar o estado antes de navegar
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) {
-              print('Navegando para ${Routes.home}');
               context.go(Routes.home);
             }
           });
         }
-
-        // Mostrar erros se houver
       },
       builder: (context, state) {
-        // Debug do estado atual
-        print(
-            '🔄 Builder executado - Estado: ${state.validationState}, canSave: ${state.canSave}, nome: "${state.plantName}"');
-
-        // Sincronizar controller com o estado de forma otimizada
         _updateControllerSafely(state.plantName);
 
         return Scaffold(
@@ -206,17 +276,16 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  // Header com botão de voltar (fixo)
                   Container(
                     width: double.infinity,
-                    height: 48,
+                    height: headerHeight,
                     child: Row(
                       children: [
                         IconButton(
                           icon: SvgPicture.asset(
                             'assets/images/arrow_back.svg',
-                            width: 28,
-                            height: 28,
+                            width: iconSize,
+                            height: iconSize,
                           ),
                           onPressed: () => context.go(Routes.auth),
                         ),
@@ -224,31 +293,28 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                     ),
                   ),
 
-                  // Área da planta visual (fixa)
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.2,
                     child: Center(
                       child: SizedBox(
-                        width: screenWidth * 0.5,
-                        height: screenHeight * 0.25,
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: MediaQuery.of(context).size.height * 0.25,
                         child: _buildFramedPlant(state.selectedColor),
                       ),
                     ),
                   ),
 
-                  // Espaçamento adicionado
-                  const SizedBox(height: 16),
+                  SizedBox(height: spacingMedium),
 
-                  // Painel inferior com configurações (fixado no final da tela)
                   Expanded(
                     child: Container(
                       width: double.infinity,
-                      decoration: const ShapeDecoration(
+                      decoration: ShapeDecoration(
                         color: MetamorfoseColors.whiteLight,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(32),
-                            topRight: Radius.circular(32),
+                            topLeft: Radius.circular(borderRadius),
+                            topRight: Radius.circular(borderRadius),
                           ),
                         ),
                       ),
@@ -258,65 +324,61 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                           constraints: BoxConstraints(
                             minHeight: MediaQuery.of(context).size.height * 0.5,
                           ),
-                          padding: const EdgeInsets.only(
-                            top: 24,
-                            left: 24,
-                            right: 24,
-                            bottom: 32,
+                          padding: EdgeInsets.only(
+                            top: containerPadding,
+                            left: containerPadding,
+                            right: containerPadding,
+                            bottom: spacingBottom,
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Campo nome da planta
                               InputField(
                                 hintText: 'Nome da planta',
                                 controller: _nameController,
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.spa,
                                   color: MetamorfoseColors.purpleLight,
-                                  size: 20,
+                                  size: plantIconSize,
                                 ),
                                 errorText: state.nameError,
                               ),
 
-                              const SizedBox(height: 12),
+                              SizedBox(height: spacingSmall),
 
-                              // Select para tipo de planta
                               SelectField<String>(
                                 hintText: 'Selecione a sua planta',
                                 selectedValue: state.selectedPlant,
-                                options: _plantOptions,
+                                options: _getPlantOptions(plantIconSize),
                                 modalTitle: 'Selecione sua planta',
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.eco,
                                   color: MetamorfoseColors.purpleLight,
-                                  size: 20,
+                                  size: plantIconSize,
                                 ),
                                 onChanged: (value) {
                                   context.read<PlantConfigBloc>().add(
-                                        SelectPlantTypeEvent(value!),
+                                        SelectPlantTypeEvent(value),
                                       );
                                 },
                               ),
 
-                              const SizedBox(height: 12),
+                              SizedBox(height: spacingSmall),
 
-                              // Select para cor do vaso
                               SelectField<Color>(
                                 hintText: 'Cor do vaso',
                                 selectedValue: state.selectedColor,
-                                options: _colorOptions,
+                                options: _getColorOptions(plantIconSize),
                                 modalTitle: 'Cor do vaso',
                                 onChanged: (value) {
                                   context.read<PlantConfigBloc>().add(
-                                        SelectPlantColorEvent(value!),
+                                        SelectPlantColorEvent(value),
                                       );
                                 },
                               ),
 
-                              const SizedBox(height: 24),
+                              SizedBox(height: spacingLarge),
 
-                              // Botão para finalizar configuração
                               SizedBox(
                                 width: double.infinity,
                                 child: IgnorePointer(
@@ -335,13 +397,13 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                                           : 'FINALIZAR CONFIGURAÇÃO',
                                       child: state.loadingState ==
                                               LoadingState.saving
-                                          ? const SizedBox(
-                                              width: 24,
-                                              height: 24,
+                                          ? SizedBox(
+                                              width: iconSize,
+                                              height: iconSize,
                                               child: CircularProgressIndicator(
                                                 valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                        Color>(Colors.white),
+                                                    const AlwaysStoppedAnimation<
+                                                        Color>(MetamorfoseColors.whiteLight),
                                                 strokeWidth: 2,
                                               ),
                                             )
@@ -360,24 +422,24 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                                 ),
                               ),
 
-                              const SizedBox(height: 16),
+                              SizedBox(height: spacingMedium),
 
-                              // Texto para acessar o mapa de floriculturas
                               GestureDetector(
                                 onTap: () {
-                                  // Navegar para a tela de mapa
                                   context.push(Routes.map);
                                 },
                                 child: RichText(
                                   textAlign: TextAlign.center,
-                                  text: const TextSpan(
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
                                     style: TextStyle(
                                       color: MetamorfoseColors.greyMedium,
-                                      fontSize: 16,
+                                      fontSize: fontSize,
                                       fontFamily: 'DIN Next for Duolingo',
                                       fontWeight: FontWeight.w400,
                                     ),
-                                    children: [
+                                    children: const [
                                       TextSpan(
                                         text: '🌸 Ainda não tem uma planta?\n',
                                         style: TextStyle(
@@ -400,16 +462,18 @@ class _PlantConfigScreenState extends State<PlantConfigScreen> {
                               ),
                               if (state.hasError)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16),
+                                  padding: EdgeInsets.only(top: spacingMedium),
                                   child: Text(
                                     state.errorMessage ??
                                         'Erro desconhecido. Tente novamente mais tarde.',
                                     style: TextStyle(
                                       color: MetamorfoseColors.redNormal,
-                                      fontSize: 16,
+                                      fontSize: fontSize,
                                       fontWeight: FontWeight.w500,
                                     ),
                                     textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                             ],

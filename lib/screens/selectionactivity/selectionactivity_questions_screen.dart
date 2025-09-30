@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/components/speech_bubble.dart';
 
-
-/// Constantes de layout
-class _LayoutConstants {
-  static const double buttonHeight = 43;
-  static const double buttonWidth = 358;
-  static const double horizontalPadding = 16;
-  static const double bottomPadding = 36;
-  static const double progressBarHeight = 8;
-}
 
 /// Tela de perguntas para personalização do usuário
 class SelectionActivityQuestionsScreen extends StatefulWidget {
@@ -28,66 +19,75 @@ class SelectionActivityQuestionsScreen extends StatefulWidget {
 class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQuestionsScreen> {
   int currentQuestionIndex = 0;
   String? selectedAnswer;
+  String customHabit = '';
+  final TextEditingController _customHabitController = TextEditingController();
   
   // Lista de perguntas
   final List<Map<String, dynamic>> questions = [
     {
-      'question': 'Qual vício você gostaria de trabalhar primeiro?',
+      'question': 'Oi! Vamos começar? 😊\n\nQual desses hábitos você gostaria de transformar?',
       'options': [
-        'Uso excessivo de celular',
+        'Celular (uso excessivo)',
         'Redes sociais',
         'Cigarro',
         'Bebida alcoólica',
-        'Alimentos ultraprocessados',
+        'Comida ultraprocessada',
         'Açúcar',
         'Cafeína',
+        'Outro hábito',
       ],
       'type': 'single_choice',
     },
     {
-      'question': 'Com que frequência você sente que perde o controle sobre esse hábito?',
+      'question': 'Entendi! E como você se sente sobre esse hábito?',
       'options': [
-        'Quase nunca',
-        'Às vezes',
-        'Frequentemente',
-        'Quase sempre',
-        'Sempre',
+        'Tudo bem, não me incomoda',
+        'Às vezes me incomoda',
+        'Me incomoda bastante',
+        'Preciso mudar urgente',
+        'Já estou tentando mudar',
       ],
       'type': 'single_choice',
     },
     {
-      'question': 'Como você se sente quando tenta parar?',
-      'options': [
-        'Ansioso(a)',
-        'Irritado(a)',
-        'Triste',
-        'Motivado(a)',
-        'Indiferente',
-      ],
-      'type': 'single_choice',
-    },
-    {
-      'question': 'Você já tentou mudar esse hábito antes?',
-      'options': ['Sim', 'Não'],
-      'type': 'single_choice',
-    },
-    {
-      'question': 'Qual é a principal razão pela qual você quer mudar?',
+      'question': 'O que mais te motiva nessa jornada? 💚',
       'options': [
         'Minha saúde',
         'Minha família',
-        'Meu bem-estar',
+        'Ter mais tempo livre',
         'Economizar dinheiro',
-        'Ter uma criança',
-        'Minha liberdade',
+        'Me sentir mais livre',
+        'Ser um bom exemplo',
       ],
       'type': 'single_choice',
     },
     {
-      'question': 'Sua privacidade vem em primeiro lugar 💙\n\nTodas as suas respostas serão mantidas em sigilo e usadas apenas para personalizar sua experiência no aplicativo. Também utilizamos seus dados de forma anônima para gerar estatísticas e melhorar nossos serviços — nunca iremos vender ou compartilhar suas informações.\n\nAo continuar, você confirma que tem pelo menos 18 anos de idade.\n\nEstá tudo bem para você?',
+      'question': 'Como você gosta de receber apoio?',
       'options': [
-        'Sim, podemos seguir em frente',
-        'Como usamos seus dados',
+        'Mensagens carinhosas',
+        'Dicas práticas',
+        'Conversas acolhedoras',
+        'Desafios divertidos',
+        'Comemorar conquistas',
+      ],
+      'type': 'single_choice',
+    },
+    {
+      'question': 'Qual horário você prefere para conversar?',
+      'options': [
+        'Manhã (6h às 10h)',
+        'Meio-dia (10h às 14h)',
+        'Tarde (14h às 18h)',
+        'Noite (18h às 22h)',
+        'Qualquer horário',
+      ],
+      'type': 'single_choice',
+    },
+    {
+      'question': 'Sua privacidade é importante para nós 💙\n\nTudo certo para continuarmos?',
+      'options': [
+        'Sim, vamos em frente!',
+        'Como meus dados são usados?',
         'Não, obrigado',
       ],
       'type': 'single_choice',
@@ -97,10 +97,43 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
   void _selectAnswer(String answer) {
     setState(() {
       selectedAnswer = answer;
+      if (answer == 'Outro hábito') {
+        customHabit = '';
+        _customHabitController.clear();
+      }
     });
   }
 
+  void _updateCustomHabit(String value) {
+    setState(() {
+      customHabit = value;
+    });
+  }
+
+  bool _canContinue() {
+    if (selectedAnswer == null) return false;
+    
+    // Se é a primeira pergunta e selecionou "Outro hábito", precisa preencher o campo
+    if (currentQuestionIndex == 0 && selectedAnswer == 'Outro hábito') {
+      return customHabit.trim().isNotEmpty;
+    }
+    
+    return true;
+  }
+
+  @override
+  void dispose() {
+    _customHabitController.dispose();
+    super.dispose();
+  }
+
   void _nextQuestion() {
+    // Verificar se é a primeira pergunta e se selecionou "Outro hábito"
+    if (currentQuestionIndex == 0 && selectedAnswer == 'Outro hábito' && customHabit.trim().isEmpty) {
+      // Não permitir avançar se selecionou "Outro hábito" mas não preencheu o campo
+      return;
+    }
+    
     if (selectedAnswer != null) {
       // Verificar se é a pergunta de privacidade (última pergunta)
       if (currentQuestionIndex == questions.length - 1) {
@@ -132,64 +165,176 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
     }
   }
 
+  void _previousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setState(() {
+        currentQuestionIndex--;
+        selectedAnswer = null;
+        // Limpar o campo de hábito customizado se voltar da primeira pergunta
+        if (currentQuestionIndex == 0) {
+          customHabit = '';
+          _customHabitController.clear();
+        }
+      });
+    } else {
+      // Se estiver na primeira pergunta, voltar para a tela de boas-vindas
+      context.go(Routes.selectionActivityWelcome);
+    }
+  }
+
   void _showConclusionDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext context) {
+        final borderRadius = ResponsiveValue<double>(
+          context,
+          defaultValue: 20.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 24.0),
+          ],
+        ).value;
+
+        final imageSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 120.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 100.0),
+            Condition.largerThan(name: TABLET, value: 140.0),
+          ],
+        ).value;
+
+        final dialogTitleFontSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 18.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 20.0),
+          ],
+        ).value;
+
+        final dialogTextFontSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 14.0),
+            Condition.largerThan(name: TABLET, value: 18.0),
+          ],
+        ).value;
+
+        final dialogPadding = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 12.0),
+            Condition.largerThan(name: TABLET, value: 20.0),
+          ],
+        ).value;
+
+        final buttonSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 4.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 2.0),
+            Condition.largerThan(name: TABLET, value: 6.0),
+          ],
+        ).value;
+
+        final maxDialogWidth = ResponsiveValue<double>(
+          context,
+          defaultValue: 600.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: double.infinity),
+            Condition.largerThan(name: TABLET, value: 800.0),
+          ],
+        ).value;
+
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: MetamorfoseColors.whiteLight,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius),
+            side: BorderSide(
+              color: MetamorfoseColors.purpleLight,
+              width: 2,
+            ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Ivy feliz
-              Image.asset(
-                'assets/images/selectionactivity/ivy_laugh.png',
-                width: 120,
-                height: 120,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Obrigada por compartilhar com a gente 💚',
-                style: TextStyle(
-                  color: MetamorfoseColors.purpleDark,
-                  fontSize: 18,
-                  fontFamily: 'DinNext',
-                  fontWeight: FontWeight.w700,
+          contentPadding: EdgeInsets.all(dialogPadding),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxDialogWidth,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/images/selectionactivity/ivy_laugh.png',
+                  width: imageSize,
+                  height: imageSize,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'A partir de agora, nossa IA vai conversar com você todos os dias e te ajudar a cuidar de si — e da sua nova plantinha também!',
-                style: TextStyle(
-                  color: MetamorfoseColors.greyMedium,
-                  fontSize: 16,
-                  fontFamily: 'DinNext',
-                  fontWeight: FontWeight.w500,
+                SizedBox(height: dialogPadding * 0.8),
+                Text(
+                  'Obrigada por compartilhar com a gente 💚',
+                  style: TextStyle(
+                    color: MetamorfoseColors.purpleDark,
+                    fontSize: dialogTitleFontSize,
+                    fontFamily: 'DinNext',
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                SizedBox(height: dialogPadding * 0.7),
+                Text(
+                  'Agora é só fazer seu cadastro para continuar.\n A partir daí, nossa IA vai estar com você todos os dias, cuidando de você e da sua nova plantinha com muito carinho!🌱',
+                  style: TextStyle(
+                    color: MetamorfoseColors.greyMedium,
+                    fontSize: dialogTextFontSize,
+                    fontFamily: 'DinNext',
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
           actions: [
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: MetamorfosePrimaryButton(
-                  text: 'Continuar',
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    context.go('${Routes.auth}?mode=register');
-                  },
-                  backgroundColor: MetamorfoseColors.greenLight,
-                  borderColor: MetamorfoseColors.greenDark,
-                  shadowColor: MetamorfoseColors.greenDark,
-                ),
+            Padding(
+              padding: EdgeInsets.all(dialogPadding),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: buttonSpacing),
+                      child: MetamorfosePrimaryButton(
+                        text: 'Cancelar',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        backgroundColor: MetamorfoseColors.redNormal,
+                        borderColor: MetamorfoseColors.redDark,
+                        shadowColor: MetamorfoseColors.redDark,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: buttonSpacing),
+                      child: MetamorfosePrimaryButton(
+                        text: 'Cadastrar',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          context.go('${Routes.auth}?mode=register');
+                        },
+                        backgroundColor: MetamorfoseColors.greenLight,
+                        borderColor: MetamorfoseColors.greenDark,
+                        shadowColor: MetamorfoseColors.greenDark,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ),
+                  
+                ],
               ),
             ),
           ],
@@ -203,64 +348,142 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
+        final borderRadius = ResponsiveValue<double>(
+          context,
+          defaultValue: 20.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 24.0),
+          ],
+        ).value;
+
+        final dialogTitleFontSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 20.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 18.0),
+            Condition.largerThan(name: TABLET, value: 22.0),
+          ],
+        ).value;
+
+        final dialogPadding = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 12.0),
+            Condition.largerThan(name: TABLET, value: 20.0),
+          ],
+        ).value;
+
+        final buttonSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 4.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 2.0),
+            Condition.largerThan(name: TABLET, value: 6.0),
+          ],
+        ).value;
+
+        final maxDialogWidth = ResponsiveValue<double>(
+          context,
+          defaultValue: 600.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: double.infinity),
+            Condition.largerThan(name: TABLET, value: 800.0),
+          ],
+        ).value;
+
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: MetamorfoseColors.whiteLight,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius),
+            side: BorderSide(
+              color: MetamorfoseColors.purpleLight,
+              width: 2,
+            ),
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Como usamos seus dados 💙',
-                  style: TextStyle(
-                    color: MetamorfoseColors.purpleDark,
-                    fontSize: 20,
-                    fontFamily: 'DinNext',
-                    fontWeight: FontWeight.w700,
+          contentPadding: EdgeInsets.all(dialogPadding),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxDialogWidth,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Como usamos seus dados 💙',
+                    style: TextStyle(
+                      color: MetamorfoseColors.purpleDark,
+                      fontSize: dialogTitleFontSize,
+                      fontFamily: 'DinNext',
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                _buildPrivacySection(
-                  'Coleta de Dados',
-                  'Coletamos apenas as informações necessárias para personalizar sua experiência: respostas das perguntas, preferências de plantas e interações com o app.',
-                ),
-                const SizedBox(height: 16),
-                _buildPrivacySection(
-                  'Uso dos Dados',
-                  'Seus dados são usados para:\n• Personalizar conversas da IA\n• Recomendar plantas adequadas\n• Melhorar a experiência do usuário\n• Gerar estatísticas anônimas',
-                ),
-                const SizedBox(height: 16),
-                _buildPrivacySection(
-                  'Proteção',
-                  '• Todos os dados são criptografados\n• Nunca vendemos ou compartilhamos informações pessoais\n• Estatísticas são sempre anônimas\n• Você pode solicitar exclusão a qualquer momento',
-                ),
-                const SizedBox(height: 16),
-                _buildPrivacySection(
-                  'Conformidade',
-                  'Seguimos rigorosamente a LGPD (Lei Geral de Proteção de Dados) e as melhores práticas de segurança da indústria.',
-                ),
-              ],
+                  SizedBox(height: dialogPadding * 0.8),
+                  _buildPrivacySection(
+                    'Coleta de Dados',
+                    'Coletamos apenas as informações necessárias para personalizar sua experiência: respostas das perguntas, preferências de plantas e interações com o app.',
+                  ),
+                  SizedBox(height: dialogPadding * 0.7),
+                  _buildPrivacySection(
+                    'Uso dos Dados',
+                    'Seus dados são usados para:\n• Personalizar conversas da IA\n• Recomendar plantas adequadas\n• Melhorar a experiência do usuário\n• Gerar estatísticas anônimas',
+                  ),
+                  SizedBox(height: dialogPadding * 0.7),
+                  _buildPrivacySection(
+                    'Proteção',
+                    '• Todos os dados são criptografados\n• Nunca vendemos ou compartilhamos informações pessoais\n• Estatísticas são sempre anônimas\n• Você pode solicitar exclusão a qualquer momento',
+                  ),
+                  SizedBox(height: dialogPadding * 0.7),
+                  _buildPrivacySection(
+                    'Conformidade',
+                    'Seguimos rigorosamente a LGPD (Lei Geral de Proteção de Dados) e as melhores práticas de segurança da indústria.',
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: MetamorfosePrimaryButton(
-                  text: 'Entendi, podemos continuar',
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _showConclusionDialog();
-                  },
-                  backgroundColor: MetamorfoseColors.greenLight,
-                  borderColor: MetamorfoseColors.greenDark,
-                  shadowColor: MetamorfoseColors.greenDark,
-                ),
+            Padding(
+              padding: EdgeInsets.all(dialogPadding),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: buttonSpacing),
+                      child: MetamorfosePrimaryButton(
+                        text: 'Cancelar',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        backgroundColor: MetamorfoseColors.redNormal,
+                        borderColor: MetamorfoseColors.redDark,
+                        shadowColor: MetamorfoseColors.redDark,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: buttonSpacing),
+                      child: MetamorfosePrimaryButton(
+                        text: 'Continuar',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _showConclusionDialog();
+                        },
+                        backgroundColor: MetamorfoseColors.greenLight,
+                        borderColor: MetamorfoseColors.greenDark,
+                        shadowColor: MetamorfoseColors.greenDark,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ),
+                  
+                ],
               ),
             ),
           ],
@@ -270,6 +493,33 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
   }
 
   Widget _buildPrivacySection(String title, String content) {
+    final sectionTitleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final sectionTextFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final sectionSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -277,21 +527,23 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
           title,
           style: TextStyle(
             color: MetamorfoseColors.purpleDark,
-            fontSize: 16,
+            fontSize: sectionTitleFontSize,
             fontFamily: 'DinNext',
             fontWeight: FontWeight.w700,
           ),
+          textAlign: TextAlign.start,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: sectionSpacing),
         Text(
           content,
           style: TextStyle(
             color: MetamorfoseColors.greyMedium,
-            fontSize: 14,
+            fontSize: sectionTextFontSize,
             fontFamily: 'DinNext',
             fontWeight: FontWeight.w500,
             height: 1.4,
           ),
+          textAlign: TextAlign.start,
         ),
       ],
     );
@@ -302,8 +554,99 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
     final currentQuestion = questions[currentQuestionIndex];
     final progress = (currentQuestionIndex + 1) / questions.length;
 
+    // Valores responsivos
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final bottomPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 36.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 48.0),
+      ],
+    ).value;
+
+    final buttonHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final buttonWidth = ResponsiveValue<double>(
+      context,
+      defaultValue: 358.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: double.infinity),
+        Condition.largerThan(name: TABLET, value: 400.0),
+      ],
+    ).value;
+
+    final progressBarHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 34.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 28.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
+
+    final speechBubbleWidth = ResponsiveValue<double>(
+      context,
+      defaultValue: 280.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 240.0),
+        Condition.largerThan(name: TABLET, value: 320.0),
+      ],
+    ).value;
+
+    final textFieldBorderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final textFieldFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MetamorfoseColors.whiteLight,
       body: Stack(
         children: [
           // Background com gradiente softPurpleGradient
@@ -321,8 +664,8 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
               children: [
                 // Header com back button e progress bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _LayoutConstants.horizontalPadding,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
                   ),
                   child: Column(
                     children: [
@@ -332,10 +675,10 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
                         child: IconButton(
                           icon: SvgPicture.asset(
                             'assets/images/arrow_back.svg',
-                            width: 34,
-                            height: 34,
+                            width: iconSize,
+                            height: iconSize,
                           ),
-                          onPressed: () => context.go(Routes.selectionActivityWelcome),
+                          onPressed: _previousQuestion,
                           color: MetamorfoseColors.purpleDark,
                         ),
                       ),
@@ -345,10 +688,10 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
                       // Progress bar
                       Container(
                         width: double.infinity,
-                        height: _LayoutConstants.progressBarHeight,
+                        height: progressBarHeight,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(_LayoutConstants.progressBarHeight / 2),
+                          color: MetamorfoseColors.whiteLight.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(progressBarHeight / 2),
                         ),
                         child: FractionallySizedBox(
                           alignment: Alignment.centerLeft,
@@ -356,7 +699,7 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
                           child: Container(
                             decoration: BoxDecoration(
                               color: MetamorfoseColors.greenLight,
-                              borderRadius: BorderRadius.circular(_LayoutConstants.progressBarHeight / 2),
+                              borderRadius: BorderRadius.circular(progressBarHeight / 2),
                             ),
                           ),
                         ),
@@ -365,121 +708,215 @@ class _SelectionActivityQuestionsScreenState extends State<SelectionActivityQues
                   ),
                 ),
                 
-                const SizedBox(height: 16), // Reduzido de Spacer(flex: 2) para SizedBox(height: 16)
+                const SizedBox(height: 16),
                 
                 // Ivy estudando e Speech bubble lado a lado
                 Expanded(
-                  flex: 2, // Aumentado de 1 para 2 para ocupar mais espaço
-                  child: Row(
-                    children: [
-                      // Ivy estudando (lado esquerdo)
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 16, right: 16), // Adicionado margens laterais
-                          child: Image.asset(
-                            'assets/images/selectionactivity/ivy_studying.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      
-                      const SizedBox(width: 20),
-                      
-                      // Speech bubble com pergunta (lado direito)
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 8, right: 16), // Reduzido left de 16 para 8 para aproximar do Ivy
-                          child: IntrinsicWidth(
-                            child: IntrinsicHeight(
-                              child: SpeechBubble(
-                                width: 280, // Aumentado de 200 para 280
-                                arrowDirection: 'left',
-                                color: Colors.white,
-                                borderColor: MetamorfoseColors.purpleLight,
-                                triangleColor: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16), // Aumentado padding
+                  flex: 2,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Em telas muito pequenas, usar layout horizontal compacto
+                      if (constraints.maxWidth < 400) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Ivy menor (lado esquerdo)
+                            SizedBox(
+                              width: constraints.maxWidth * 0.35, // 35% da largura
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8, right: 8),
+                                child: Image.asset(
+                                  'assets/images/selectionactivity/ivy_studying.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            
+                            const SizedBox(width: 8),
+                            
+                            // Speech bubble (lado direito)
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: SpeechBubble(
+                                  width: constraints.maxWidth * 0.6, // 60% da largura
+                                  arrowDirection: 'left',
+                                  color: MetamorfoseColors.whiteLight,
+                                  borderColor: MetamorfoseColors.purpleLight,
+                                  triangleColor: MetamorfoseColors.whiteLight,
                                   child: Text(
                                     currentQuestion['question'],
                                     style: TextStyle(
                                       color: MetamorfoseColors.purpleDark,
-                                      fontSize: 18, // Aumentado de 15 para 18
+                                      fontSize: titleFontSize * 0.9,
                                       fontFamily: 'DinNext',
                                       fontWeight: FontWeight.w700,
-                                      height: 1.4, // Aumentado de 1.3 para 1.4
+                                      height: 1.3,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
                             ),
+                          ],
+                        );
+                      }
+                      
+                      // Layout horizontal para telas maiores
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Ivy estudando (lado esquerdo)
+                          Expanded(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              child: Image.asset(
+                                'assets/images/selectionactivity/ivy_studying.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                          
+                          const SizedBox(width: 20),
+                          
+                          // Speech bubble com pergunta (lado direito)
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8, right: 16),
+                              child: SpeechBubble(
+                                width: speechBubbleWidth,
+                                arrowDirection: 'left',
+                                color: MetamorfoseColors.whiteLight,
+                                borderColor: MetamorfoseColors.purpleLight,
+                                triangleColor: MetamorfoseColors.whiteLight,
+                                child: Text(
+                                  currentQuestion['question'],
+                                  style: TextStyle(
+                                    color: MetamorfoseColors.purpleDark,
+                                    fontSize: titleFontSize,
+                                    fontFamily: 'DinNext',
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.4,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 
-                const SizedBox(height: 16), // Reduzido de 20 para 16
+                const SizedBox(height: 16),
                 
                 // Opções de resposta
                 Expanded(
-                  flex: 4, // Aumentado de 3 para 4 para ocupar mais espaço
+                  flex: 4,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: _LayoutConstants.horizontalPadding,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
                     ),
-                    child: ListView.builder(
-                      itemCount: currentQuestion['options'].length,
-                      itemBuilder: (context, index) {
-                        final option = currentQuestion['options'][index];
-                        final isSelected = selectedAnswer == option;
-                        
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10), // Reduzido de 12 para 10
-                          child: MetamorfosePrimaryButton(
-                            text: option,
-                            onPressed: () => _selectAnswer(option),
-                            backgroundColor: isSelected 
-                                ? MetamorfoseColors.greenLight 
-                                : MetamorfoseColors.purpleLight,
-                            borderColor: isSelected 
-                                ? MetamorfoseColors.greenDark 
-                                : MetamorfoseColors.purpleNormal,
-                            shadowColor: isSelected 
-                                ? MetamorfoseColors.greenDark 
-                                : MetamorfoseColors.purpleNormal,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: currentQuestion['options'].length,
+                            itemBuilder: (context, index) {
+                              final option = currentQuestion['options'][index];
+                              final isSelected = selectedAnswer == option;
+                              
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: MetamorfosePrimaryButton(
+                                  text: option,
+                                  onPressed: () => _selectAnswer(option),
+                                  backgroundColor: isSelected 
+                                      ? MetamorfoseColors.greenLight 
+                                      : MetamorfoseColors.purpleLight,
+                                  borderColor: isSelected 
+                                      ? MetamorfoseColors.greenDark 
+                                      : MetamorfoseColors.purpleNormal,
+                                  shadowColor: isSelected 
+                                      ? MetamorfoseColors.greenDark 
+                                      : MetamorfoseColors.purpleNormal,
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
+                        ),
+                        
+                        // Campo de texto para "Outro hábito" (apenas na primeira pergunta)
+                        if (currentQuestionIndex == 0 && selectedAnswer == 'Outro hábito')
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: MetamorfoseColors.whiteLight,
+                                borderRadius: BorderRadius.circular(textFieldBorderRadius),
+                                border: Border.all(
+                                  color: MetamorfoseColors.purpleLight,
+                                  width: 2,
+                                ),
+                              ),
+                              child: TextField(
+                                controller: _customHabitController,
+                                onChanged: _updateCustomHabit,
+                                decoration: InputDecoration(
+                                  hintText: 'Qual hábito você gostaria de transformar?',
+                                  hintStyle: TextStyle(
+                                    color: MetamorfoseColors.greyMedium,
+                                    fontSize: textFieldFontSize,
+                                    fontFamily: 'DinNext',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  color: MetamorfoseColors.purpleDark,
+                                  fontSize: textFieldFontSize,
+                                  fontFamily: 'DinNext',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 
-                const SizedBox(height: 16), // Reduzido de Spacer(flex: 1) para SizedBox(height: 16)
+                const SizedBox(height: 16),
                 
                 // Bottom button
                 Padding(
-                  padding: const EdgeInsets.only(
-                    left: _LayoutConstants.horizontalPadding,
-                    right: _LayoutConstants.horizontalPadding,
-                    bottom: _LayoutConstants.bottomPadding,
+                  padding: EdgeInsets.only(
+                    left: horizontalPadding,
+                    right: horizontalPadding,
+                    bottom: bottomPadding,
                   ),
                   child: SizedBox(
-                    width: _LayoutConstants.buttonWidth,
-                    height: _LayoutConstants.buttonHeight,
+                    width: buttonWidth,
+                    height: buttonHeight,
                     child: MetamorfosePrimaryButton(
                       text: 'Continuar',
-                      onPressed: selectedAnswer != null ? _nextQuestion : () {},
-                      backgroundColor: selectedAnswer != null 
+                      onPressed: _canContinue() ? _nextQuestion : () {},
+                      backgroundColor: _canContinue() 
                           ? MetamorfoseColors.greenLight 
                           : MetamorfoseColors.greyLight,
-                      borderColor: selectedAnswer != null 
+                      borderColor: _canContinue() 
                           ? MetamorfoseColors.greenDark 
                           : MetamorfoseColors.greyMedium,
-                      shadowColor: selectedAnswer != null 
+                      shadowColor: _canContinue() 
                           ? MetamorfoseColors.greenDark 
                           : MetamorfoseColors.greyMedium,
                     ),

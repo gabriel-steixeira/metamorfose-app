@@ -1,22 +1,20 @@
-/**
- * File: map_screen_bloc.dart
- * Description: Tela de mapa com BLoC implementada.
- *
- * Responsabilidades:
- * - Exibir mapa com floriculturas próximas usando BLoC
- * - Listar floriculturas em formato de lista
- * - Interface de busca reativa
- * - Gerenciar localização do usuário via BLoC
- *
- * Author: Gabriel Teixeira
- * Created on: 31-08-2025
- * 
- * Changes:
- * - UI Ajustada. (Evelin Cordeiro)
- * 
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: map_screen_bloc.dart
+/// Description: Tela de mapa com BLoC implementada.
+///
+/// Responsabilidades:
+/// - Exibir mapa com floriculturas próximas usando BLoC
+/// - Listar floriculturas em formato de lista
+/// - Interface de busca reativa
+/// - Gerenciar localização do usuário via BLoC
+///
+/// Author: Gabriel Teixeira
+/// Created on: 31-08-2025
+/// 
+/// Changes:
+/// - UI Ajustada. (Evelin Cordeiro)
+/// 
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -28,7 +26,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/components/input_field.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/utils/responsive_utils.dart';
 
 class MapScreenBloc extends StatelessWidget {
   const MapScreenBloc({super.key});
@@ -60,7 +57,6 @@ class _MapViewState extends State<MapView> {
     super.initState();
     _searchFocusNode = FocusNode();
 
-    // Opcional: listener para limpar o ícone de 'clear' quando o texto for apagado
     _searchController.addListener(() {
       setState(() {});
     });
@@ -132,29 +128,86 @@ class _MapViewState extends State<MapView> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 22.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final iconPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(padding),
       child: Column(
         children: [
-          const Text('Floriculturas Próximas',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: MetamorfoseColors.blackNormal,
-                  fontFamily: 'DIN Next for Duolingo')),
-          const SizedBox(height: 16),
+          Text(
+            'Floriculturas Próximas',
+            style: TextStyle(
+              fontSize: titleFontSize,
+              fontWeight: FontWeight.bold,
+              color: MetamorfoseColors.blackNormal,
+              fontFamily: 'DIN Next for Duolingo',
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: spacing),
           InputField(
             hintText: 'Buscar floricultura...',
             controller: _searchController,
-            prefixIcon: const Padding(
-              padding: EdgeInsets.all(12),
-              child: Icon(Icons.search,
-                  color: MetamorfoseColors.purpleNormal, size: 22),
+            prefixIcon: Padding(
+              padding: EdgeInsets.all(iconPadding),
+              child: Icon(
+                Icons.search,
+                color: MetamorfoseColors.purpleNormal,
+                size: iconSize,
+              ),
             ),
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.clear,
-                        color: MetamorfoseColors.greyMedium, size: 22),
+                    icon: Icon(
+                      Icons.clear,
+                      color: MetamorfoseColors.greyMedium,
+                      size: iconSize,
+                    ),
                     onPressed: () {
                       _searchController.clear();
                       _searchFocusNode.unfocus();
@@ -176,19 +229,64 @@ class _MapViewState extends State<MapView> {
   }
 
   Widget _buildTabBar(BuildContext context, MapState state) {
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final margin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 3.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 3.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      height: 43,
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(4),
+      height: height,
+      margin: EdgeInsets.symmetric(horizontal: margin),
+      padding: EdgeInsets.all(padding),
       decoration: ShapeDecoration(
-          color: MetamorfoseColors.greyLightest2,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        color: MetamorfoseColors.greyLightest2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+      ),
       child: Row(
         children: [
           _buildTabItem(context, 'Mapa', MapTabIndex.map, state.selectedTab),
-          const SizedBox(width: 4),
+          SizedBox(width: spacing),
           _buildTabItem(context, 'Lista', MapTabIndex.list, state.selectedTab),
         ],
       ),
@@ -198,17 +296,63 @@ class _MapViewState extends State<MapView> {
   Widget _buildTabItem(BuildContext context, String title, MapTabIndex tabIndex,
       MapTabIndex selectedTab) {
     final isSelected = tabIndex == selectedTab;
+    
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 35.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 32.0),
+        Condition.largerThan(name: TABLET, value: 42.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     return Expanded(
       child: GestureDetector(
         onTap: () => context.read<MapBloc>().add(MapChangeTabEvent(tabIndex)),
         child: Container(
-          height: 35,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          height: height,
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
           decoration: isSelected
               ? ShapeDecoration(
                   color: MetamorfoseColors.whiteLight,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(borderRadius)),
                   shadows: const [
                     BoxShadow(
                         color: MetamorfoseColors.shadowLight,
@@ -222,11 +366,13 @@ class _MapViewState extends State<MapView> {
             child: Text(
               title,
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: isSelected
                     ? MetamorfoseColors.greyMedium
                     : MetamorfoseColors.greyLight,
-                fontSize: 16,
+                fontSize: fontSize,
                 fontFamily: 'DIN Next for Duolingo',
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
               ),
@@ -238,29 +384,90 @@ class _MapViewState extends State<MapView> {
   }
 
   Widget _buildMapView(BuildContext context, MapState state) {
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 64.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 48.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final margin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     if (state.locationState.isLoading) {
-      return const Center(
+      return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
-        SizedBox(height: 16),
-        Text('Obtendo sua localização...',
-            style: TextStyle(
-                color: MetamorfoseColors.greyMedium,
-                fontFamily: 'DIN Next for Duolingo'))
+        const CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
+        SizedBox(height: spacing),
+        Text(
+          'Obtendo sua localização...',
+          style: TextStyle(
+            color: MetamorfoseColors.greyMedium,
+            fontFamily: 'DIN Next for Duolingo',
+            fontSize: fontSize,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        )
       ]));
     }
     if (state.locationState.hasError) {
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.location_off,
-            size: 64, color: MetamorfoseColors.greyLight),
-        const SizedBox(height: 16),
-        Text(state.locationState.errorMessage!,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: MetamorfoseColors.greyMedium,
-                fontFamily: 'DIN Next for Duolingo')),
-        const SizedBox(height: 16),
+        Icon(
+          Icons.location_off,
+          size: iconSize,
+          color: MetamorfoseColors.greyLight,
+        ),
+        SizedBox(height: spacing),
+        Text(
+          state.locationState.errorMessage!,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: MetamorfoseColors.greyMedium,
+            fontFamily: 'DIN Next for Duolingo',
+            fontSize: fontSize,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        SizedBox(height: spacing),
         ElevatedButton(
             onPressed: () =>
                 context.read<MapBloc>().add(MapReloadLocationEvent()),
@@ -269,9 +476,9 @@ class _MapViewState extends State<MapView> {
     }
     if (state.locationState.position != null) {
       return Container(
-        margin: const EdgeInsets.all(24),
+        margin: EdgeInsets.all(margin),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(borderRadius),
             boxShadow: const [
               BoxShadow(
                   color: MetamorfoseColors.shadowLight,
@@ -280,7 +487,7 @@ class _MapViewState extends State<MapView> {
                   spreadRadius: 0)
             ]),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(borderRadius),
           child: Stack(
             children: [
               GoogleMap(
@@ -298,11 +505,11 @@ class _MapViewState extends State<MapView> {
               ),
               if (state.searchState.isSearching)
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: MetamorfoseColors.blackNormal.withOpacity(0.3),
                   child: const Center(
                       child: CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white))),
+                              AlwaysStoppedAnimation<Color>(MetamorfoseColors.whiteLight))),
                 ),
             ],
           ),
@@ -313,15 +520,58 @@ class _MapViewState extends State<MapView> {
   }
 
   Widget _buildListView(BuildContext context, MapState state) {
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 64.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 48.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     if (state.locationState.isLoading || state.searchState.isSearching) {
-      return const Center(
+      return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
-        SizedBox(height: 16),
-        Text('Buscando floriculturas...',
-            style: TextStyle(
-                color: MetamorfoseColors.greyMedium,
-                fontFamily: 'DIN Next for Duolingo'))
+        const CircularProgressIndicator(color: MetamorfoseColors.purpleNormal),
+        SizedBox(height: spacing),
+        Text(
+          'Buscando floriculturas...',
+          style: TextStyle(
+            color: MetamorfoseColors.greyMedium,
+            fontFamily: 'DIN Next for Duolingo',
+            fontSize: fontSize,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        )
       ]));
     }
     final floriculturas = state.searchState.displayResults;
@@ -332,18 +582,27 @@ class _MapViewState extends State<MapView> {
       }
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.local_florist,
-            size: 64, color: MetamorfoseColors.greyLight),
-        const SizedBox(height: 16),
-        Text(message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: MetamorfoseColors.greyMedium,
-                fontFamily: 'DIN Next for Duolingo')),
+        Icon(
+          Icons.local_florist,
+          size: iconSize,
+          color: MetamorfoseColors.greyLight,
+        ),
+        SizedBox(height: spacing),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: MetamorfoseColors.greyMedium,
+            fontFamily: 'DIN Next for Duolingo',
+            fontSize: fontSize,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       ]));
     }
     return ListView.builder(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(padding),
       itemCount: floriculturas.length,
       itemBuilder: (context, index) {
         final floricultura = floriculturas[index];
@@ -354,12 +613,102 @@ class _MapViewState extends State<MapView> {
 
   Widget _buildFloriculturaCard(
       BuildContext context, Floricultura floricultura) {
+    final margin = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final bodyFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final smallFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final statusPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final statusBorderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: margin),
+      padding: EdgeInsets.all(padding),
       decoration: ShapeDecoration(
         color: MetamorfoseColors.whiteLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         shadows: const [
           BoxShadow(
               color: MetamorfoseColors.shadowLight,
@@ -374,57 +723,95 @@ class _MapViewState extends State<MapView> {
           Row(
             children: [
               Expanded(
-                  child: Text(floricultura.nome,
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: MetamorfoseColors.blackNormal,
-                          fontFamily: 'DIN Next for Duolingo'))),
+                  child: Text(
+                    floricultura.nome,
+                    style: TextStyle(
+                      fontSize: titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: MetamorfoseColors.blackNormal,
+                      fontFamily: 'DIN Next for Duolingo',
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                  )),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: statusPadding, vertical: statusPadding / 2),
                 decoration: BoxDecoration(
                     color: floricultura.isOpen
                         ? MetamorfoseColors.greenLight
                         : MetamorfoseColors.redLight,
-                    borderRadius: BorderRadius.circular(12)),
-                child: Text(floricultura.isOpen ? 'Aberto' : 'Fechado',
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: floricultura.isOpen
-                            ? MetamorfoseColors.greenDarken
-                            : MetamorfoseColors.redNormal,
-                        fontFamily: 'DIN Next for Duolingo')),
+                    borderRadius: BorderRadius.circular(statusBorderRadius)),
+                child: Text(
+                  floricultura.isOpen ? 'Aberto' : 'Fechado',
+                  style: TextStyle(
+                    fontSize: smallFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: floricultura.isOpen
+                        ? MetamorfoseColors.greenDarken
+                        : MetamorfoseColors.redNormal,
+                    fontFamily: 'DIN Next for Duolingo',
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(floricultura.endereco,
-              style: const TextStyle(
-                  fontSize: 14,
-                  color: MetamorfoseColors.greyMedium,
-                  fontFamily: 'DIN Next for Duolingo')),
-          const SizedBox(height: 8),
+          SizedBox(height: spacing),
+          Text(
+            floricultura.endereco,
+            style: TextStyle(
+              fontSize: bodyFontSize,
+              color: MetamorfoseColors.greyMedium,
+              fontFamily: 'DIN Next for Duolingo',
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.start,
+          ),
+          SizedBox(height: spacing),
           Row(
             children: [
-              const Icon(Icons.location_on,
-                  size: 16, color: MetamorfoseColors.purpleNormal),
-              const SizedBox(width: 4),
-              Text(
+              Icon(
+                Icons.location_on,
+                size: iconSize,
+                color: MetamorfoseColors.purpleNormal,
+              ),
+              SizedBox(width: spacing / 2),
+              Expanded(
+                child: Text(
                   '${floricultura.distancia.toStringAsFixed(1)} km de distância',
-                  style: const TextStyle(
-                      fontSize: 14,
-                      color: MetamorfoseColors.greyMedium,
-                      fontFamily: 'DIN Next for Duolingo')),
-              const Spacer(),
-              const Icon(Icons.local_florist,
-                  size: 16, color: MetamorfoseColors.greenNormal),
-              const SizedBox(width: 4),
-              Text(floricultura.tiposAceitos,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      color: MetamorfoseColors.greyMedium,
-                      fontFamily: 'DIN Next for Duolingo')),
+                  style: TextStyle(
+                    fontSize: bodyFontSize,
+                    color: MetamorfoseColors.greyMedium,
+                    fontFamily: 'DIN Next for Duolingo',
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              Icon(
+                Icons.local_florist,
+                size: iconSize,
+                color: MetamorfoseColors.greenNormal,
+              ),
+              SizedBox(width: spacing / 2),
+              Expanded(
+                child: Text(
+                  floricultura.tiposAceitos,
+                  style: TextStyle(
+                    fontSize: smallFontSize,
+                    color: MetamorfoseColors.greyMedium,
+                    fontFamily: 'DIN Next for Duolingo',
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+              ),
             ],
           ),
         ],

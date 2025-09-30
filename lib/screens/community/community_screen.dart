@@ -1,32 +1,27 @@
-/**
- * File: community_screen.dart
- * Description: Tela de comunidade
- *
- * Responsabilidades:
- * - Exibir feed de posts da comunidade
- * - Exibir lista de amigos
- * - Permitir compartilhamento de conteúdo
- * - Usar BLoC pattern para gerenciamento de estado
- *
- * Author: Evelin Cordeiro
- * Created on: 06-08-2025
- * Last modified: 31-08-2025
- * 
- * Changes:
- * - UI Ajustada. (Evelin Cordeiro)
- * 
- * Version: 1.0.0 (BLoC)
- * Squad: Metamorfose
- */
+/// File: community_screen.dart
+/// Description: Tela de comunidade
+///
+/// Responsabilidades:
+/// - Exibir feed de posts da comunidade
+/// - Exibir lista de amigos
+/// - Permitir compartilhamento de conteúdo
+/// - Usar BLoC pattern para gerenciamento de estado
+///
+/// Author: Evelin Cordeiro
+/// Created on: 06-08-2025
+/// Last modified: 31-08-2025
+/// 
+/// Changes:
+/// - UI Ajustada. (Evelin Cordeiro)
+/// 
+/// Version: 1.0.0 (BLoC)
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
-import 'package:metamorfose_flutter/components/primary_button.dart';
 import 'package:metamorfose_flutter/blocs/community_bloc.dart';
 import 'package:metamorfose_flutter/state/community/community_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
@@ -50,11 +45,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+    final isTablet = ResponsiveBreakpoints.of(context).isTablet;
+    final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
 
     return BlocConsumer<CommunityBloc, CommunityState>(
       listener: (context, state) {
-        // Tratar erros se necessário
         if (state.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -62,7 +58,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
               backgroundColor: MetamorfoseColors.redNormal,
             ),
           );
-          // Limpar erro após mostrar
           context.read<CommunityBloc>().add(ClearErrorEvent());
         }
       },
@@ -70,22 +65,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
         return Scaffold(
           backgroundColor: MetamorfoseColors.whiteLight,
           body: SafeArea(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(),
-
-                // Tabs
-                _buildTabs(state),
-
-                // Content
-                Expanded(
-                  child: _buildContent(state),
-                ),
-              ],
-            ),
+            child: _buildResponsiveLayout(context, state, isMobile, isTablet, isDesktop),
           ),
-          bottomNavigationBar: BottomNavigationMenu(
+          bottomNavigationBar: const BottomNavigationMenu(
             activeIndex: 3,
           ),
         );
@@ -93,24 +75,110 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
+  /// Constrói o layout responsivo baseado no tipo de dispositivo
+  Widget _buildResponsiveLayout(
+    BuildContext context,
+    CommunityState state,
+    bool isMobile,
+    bool isTablet,
+    bool isDesktop,
+  ) {
+    if (isMobile) {
+      return _buildMobileLayout(context, state);
+    } else if (isTablet) {
+      return _buildTabletLayout(context, state);
+    } else {
+      return _buildDesktopLayout(context, state);
+    }
+  }
+
+  /// Layout para dispositivos móveis
+  Widget _buildMobileLayout(BuildContext context, CommunityState state) {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildTabs(state),
+        Expanded(
+          child: _buildContent(state),
+        ),
+      ],
+    );
+  }
+
+  /// Layout para tablets
+  Widget _buildTabletLayout(BuildContext context, CommunityState state) {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildTabs(state),
+        Expanded(
+          child: _buildContent(state),
+        ),
+      ],
+    );
+  }
+
+  /// Layout para desktop
+  Widget _buildDesktopLayout(BuildContext context, CommunityState state) {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildTabs(state),
+        Expanded(
+          child: _buildContent(state),
+        ),
+      ],
+    );
+  }
+
   /// Header
   Widget _buildHeader() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(padding),
       child: Row(
         children: [
           _buildUserProgressAvatar(),
 
-          const SizedBox(width: 12),
+          SizedBox(width: spacing),
 
-          // Título
           Text(
             'Comunidade',
             style: AppTypography.headlineMedium.copyWith(
               color: MetamorfoseColors.greyDark,
               fontWeight: FontWeight.w700,
               fontFamily: 'DinNext',
+              fontSize: titleFontSize,
             ),
+            textAlign: TextAlign.start,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -119,11 +187,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   /// Abas (Feed/Amigos)
   Widget _buildTabs(CommunityState state) {
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Row(
         children: [
-          // Tab Feed
           Expanded(
             child: _buildTab(
               title: 'Feed',
@@ -133,7 +209,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ),
 
-          // Tab Amigos
           Expanded(
             child: _buildTab(
               title: 'Amigos',
@@ -154,10 +229,46 @@ class _CommunityScreenState extends State<CommunityScreen> {
     required bool isActive,
     required VoidCallback onTap,
   }) {
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 5.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 4.0),
+        Condition.largerThan(name: TABLET, value: 8.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 5),
+        padding: EdgeInsets.symmetric(vertical: verticalPadding),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -173,12 +284,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
           children: [
             Icon(
               icon,
-              size: 20,
+              size: iconSize,
               color: isActive
                   ? MetamorfoseColors.purpleNormal
                   : MetamorfoseColors.greyMedium,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: spacing),
             Text(
               title,
               style: AppTypography.titleMedium.copyWith(
@@ -187,7 +298,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     : MetamorfoseColors.greyMedium,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 fontFamily: 'DinNext',
+                fontSize: fontSize,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -247,31 +362,82 @@ class _CommunityScreenState extends State<CommunityScreen> {
     required String title,
     required String message,
   }) {
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final titleSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final messageFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return SizedBox.expand(
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 24),
+              SizedBox(height: verticalSpacing),
               Text(
                 title,
                 style: AppTypography.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyDark,
                   fontFamily: 'DinNext',
+                  fontSize: titleFontSize,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: titleSpacing),
               Text(
                 message,
                 style: AppTypography.bodyMedium.copyWith(
                   color: MetamorfoseColors.greyMedium,
                   fontFamily: 'DinNext',
+                  fontSize: messageFontSize,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -282,12 +448,30 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   /// Constrói o avatar com a foto de perfil do progresso do usuário
   Widget _buildUserProgressAvatar() {
+    final avatarRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final imageSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
     return FutureBuilder<int>(
       future: UserProgressService.getUserProgress(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircleAvatar(
-            radius: 28,
+            radius: avatarRadius,
             backgroundColor: MetamorfoseColors.purpleLight,
             child: const CircularProgressIndicator(
               color: Colors.white,
@@ -301,13 +485,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
         final imagePath = UserProgressService.getPhaseImagePath(phase);
 
         return CircleAvatar(
-          radius: 28,
+          radius: avatarRadius,
           backgroundColor: MetamorfoseColors.purpleLight,
           child: ClipOval(
             child: Image.asset(
               imagePath,
-              width: 40,
-              height: 40,
+              width: imageSize,
+              height: imageSize,
               fit: BoxFit.cover,
             ),
           ),
