@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/utils/responsive_utils.dart';
 import 'package:metamorfose_flutter/models/chat_message.dart';
+import 'package:responsive_framework/responsive_framework.dart' as rf;
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
@@ -39,23 +40,53 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.isUser;
-    final responsivePadding = ResponsiveUtils.getResponsivePadding(context);
-    final responsiveFontSize =
-        ResponsiveUtils.getResponsiveFontSize(context, 16);
-    final responsiveBorderRadius =
-        ResponsiveUtils.getResponsiveBorderRadius(context, 16);
-    final maxWidth = ResponsiveUtils.getMaxContentWidth(context);
-    final screenWidth = context.screenWidth;
+    
+    // Valores responsivos usando responsive_framework
+    final responsivePadding = rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 12.0),
+        rf.Condition.largerThan(name: rf.TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final responsiveFontSize = rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 14.0),
+        rf.Condition.largerThan(name: rf.TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final responsiveBorderRadius = rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 12.0),
+        rf.Condition.largerThan(name: rf.TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = rf.ResponsiveBreakpoints.of(context).isMobile;
 
     // Calcular largura máxima do bubble baseada no dispositivo
-    final bubbleMaxWidth =
-        context.isMobile ? screenWidth * 0.8 : maxWidth * 0.7;
+    final bubbleMaxWidth = isMobile ? screenWidth * 0.8 : screenWidth * 0.6;
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: EdgeInsets.only(
-          bottom: ResponsiveUtils.getResponsiveSpacing(context, 12),
+          bottom: rf.ResponsiveValue<double>(
+            context,
+            defaultValue: 12.0,
+            conditionalValues: [
+              rf.Condition.smallerThan(name: rf.MOBILE, value: 8.0),
+              rf.Condition.largerThan(name: rf.TABLET, value: 16.0),
+            ],
+          ).value,
         ),
         child: Row(
           mainAxisAlignment:
@@ -65,14 +96,21 @@ class ChatBubble extends StatelessWidget {
             // Avatar para mensagens da IA
             if (!isUser && avatar != null) ...[
               avatar!,
-              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+              SizedBox(width: rf.ResponsiveValue<double>(
+                context,
+                defaultValue: 8.0,
+                conditionalValues: [
+                  rf.Condition.smallerThan(name: rf.MOBILE, value: 6.0),
+                  rf.Condition.largerThan(name: rf.TABLET, value: 12.0),
+                ],
+              ).value),
             ],
 
             // Bubble de mensagem
             Flexible(
               child: Container(
                 constraints: BoxConstraints(maxWidth: bubbleMaxWidth),
-                padding: EdgeInsets.all(responsivePadding.left * 0.75),
+                padding: EdgeInsets.all(responsivePadding * 0.75),
                 decoration: BoxDecoration(
                   color: bubbleColor ??
                       (isUser

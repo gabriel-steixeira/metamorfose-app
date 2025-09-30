@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Botão social do aplicativo Metamorfose.
 /// 
@@ -51,11 +52,57 @@ class MetamorfoseSocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 56.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 50.0),
+        Condition.largerThan(name: TABLET, value: 64.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final horizontalSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),//16, vertical: 12),
+        height: height,
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         decoration: ShapeDecoration(
           color: MetamorfoseColors.whiteLight,
           shape: RoundedRectangleBorder(
@@ -63,7 +110,7 @@ class MetamorfoseSocialButton extends StatelessWidget {
               width: 2,
               color: MetamorfoseColors.whiteDark,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
           shadows: const [
             BoxShadow(
@@ -81,16 +128,16 @@ class MetamorfoseSocialButton extends StatelessWidget {
           children: [
             SvgPicture.asset(
               iconPath,
-              width: 24,
-              height: 24,
+              width: iconSize,
+              height: iconSize,
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: horizontalSpacing),
             Text(
               text.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: textColor,
-                fontSize: 18,
+                fontSize: fontSize,
                 fontFamily: 'DIN Next for Duolingo',
                 fontWeight: FontWeight.w600,
                 shadows: [

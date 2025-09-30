@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -23,12 +24,52 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos baseados no breakpoint
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 15.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 13.0),
+        Condition.largerThan(name: TABLET, value: 17.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: double.infinity, //358
+        width: double.infinity,
         clipBehavior: Clip.antiAlias,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
         decoration: ShapeDecoration(
           color: backgroundColor,
           shape: RoundedRectangleBorder(
@@ -36,7 +77,7 @@ class CustomButton extends StatelessWidget {
               width: 1,
               color: strokeColor,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
           shadows: [
             BoxShadow(
@@ -60,7 +101,7 @@ class CustomButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 15,
+                  fontSize: fontSize,
                   fontFamily: 'DinNext',
                   fontWeight: FontWeight.w700,
                   height: 1.27,

@@ -22,6 +22,7 @@ import 'package:metamorfose_flutter/services/hybrid_auth_service.dart';
 import 'package:metamorfose_flutter/theme/theme.dart';
 import 'package:metamorfose_flutter/navigation/app_router.dart';
 import 'package:site24x7_flutter_plugin/site24x7_flutter_plugin.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class MetamorfoseApp extends StatelessWidget {
   const MetamorfoseApp({super.key});
@@ -39,6 +40,15 @@ class MetamorfoseApp extends StatelessWidget {
         theme: MetamorfoseTheme.lightTheme,
         themeMode: ThemeMode.light,
         routerConfig: AppRouter.router,
+        builder: (context, child) => ResponsiveBreakpoints.builder(
+          child: child!,
+          breakpoints: [
+            const Breakpoint(start: 0, end: 450, name: MOBILE),
+            const Breakpoint(start: 451, end: 800, name: TABLET),
+            const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+            const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+          ],
+        ),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

@@ -18,6 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class Carousel extends StatelessWidget {
   final String title;

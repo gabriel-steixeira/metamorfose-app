@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/utils/responsive_utils.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Input de texto do aplicativo Metamorfose.
 ///
@@ -98,6 +99,52 @@ class InputField extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasError = errorText != null && errorText!.isNotEmpty;
 
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return RepaintBoundary(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -105,7 +152,7 @@ class InputField extends StatelessWidget {
         children: [
           Container(
               width: double.infinity,
-              height: 43,
+              height: height,
               decoration: ShapeDecoration(
                 color: MetamorfoseColors.greyExtraLight,
                 shape: RoundedRectangleBorder(
@@ -115,7 +162,7 @@ class InputField extends StatelessWidget {
                         ? MetamorfoseColors.redNormal
                         : MetamorfoseColors.whiteDark,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 shadows: [],
               ),
@@ -138,25 +185,28 @@ class InputField extends StatelessWidget {
                   scribbleEnabled: false,
                   maxLines: 1,
                   expands: false,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: MetamorfoseColors.greyMedium,
-                    fontSize: 16,
+                    fontSize: fontSize,
                     fontFamily: 'DIN Next for Duolingo',
                     fontWeight: FontWeight.w400,
                   ),
                   decoration: InputDecoration(
                     hintText: hintText,
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       color: MetamorfoseColors.greyMedium,
-                      fontSize: 16,
+                      fontSize: fontSize,
                       fontFamily: 'DIN Next for Duolingo',
                       fontWeight: FontWeight.w400,
                     ),
                     prefixIcon: prefixIcon != null
                         ? Container(
                             width: 40,
-                            height: 43,
-                            padding: const EdgeInsets.only(left: 16, right: 8),
+                            height: height,
+                            padding: EdgeInsets.only(
+                              left: horizontalPadding,
+                              right: 8,
+                            ),
                             child: Center(
                               child: prefixIcon!,
                             ),
@@ -165,17 +215,20 @@ class InputField extends StatelessWidget {
                     suffixIcon: suffixIcon != null
                         ? Container(
                             width: 40,
-                            height: 43,
-                            padding: const EdgeInsets.only(right: 16, left: 8),
+                            height: height,
+                            padding: EdgeInsets.only(
+                              right: horizontalPadding,
+                              left: 8,
+                            ),
                             child: Center(
                               child: suffixIcon!,
                             ),
                           )
                         : null,
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: verticalPadding,
                     ),
                     isCollapsed: false,
                     isDense: false,
@@ -184,12 +237,12 @@ class InputField extends StatelessWidget {
               )),
           if (hasError)
             Padding(
-              padding: const EdgeInsets.only(top: 4, left: 16),
+              padding: EdgeInsets.only(top: 4, left: horizontalPadding),
               child: Text(
                 errorText!,
-                style: const TextStyle(
+                style: TextStyle(
                   color: MetamorfoseColors.redNormal,
-                  fontSize: 12,
+                  fontSize: fontSize * 0.75,
                 ),
               ),
             ),

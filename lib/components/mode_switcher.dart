@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 enum ChatMode {
   voice,

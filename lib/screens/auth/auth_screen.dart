@@ -30,6 +30,7 @@ import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:metamorfose_flutter/blocs/auth_bloc.dart';
 import 'package:metamorfose_flutter/state/auth/auth_state.dart';
 import 'package:metamorfose_flutter/state/auth/auth_events.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Tela de autenticação com opções de login e cadastro usando BLoC
 class AuthScreen extends StatefulWidget {
@@ -162,13 +163,27 @@ class _AuthScreenState extends State<AuthScreen> {
         return AlertDialog(
           backgroundColor: MetamorfoseColors.whiteLight,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ResponsiveValue<double>(
+              context,
+              defaultValue: 16.0,
+              conditionalValues: [
+                Condition.smallerThan(name: MOBILE, value: 12.0),
+                Condition.largerThan(name: TABLET, value: 20.0),
+              ],
+            ).value),
           ),
-          title: const Text(
+          title: Text(
             'Esqueceu a senha?',
             style: TextStyle(
               color: MetamorfoseColors.greyMedium,
-              fontSize: 18,
+              fontSize: ResponsiveValue<double>(
+                context,
+                defaultValue: 18.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 20.0),
+                ],
+              ).value,
               fontFamily: 'DIN Next for Duolingo',
               fontWeight: FontWeight.w700,
             ),
@@ -176,25 +191,60 @@ class _AuthScreenState extends State<AuthScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Digite seu email para receber as instruções de recuperação de senha.',
                 style: TextStyle(
                   color: MetamorfoseColors.greyLight,
-                  fontSize: 14,
+                  fontSize: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 14.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 12.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value,
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 16.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 12.0),
+                  Condition.largerThan(name: TABLET, value: 20.0),
+                ],
+              ).value),
               InputField(
                 hintText: 'Digite seu e-mail',
                 controller: resetEmailController,
                 prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(ResponsiveValue<double>(
+                    context,
+                    defaultValue: 12.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 10.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value),
                   child: SvgPicture.asset(
                     'assets/images/auth/ic_email.svg',
-                    width: 22,
-                    height: 22,
+                    width: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 22.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 20.0),
+                        Condition.largerThan(name: TABLET, value: 24.0),
+                      ],
+                    ).value,
+                    height: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 22.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 20.0),
+                        Condition.largerThan(name: TABLET, value: 24.0),
+                      ],
+                    ).value,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleNormal,
                       BlendMode.srcIn,
@@ -209,11 +259,18 @@ class _AuthScreenState extends State<AuthScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
+              child: Text(
                 'Cancelar',
                 style: TextStyle(
                   color: MetamorfoseColors.greyLight,
-                  fontSize: 14,
+                  fontSize: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 14.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 12.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value,
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w500,
                 ),
@@ -230,11 +287,19 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   // Mostrar mensagem de sucesso
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: Text(
                         'Email de recuperação enviado! Verifique sua caixa de entrada.',
                         style: TextStyle(
                           fontFamily: 'DIN Next for Duolingo',
+                          fontSize: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 14.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 12.0),
+                              Condition.largerThan(name: TABLET, value: 16.0),
+                            ],
+                          ).value,
                         ),
                       ),
                       backgroundColor: MetamorfoseColors.greenNormal,
@@ -242,11 +307,18 @@ class _AuthScreenState extends State<AuthScreen> {
                   );
                 }
               },
-              child: const Text(
+              child: Text(
                 'Enviar',
                 style: TextStyle(
                   color: MetamorfoseColors.purpleLight,
-                  fontSize: 14,
+                  fontSize: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 14.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 12.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value,
                   fontFamily: 'DIN Next for Duolingo',
                   fontWeight: FontWeight.w700,
                 ),
@@ -273,15 +345,61 @@ class _AuthScreenState extends State<AuthScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (previous, current) => previous.mode != current.mode,
       builder: (context, state) {
+        // Valores responsivos para o tab bar
+        final height = ResponsiveValue<double>(
+          context,
+          defaultValue: 43.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 40.0),
+            Condition.largerThan(name: TABLET, value: 52.0),
+          ],
+        ).value;
+
+        final horizontalMargin = ResponsiveValue<double>(
+          context,
+          defaultValue: 24.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 32.0),
+          ],
+        ).value;
+
+        final padding = ResponsiveValue<double>(
+          context,
+          defaultValue: 4.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 3.0),
+            Condition.largerThan(name: TABLET, value: 6.0),
+          ],
+        ).value;
+
+        final borderRadius = ResponsiveValue<double>(
+          context,
+          defaultValue: 12.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 10.0),
+            Condition.largerThan(name: TABLET, value: 16.0),
+          ],
+        ).value;
+
+        final fontSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 14.0),
+            Condition.largerThan(name: TABLET, value: 18.0),
+          ],
+        ).value;
+
         return Container(
           width: double.infinity,
-          height: 43,
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          padding: const EdgeInsets.all(4),
+          height: height,
+          margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
+          padding: EdgeInsets.all(padding),
           decoration: ShapeDecoration(
             color: MetamorfoseColors.greyLightest2,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
             ),
           ),
           child: Row(
@@ -294,14 +412,30 @@ class _AuthScreenState extends State<AuthScreen> {
                         .add(const AuthToggleModeEvent(AuthScreenMode.login));
                   },
                   child: Container(
-                    height: 35,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    height: height - (padding * 2),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value,
+                      vertical: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 8.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 6.0),
+                          Condition.largerThan(name: TABLET, value: 10.0),
+                        ],
+                      ).value,
+                    ),
                     decoration: state.mode == AuthScreenMode.login
                         ? ShapeDecoration(
                             color: MetamorfoseColors.whiteLight,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(borderRadius),
                             ),
                             shadows: const [
                               BoxShadow(
@@ -321,7 +455,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: state.mode == AuthScreenMode.login
                               ? MetamorfoseColors.greyMedium
                               : MetamorfoseColors.greyLight,
-                          fontSize: 16,
+                          fontSize: fontSize,
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: state.mode == AuthScreenMode.login
                               ? FontWeight.w700
@@ -332,7 +466,16 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 4),
+              SizedBox(
+                width: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 4.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 3.0),
+                    Condition.largerThan(name: TABLET, value: 6.0),
+                  ],
+                ).value,
+              ),
               Expanded(
                 child: GestureDetector(
                   onTap: () {
@@ -340,14 +483,30 @@ class _AuthScreenState extends State<AuthScreen> {
                         const AuthToggleModeEvent(AuthScreenMode.register));
                   },
                   child: Container(
-                    height: 35,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    height: height - (padding * 2),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value,
+                      vertical: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 8.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 6.0),
+                          Condition.largerThan(name: TABLET, value: 10.0),
+                        ],
+                      ).value,
+                    ),
                     decoration: state.mode == AuthScreenMode.register
                         ? ShapeDecoration(
                             color: MetamorfoseColors.whiteLight,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(borderRadius),
                             ),
                             shadows: const [
                               BoxShadow(
@@ -367,7 +526,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: state.mode == AuthScreenMode.register
                               ? MetamorfoseColors.greyMedium
                               : MetamorfoseColors.greyLight,
-                          fontSize: 16,
+                          fontSize: fontSize,
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: state.mode == AuthScreenMode.register
                               ? FontWeight.w700
@@ -389,15 +548,52 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildLoginForm() {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        // Valores responsivos para o formulário
+        final topSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 32.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 24.0),
+            Condition.largerThan(name: TABLET, value: 40.0),
+          ],
+        ).value;
+
+        final horizontalPadding = ResponsiveValue<double>(
+          context,
+          defaultValue: 24.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 32.0),
+          ],
+        ).value;
+
+        final fieldSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 12.0),
+            Condition.largerThan(name: TABLET, value: 20.0),
+          ],
+        ).value;
+
+        final iconSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 20.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 18.0),
+            Condition.largerThan(name: TABLET, value: 24.0),
+          ],
+        ).value;
+
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 32),
+              SizedBox(height: topSpacing),
 
               // Campo de email
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'Digite seu e-mail',
                   controller: _emailController,
@@ -406,8 +602,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       : null,
                   prefixIcon: SvgPicture.asset(
                     'assets/images/auth/ic_email.svg',
-                    width: 20,
-                    height: 20,
+                    width: iconSize,
+                    height: iconSize,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleLight,
                       BlendMode.srcIn,
@@ -416,11 +612,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de senha
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: PasswordInputField(
                   hintText: 'Senha',
                   controller: _passwordController,
@@ -434,8 +630,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   },
                   prefixIcon: SvgPicture.asset(
                     'assets/images/auth/ic_lock.svg',
-                    width: 20,
-                    height: 20,
+                    width: iconSize,
+                    height: iconSize,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleLight,
                       BlendMode.srcIn,
@@ -444,22 +640,29 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Esqueceu a senha
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
                     onTap: () {
                       _showForgotPasswordDialog();
                     },
-                    child: const Text(
+                    child: Text(
                       'Esqueceu a senha?',
                       style: TextStyle(
                         color: MetamorfoseColors.purpleLight,
-                        fontSize: 14,
+                        fontSize: ResponsiveValue<double>(
+                          context,
+                          defaultValue: 14.0,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 12.0),
+                            Condition.largerThan(name: TABLET, value: 16.0),
+                          ],
+                        ).value,
                         fontFamily: 'DIN Next for Duolingo',
                         fontWeight: FontWeight.bold,
                       ),
@@ -468,11 +671,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 32.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 24.0),
+                  Condition.largerThan(name: TABLET, value: 40.0),
+                ],
+              ).value),
 
               // Botão Entrar
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: MetamorfeseButton(
                   text: state.loginState.isLoading ? 'ENTRANDO...' : 'ENTRAR',
                   onPressed: state.loginState.isLoading
@@ -489,32 +699,62 @@ class _AuthScreenState extends State<AuthScreen> {
 
               // Exibir erro se houver
               if (state.loginState.errorMessage != null) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: fieldSpacing),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(ResponsiveValue<double>(
+                      context,
+                      defaultValue: 12.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 10.0),
+                        Condition.largerThan(name: TABLET, value: 16.0),
+                      ],
+                    ).value),
                     decoration: BoxDecoration(
                       color: MetamorfoseColors.redLight,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(ResponsiveValue<double>(
+                        context,
+                        defaultValue: 8.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 6.0),
+                          Condition.largerThan(name: TABLET, value: 12.0),
+                        ],
+                      ).value),
                       border: Border.all(color: MetamorfoseColors.redNormal),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
                           color: MetamorfoseColors.redNormal,
-                          size: 20,
+                          size: iconSize,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: ResponsiveValue<double>(
+                          context,
+                          defaultValue: 8.0,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 6.0),
+                            Condition.largerThan(name: TABLET, value: 12.0),
+                          ],
+                        ).value),
                         Expanded(
                           child: Text(
                             state.loginState.errorMessage!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: MetamorfoseColors.redNormal,
-                              fontSize: 14,
+                              fontSize: ResponsiveValue<double>(
+                                context,
+                                defaultValue: 14.0,
+                                conditionalValues: [
+                                  Condition.smallerThan(name: MOBILE, value: 12.0),
+                                  Condition.largerThan(name: TABLET, value: 16.0),
+                                ],
+                              ).value,
                               fontFamily: 'DIN Next for Duolingo',
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                         ),
                       ],
@@ -523,11 +763,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ],
 
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
 
               // Divisor OU
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Row(
                   children: [
                     Expanded(
@@ -536,13 +783,27 @@ class _AuthScreenState extends State<AuthScreen> {
                         color: MetamorfoseColors.whiteDark,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value),
                       child: Text(
                         'OU',
                         style: TextStyle(
                           color: MetamorfoseColors.greyLight,
-                          fontSize: 14,
+                          fontSize: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 14.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 12.0),
+                              Condition.largerThan(name: TABLET, value: 16.0),
+                            ],
+                          ).value,
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: FontWeight.w400,
                         ),
@@ -558,11 +819,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
 
               // Botões de login social
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Row(
                   children: [
                     Expanded(
@@ -579,7 +847,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         textColor: MetamorfoseColors.blueNormal,
                       ),
                     ),
-                    const SizedBox(width: 50),
+                    SizedBox(width: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 50.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 32.0),
+                        Condition.largerThan(name: TABLET, value: 64.0),
+                      ],
+                    ).value),
                     Expanded(
                       child: MetamorfoseSocialButton(
                         text: 'FACEBOOK',
@@ -598,17 +873,31 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
 
               // Termos e Política de Privacidade
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(
+                  text: TextSpan(
                     style: TextStyle(
                       color: MetamorfoseColors.greyLight,
-                      fontSize: 16,
+                      fontSize: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 14.0),
+                          Condition.largerThan(name: TABLET, value: 18.0),
+                        ],
+                      ).value,
                       fontFamily: 'DIN Next for Duolingo',
                       fontWeight: FontWeight.w400,
                     ),
@@ -637,7 +926,14 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
             ],
           ),
         );
@@ -650,15 +946,52 @@ class _AuthScreenState extends State<AuthScreen> {
       buildWhen: (previous, current) =>
           previous.registerState != current.registerState,
       builder: (context, state) {
+        // Valores responsivos para o formulário de registro
+        final topSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 32.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 24.0),
+            Condition.largerThan(name: TABLET, value: 40.0),
+          ],
+        ).value;
+
+        final horizontalPadding = ResponsiveValue<double>(
+          context,
+          defaultValue: 24.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 16.0),
+            Condition.largerThan(name: TABLET, value: 32.0),
+          ],
+        ).value;
+
+        final fieldSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 16.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 12.0),
+            Condition.largerThan(name: TABLET, value: 20.0),
+          ],
+        ).value;
+
+        final iconSize = ResponsiveValue<double>(
+          context,
+          defaultValue: 20.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 18.0),
+            Condition.largerThan(name: TABLET, value: 24.0),
+          ],
+        ).value;
+
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 32),
+              SizedBox(height: topSpacing),
 
               // Campo de username
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'Username',
                   controller: _usernameController,
@@ -667,8 +1000,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       : null,
                   prefixIcon: SvgPicture.asset(
                     'assets/images/auth/ic_user.svg',
-                    width: 20,
-                    height: 20,
+                    width: iconSize,
+                    height: iconSize,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleLight,
                       BlendMode.srcIn,
@@ -677,30 +1010,30 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de telefone
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'Telefone',
                   controller: _phoneController,
                   errorText: state.registerState.phoneError.isNotEmpty
                       ? state.registerState.phoneError
                       : null,
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.phone_outlined,
-                    size: 20,
+                    size: iconSize,
                     color: MetamorfoseColors.purpleLight,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de nome completo
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'Nome Completo',
                   controller: _completeNameController,
@@ -708,19 +1041,19 @@ class _AuthScreenState extends State<AuthScreen> {
                       ? state.registerState.completeNameError
                       : null,
                   onChanged: (value) => _onCompleteNameChanged(),
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.person_outline,
-                    size: 20,
+                    size: iconSize,
                     color: MetamorfoseColors.purpleLight,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de data de nascimento
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'Data de Nascimento',
                   controller: _birthDateController,
@@ -729,19 +1062,19 @@ class _AuthScreenState extends State<AuthScreen> {
                       : null,
                   readOnly: true,
                   onTap: () => _selectBirthDate(),
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.calendar_today_outlined,
-                    size: 20,
+                    size: iconSize,
                     color: MetamorfoseColors.purpleLight,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de email
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: InputField(
                   hintText: 'E-mail',
                   controller: _emailController,
@@ -750,8 +1083,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       : null,
                   prefixIcon: SvgPicture.asset(
                     'assets/images/auth/ic_email.svg',
-                    width: 20,
-                    height: 20,
+                    width: iconSize,
+                    height: iconSize,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleLight,
                       BlendMode.srcIn,
@@ -760,11 +1093,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: fieldSpacing),
 
               // Campo de senha
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: PasswordInputField(
                   hintText: 'Senha',
                   controller: _passwordController,
@@ -778,8 +1111,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   },
                   prefixIcon: SvgPicture.asset(
                     'assets/images/auth/ic_lock.svg',
-                    width: 20,
-                    height: 20,
+                    width: iconSize,
+                    height: iconSize,
                     colorFilter: const ColorFilter.mode(
                       MetamorfoseColors.purpleLight,
                       BlendMode.srcIn,
@@ -788,11 +1121,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 32.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 24.0),
+                  Condition.largerThan(name: TABLET, value: 40.0),
+                ],
+              ).value),
 
               // Botão Criar Conta
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: MetamorfeseButton(
                   text: state.registerState.isLoading
                       ? 'CRIANDO CONTA...'
@@ -813,32 +1153,62 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
 
               if (state.registerState.errorMessage != null) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: fieldSpacing),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(ResponsiveValue<double>(
+                      context,
+                      defaultValue: 12.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 10.0),
+                        Condition.largerThan(name: TABLET, value: 16.0),
+                      ],
+                    ).value),
                     decoration: BoxDecoration(
                       color: MetamorfoseColors.redLight,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(ResponsiveValue<double>(
+                        context,
+                        defaultValue: 8.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 6.0),
+                          Condition.largerThan(name: TABLET, value: 12.0),
+                        ],
+                      ).value),
                       border: Border.all(color: MetamorfoseColors.redNormal),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
                           color: MetamorfoseColors.redNormal,
-                          size: 20,
+                          size: iconSize,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: ResponsiveValue<double>(
+                          context,
+                          defaultValue: 8.0,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 6.0),
+                            Condition.largerThan(name: TABLET, value: 12.0),
+                          ],
+                        ).value),
                         Expanded(
                           child: Text(
                             state.registerState.errorMessage!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: MetamorfoseColors.redNormal,
-                              fontSize: 14,
+                              fontSize: ResponsiveValue<double>(
+                                context,
+                                defaultValue: 14.0,
+                                conditionalValues: [
+                                  Condition.smallerThan(name: MOBILE, value: 12.0),
+                                  Condition.largerThan(name: TABLET, value: 16.0),
+                                ],
+                              ).value,
                               fontFamily: 'DIN Next for Duolingo',
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                         ),
                       ],
@@ -847,10 +1217,17 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ],
 
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
               // Divisor OU
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Row(
                   children: [
                     Expanded(
@@ -859,13 +1236,27 @@ class _AuthScreenState extends State<AuthScreen> {
                         color: MetamorfoseColors.whiteDark,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value),
                       child: Text(
                         'OU',
                         style: TextStyle(
                           color: MetamorfoseColors.greyLight,
-                          fontSize: 14,
+                          fontSize: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 14.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 12.0),
+                              Condition.largerThan(name: TABLET, value: 16.0),
+                            ],
+                          ).value,
                           fontFamily: 'DIN Next for Duolingo',
                           fontWeight: FontWeight.w400,
                         ),
@@ -880,10 +1271,17 @@ class _AuthScreenState extends State<AuthScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
               // Botões de login social
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Row(
                   children: [
                     Expanded(
@@ -900,7 +1298,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         textColor: MetamorfoseColors.blueNormal,
                       ),
                     ),
-                    const SizedBox(width: 50),
+                    SizedBox(width: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 50.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 32.0),
+                        Condition.largerThan(name: TABLET, value: 64.0),
+                      ],
+                    ).value),
                     Expanded(
                       child: MetamorfoseSocialButton(
                         text: 'FACEBOOK',
@@ -918,16 +1323,30 @@ class _AuthScreenState extends State<AuthScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
               // Termos e Política de Privacidade
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(
+                  text: TextSpan(
                     style: TextStyle(
                       color: MetamorfoseColors.greyLight,
-                      fontSize: 16,
+                      fontSize: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 14.0),
+                          Condition.largerThan(name: TABLET, value: 18.0),
+                        ],
+                      ).value,
                       fontFamily: 'DIN Next for Duolingo',
                       fontWeight: FontWeight.w400,
                     ),
@@ -955,7 +1374,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: ResponsiveValue<double>(
+                context,
+                defaultValue: 24.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 16.0),
+                  Condition.largerThan(name: TABLET, value: 32.0),
+                ],
+              ).value),
             ],
           ),
         );
@@ -989,14 +1415,35 @@ class _AuthScreenState extends State<AuthScreen> {
                 // Header com botão voltar
                 Container(
                   width: double.infinity,
-                  height: 56,
+                  height: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 56.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 48.0),
+                      Condition.largerThan(name: TABLET, value: 64.0),
+                    ],
+                  ).value,
                   child: Row(
                     children: [
                       IconButton(
                         icon: SvgPicture.asset(
                           'assets/images/arrow_back.svg',
-                          width: 34,
-                          height: 34,
+                          width: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 34.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 28.0),
+                              Condition.largerThan(name: TABLET, value: 40.0),
+                            ],
+                          ).value,
+                          height: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 34.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 28.0),
+                              Condition.largerThan(name: TABLET, value: 40.0),
+                            ],
+                          ).value,
                         ),
                         onPressed: () => context.go(Routes.onboarding),
                       ),
@@ -1006,31 +1453,57 @@ class _AuthScreenState extends State<AuthScreen> {
 
                 // Personagem robô (reativo ao estado dos olhos)
                 Expanded(
-                  flex: 2,
+                  flex: ResponsiveValue<int>(
+                    context,
+                    defaultValue: 2,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 1),
+                      Condition.largerThan(name: TABLET, value: 3),
+                    ],
+                  ).value,
                   child: BlocBuilder<AuthBloc, AuthState>(
                     buildWhen: (previous, current) =>
                         previous.eyesOpen != current.eyesOpen,
                     builder: (context, state) {
+                      // Valores responsivos para o personagem
+                      final leftMargin = ResponsiveValue<double>(
+                        context,
+                        defaultValue: state.eyesOpen ? 0.175 : 0.2375,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: state.eyesOpen ? 0.15 : 0.2),
+                          Condition.largerThan(name: TABLET, value: state.eyesOpen ? 0.2 : 0.25),
+                        ],
+                      ).value;
+
+                      final imageWidth = ResponsiveValue<double>(
+                        context,
+                        defaultValue: state.eyesOpen ? 0.65 : 0.525,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: state.eyesOpen ? 0.7 : 0.6),
+                          Condition.largerThan(name: TABLET, value: state.eyesOpen ? 0.6 : 0.5),
+                        ],
+                      ).value;
+
+                      final bottomOffset = ResponsiveValue<double>(
+                        context,
+                        defaultValue: -50.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: -40.0),
+                          Condition.largerThan(name: TABLET, value: -60.0),
+                        ],
+                      ).value;
+
                       return Stack(
                         children: [
                           Positioned(
-                            bottom:
-                                -50, // 5% da imagem ficará atrás da parte branca
-                            left: state.eyesOpen
-                                ? screenWidth * 0.175
-                                : screenWidth *
-                                    0.2375, // 15% de margem esquerda
-                            right: state.eyesOpen
-                                ? screenWidth * 0.175
-                                : screenWidth * 0.2375, // 15% de margem direita
+                            bottom: bottomOffset,
+                            left: screenWidth * leftMargin,
+                            right: screenWidth * leftMargin,
                             child: Image.asset(
                               state.eyesOpen
                                   ? 'assets/images/auth/ivy_eyes_open.png'
                                   : 'assets/images/auth/ivy_eyes_closed.png',
-                              width: state.eyesOpen
-                                  ? screenWidth * 0.65
-                                  : screenWidth *
-                                      0.525, // 70% da largura da tela
+                              width: screenWidth * imageWidth,
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -1042,21 +1515,49 @@ class _AuthScreenState extends State<AuthScreen> {
 
                 // Container branco com formulário
                 Expanded(
-                  flex: isSmallScreen ? 4 : 5,
+                  flex: ResponsiveValue<int>(
+                    context,
+                    defaultValue: isSmallScreen ? 4 : 5,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 3),
+                      Condition.largerThan(name: TABLET, value: 6),
+                    ],
+                  ).value,
                   child: Container(
                     width: double.infinity,
-                    decoration: const ShapeDecoration(
+                    decoration: ShapeDecoration(
                       color: MetamorfoseColors.whiteLight,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32),
-                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(ResponsiveValue<double>(
+                            context,
+                            defaultValue: 32.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 24.0),
+                              Condition.largerThan(name: TABLET, value: 40.0),
+                            ],
+                          ).value),
+                          topRight: Radius.circular(ResponsiveValue<double>(
+                            context,
+                            defaultValue: 32.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 24.0),
+                              Condition.largerThan(name: TABLET, value: 40.0),
+                            ],
+                          ).value),
                         ),
                       ),
                     ),
                     child: Column(
                       children: [
-                        const SizedBox(height: 32),
+                        SizedBox(height: ResponsiveValue<double>(
+                          context,
+                          defaultValue: 32.0,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 24.0),
+                            Condition.largerThan(name: TABLET, value: 40.0),
+                          ],
+                        ).value),
 
                         // Custom Tab Bar
                         _buildCustomTabBar(),

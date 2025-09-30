@@ -14,6 +14,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:metamorfose_flutter/screens/splash/brand_splash_screen.dart';
 import 'package:metamorfose_flutter/screens/splash/mascot_splash_screen.dart';
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_screen.dart';

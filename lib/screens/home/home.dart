@@ -22,14 +22,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/theme/text_styles.dart';
-import 'package:metamorfose_flutter/components/speech_bubble.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/components/carousel.dart';
 import 'package:metamorfose_flutter/blocs/home_bloc.dart';
 import 'package:metamorfose_flutter/state/home/home_state.dart';
 import 'package:metamorfose_flutter/theme/typography.dart';
 import 'package:metamorfose_flutter/services/plant_config_service.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +38,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  bool _isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _heightAnimation;
   double _dragStartY = 0;
@@ -88,15 +86,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (_animationController.value > 0.5 || velocity < -500) {
       // Expandir
       _animationController.forward();
-      setState(() {
-        _isExpanded = true;
-      });
     } else {
       // Contrair
       _animationController.reverse();
-      setState(() {
-        _isExpanded = false;
-      });
     }
   }
 
@@ -113,12 +105,58 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       greetingIcon = Icons.wb_cloudy_outlined;
     }
 
+    // Valores responsivos
+    final horizontalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final iconPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(24),
+      margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: MetamorfoseColors.whiteLight.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
             color: MetamorfoseColors.shadowLight,
@@ -135,18 +173,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(iconPadding),
             decoration: BoxDecoration(
               color: MetamorfoseColors.purpleNormal.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(iconPadding + 4),
             ),
             child: Icon(
               greetingIcon,
               color: MetamorfoseColors.purpleNormal,
-              size: 28,
+              size: iconSize,
             ),
           ),
-          const SizedBox(width: 20),
+          SizedBox(width: ResponsiveValue<double>(
+            context,
+            defaultValue: 20.0,
+            conditionalValues: [
+              Condition.smallerThan(name: MOBILE, value: 16.0),
+              Condition.largerThan(name: TABLET, value: 24.0),
+            ],
+          ).value),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +202,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: MetamorfoseColors.blackLight,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 4.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 2.0),
+                    Condition.largerThan(name: TABLET, value: 6.0),
+                  ],
+                ).value),
                 Text(
                   'Como você está se sentindo?',
                   style: AppTypography.bodyLarge.copyWith(
@@ -173,12 +225,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildWeatherCard(HomeState state) {
+    // Valores responsivos
+    final horizontalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 36.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 36.0),
+      ],
+    ).value;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(28),
+      margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         gradient: MetamorfoseGradients.darkPurpleGradient,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
             color: MetamorfoseColors.greenLight.withOpacity(0.3),
@@ -275,40 +355,81 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      '${state.weather!.temperature.toStringAsFixed(0)}°',
-                      style: AppTypography.displayLarge.copyWith(
-                        color: MetamorfoseColors.whiteLight,
-                        fontWeight: FontWeight.w200,
-                        fontSize: 52,
-                        height: 0.9,
+                    Flexible(
+                      child: Text(
+                        '${state.weather!.temperature.toStringAsFixed(0)}°',
+                        style: AppTypography.displayLarge.copyWith(
+                          color: MetamorfoseColors.whiteLight,
+                          fontWeight: FontWeight.w200,
+                          fontSize: 52,
+                          height: 0.9,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            state.weather!.location,
-                            style: AppTypography.bodyLarge.copyWith(
-                              color:
-                                  MetamorfoseColors.whiteLight.withOpacity(0.9),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              _buildTempIndicator('H', state.weather!.tempMax,
-                                  Icons.keyboard_arrow_up),
-                              const SizedBox(width: 16),
-                              _buildTempIndicator('L', state.weather!.tempMin,
-                                  Icons.keyboard_arrow_down),
+                    SizedBox(width: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 16.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 12.0),
+                        Condition.largerThan(name: TABLET, value: 20.0),
+                      ],
+                    ).value),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: ResponsiveValue<double>(
+                            context,
+                            defaultValue: 8.0,
+                            conditionalValues: [
+                              Condition.smallerThan(name: MOBILE, value: 6.0),
+                              Condition.largerThan(name: TABLET, value: 12.0),
                             ],
-                          ),
-                        ],
+                          ).value,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.weather!.location,
+                              style: AppTypography.bodyLarge.copyWith(
+                                color: MetamorfoseColors.whiteLight.withOpacity(0.9),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            SizedBox(height: ResponsiveValue<double>(
+                              context,
+                              defaultValue: 4.0,
+                              conditionalValues: [
+                                Condition.smallerThan(name: MOBILE, value: 2.0),
+                                Condition.largerThan(name: TABLET, value: 6.0),
+                              ],
+                            ).value),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: _buildTempIndicator('H', state.weather!.tempMax,
+                                      Icons.keyboard_arrow_up),
+                                ),
+                                SizedBox(width: ResponsiveValue<double>(
+                                  context,
+                                  defaultValue: 16.0,
+                                  conditionalValues: [
+                                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                                    Condition.largerThan(name: TABLET, value: 20.0),
+                                  ],
+                                ).value),
+                                Flexible(
+                                  child: _buildTempIndicator('L', state.weather!.tempMin,
+                                      Icons.keyboard_arrow_down),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -337,13 +458,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Icon(
           icon,
           color: MetamorfoseColors.whiteLight.withOpacity(0.8),
-          size: 16,
+          size: ResponsiveValue<double>(
+            context,
+            defaultValue: 16.0,
+            conditionalValues: [
+              Condition.smallerThan(name: MOBILE, value: 14.0),
+              Condition.largerThan(name: TABLET, value: 18.0),
+            ],
+          ).value,
         ),
-        Text(
-          '$label ${temp.toStringAsFixed(0)}°',
-          style: AppTypography.bodyMedium.copyWith(
-            color: MetamorfoseColors.whiteLight.withOpacity(0.9),
-            fontWeight: FontWeight.w500,
+        SizedBox(width: ResponsiveValue<double>(
+          context,
+          defaultValue: 4.0,
+          conditionalValues: [
+            Condition.smallerThan(name: MOBILE, value: 2.0),
+            Condition.largerThan(name: TABLET, value: 6.0),
+          ],
+        ).value),
+        Flexible(
+          child: Text(
+            '$label ${temp.toStringAsFixed(0)}°',
+            style: AppTypography.bodyMedium.copyWith(
+              color: MetamorfoseColors.whiteLight.withOpacity(0.9),
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
       ],
@@ -351,8 +491,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildContentCards(HomeState state) {
+    // Valores responsivos
+    final horizontalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    // Layout responsivo - coluna em mobile, linha em tablet+
+    if (ResponsiveBreakpoints.of(context).isMobile) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
+        child: Column(
+          children: [
+            _buildQuoteCard(state),
+            SizedBox(height: spacing),
+            _buildPlantCareCard(),
+          ],
+        ),
+      );
+    }
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
+      margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
       child: Row(
         children: [
           // Quote card
@@ -360,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             flex: 3,
             child: _buildQuoteCard(state),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: spacing),
           // Plant care card
           Expanded(
             flex: 2,
@@ -372,12 +545,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildQuoteCard(HomeState state) {
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 180.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 160.0),
+        Condition.largerThan(name: TABLET, value: 200.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Container(
-      height: 180,
-      padding: const EdgeInsets.all(24),
+      height: height,
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: MetamorfoseColors.whiteLight,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
             color: MetamorfoseColors.shadowLight,
@@ -477,20 +678,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildPlantCareCard() {
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 180.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 160.0),
+        Condition.largerThan(name: TABLET, value: 200.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
     return GestureDetector(
       onTap: () async {
         final plantService = PlantConfigService();
         final hasPlant = await plantService.hasExistingPlant();
         
-        if (hasPlant) {
-          context.go('/plant-care');
-        } else {
-          context.go('/plant-config');
+        if (mounted) {
+          if (hasPlant) {
+            context.go('/plant-care');
+          } else {
+            context.go('/plant-config');
+          }
         }
       },
       child: Container(
-        height: 180,
-        padding: const EdgeInsets.all(20),
+        height: height,
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           gradient: MetamorfoseGradients.darkGreenGradient,
           borderRadius: BorderRadius.circular(24),
@@ -572,41 +794,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  LinearGradient _getGradientForFeature(String title) {
-    switch (title.toLowerCase()) {
-      case 'daily check-in':
-      case 'modo noturno':
-      case 'configurações':
-        return LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MetamorfoseColors.purpleNormal,
-            MetamorfoseColors.purpleDark,
-          ],
-        );
-      case 'psicólogos':
-      case 'Botão SOS':
-      case 'hub educacional':
-        return LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MetamorfoseColors.greenNormal,
-            MetamorfoseColors.greenDark,
-          ],
-        );
-      default:
-        return LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MetamorfoseColors.purpleLight,
-            MetamorfoseColors.greenLight,
-          ],
-        );
-    }
-  }
 
   IconData _getIconForFeature(String title) {
     switch (title.toLowerCase()) {
@@ -635,12 +822,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  Color _getShadowColorForFeature(String title, bool isComingSoon) {
-    if (isComingSoon) {
-      return MetamorfoseColors.greyLight.withOpacity(0.3);
-    }
-    return MetamorfoseColors.purpleNormal.withOpacity(0.3);
-  }
 
   @override
   Widget build(BuildContext context) {

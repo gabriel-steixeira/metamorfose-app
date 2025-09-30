@@ -20,7 +20,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/utils/responsive_utils.dart';
+import 'package:responsive_framework/responsive_framework.dart' as rf;
 
 enum AvatarType { user, plant, generic }
 
@@ -80,10 +80,33 @@ class Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsiveSize =
-        size ?? ResponsiveUtils.getResponsiveSpacing(context, 32);
-    final borderWidth = ResponsiveUtils.getResponsiveSpacing(context, 2);
-    final fontSize = ResponsiveUtils.getResponsiveFontSize(context, 12);
+    // Valores responsivos usando responsive_framework
+    final responsiveSize = size ?? rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 28.0),
+        rf.Condition.largerThan(name: rf.TABLET, value: 40.0),
+      ],
+    ).value;
+
+    final borderWidth = rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 2.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 1.5),
+        rf.Condition.largerThan(name: rf.TABLET, value: 3.0),
+      ],
+    ).value;
+
+    final fontSize = rf.ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        rf.Condition.smallerThan(name: rf.MOBILE, value: 10.0),
+        rf.Condition.largerThan(name: rf.TABLET, value: 14.0),
+      ],
+    ).value;
 
     return Container(
       width: responsiveSize,

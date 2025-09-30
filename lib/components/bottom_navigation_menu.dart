@@ -22,12 +22,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
 import 'package:metamorfose_flutter/routes/routes.dart';
-import 'package:metamorfose_flutter/services/plant_config_service.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class BottomNavigationMenu extends StatelessWidget {
   final int activeIndex;
@@ -68,70 +67,54 @@ class BottomNavigationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 80.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 70.0),
+        Condition.largerThan(name: TABLET, value: 90.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final microphoneSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 70.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 60.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
+    // Layout responsivo baseado no tamanho da tela
+    final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+    
     return Container(
       width: double.infinity,
-      height: 80,
-      decoration: const BoxDecoration(
+      height: height,
+      decoration: BoxDecoration(
         color: MetamorfoseColors.purpleDark,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.circular(borderRadius),
+          topRight: Radius.circular(borderRadius),
         ),
       ),
       child: Stack(
         children: [
-          // Layout dos itens laterais com alinhamento centralizado
+          // Layout responsivo dos itens de navegação
           Positioned.fill(
-            child: Row(
-              children: [
-                // Lado esquerdo - Home e Perfil
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildNavItem(
-                        context,
-                        icon: Icons.home_rounded,
-                        index: 0,
-                        label: 'Home',
-                      ),
-                      _buildNavItem(
-                        context,
-                        icon: Icons.person_rounded,
-                        index: 1,
-                        label: 'Perfil',
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Espaço para o microfone central
-                const SizedBox(width: 70),
-
-                // Lado direito - Comunidade e Sair
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildNavItem(
-                        context,
-                        icon: Icons.groups_rounded,
-                        index: 3,
-                        label: 'Comunidade',
-                      ),
-                      _buildNavItem(
-                        context,
-                        icon: Icons.exit_to_app_rounded,
-                        index: 4,
-                        label: 'Sair',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: isMobile 
+              ? _buildMobileLayout(context, microphoneSize)
+              : _buildDesktopLayout(context, microphoneSize),
           ),
 
           // Microfone posicionado no centro absoluto
@@ -146,9 +129,118 @@ class BottomNavigationMenu extends StatelessWidget {
     );
   }
 
+  /// Layout otimizado para mobile com melhor distribuição de espaço
+  Widget _buildMobileLayout(BuildContext context, double microphoneSize) {
+    return Row(
+      children: [
+        // Lado esquerdo - Home e Perfil
+        Expanded(
+          flex: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.home_rounded,
+                index: 0,
+                label: 'Home',
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.person_rounded,
+                index: 1,
+                label: 'Perfil',
+              ),
+            ],
+          ),
+        ),
+
+        // Espaço para o microfone central
+        SizedBox(width: microphoneSize),
+
+        // Lado direito - Comunidade e Sair
+        Expanded(
+          flex: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.groups_rounded,
+                index: 3,
+                label: 'Comunidade',
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.exit_to_app_rounded,
+                index: 4,
+                label: 'Sair',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Layout otimizado para desktop/tablet com mais espaço
+  Widget _buildDesktopLayout(BuildContext context, double microphoneSize) {
+    return Row(
+      children: [
+        // Lado esquerdo - Home e Perfil
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.home_rounded,
+                index: 0,
+                label: 'Home',
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.person_rounded,
+                index: 1,
+                label: 'Perfil',
+              ),
+            ],
+          ),
+        ),
+
+        // Espaço para o microfone central
+        SizedBox(width: microphoneSize),
+
+        // Lado direito - Comunidade e Sair
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.groups_rounded,
+                index: 3,
+                label: 'Comunidade',
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.exit_to_app_rounded,
+                index: 4,
+                label: 'Sair',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   /// Constrói o item especial do microfone com destaque
   Widget _buildMicrophoneItem(BuildContext context) {
-    final isActive = activeIndex == 2;
 
     return Material(
       color: Colors.transparent,
@@ -202,37 +294,90 @@ class BottomNavigationMenu extends StatelessWidget {
     required String label,
   }) {
     final isActive = activeIndex == index;
+    
+    // Valores responsivos para o item de navegação
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _onNavTap(context, index),
-        borderRadius: BorderRadius.circular(12),
-        splashColor: Colors.white.withOpacity(0.1),
-        highlightColor: Colors.white.withOpacity(0.05),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 28,
-                color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color:
-                      isActive ? Colors.white : Colors.white.withOpacity(0.7),
-                  fontFamily: 'DinNext',
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 2.0),
+        Condition.largerThan(name: TABLET, value: 6.0),
+      ],
+    ).value;
+
+    return Flexible(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _onNavTap(context, index),
+          borderRadius: BorderRadius.circular(12),
+          splashColor: Colors.white.withOpacity(0.1),
+          highlightColor: Colors.white.withOpacity(0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: iconSize,
+                  color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
                 ),
-              ),
-            ],
+                SizedBox(height: spacing),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w500,
+                    color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
+                    fontFamily: 'DinNext',
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),

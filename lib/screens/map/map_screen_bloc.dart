@@ -19,6 +19,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metamorfose_flutter/blocs/map_bloc.dart';
 import 'package:metamorfose_flutter/state/map/map_state.dart';

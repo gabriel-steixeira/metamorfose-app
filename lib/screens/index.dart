@@ -23,7 +23,6 @@ export 'auth/auth_screen.dart';
 
 // Chat
 export 'chat/chat_screen.dart';
-export 'chat/text_chat_screen.dart';
 
 // Community
 export 'community/community_screen.dart';

@@ -23,6 +23,7 @@
 
 import 'package:flutter/material.dart';
 import '../services/gemini_service.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Widget que exibe uma linha de botões para o usuário escolher a personalidade do assistente.
 class PersonalitySelector extends StatelessWidget {

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 /// Modelo para opções do select
 class SelectOption<T> {
@@ -158,9 +159,46 @@ class SelectField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos
+    final height = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      height: 43,
+      height: height,
       decoration: ShapeDecoration(
         color: MetamorfoseColors.greyExtraLight,
         shape: RoundedRectangleBorder(
@@ -168,7 +206,7 @@ class SelectField<T> extends StatelessWidget {
             width: 1,
             color: MetamorfoseColors.whiteDark,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         shadows: [],
       ),
@@ -176,26 +214,29 @@ class SelectField<T> extends StatelessWidget {
         color: MetamorfoseColors.transparent,
         child: InkWell(
           onTap: enabled ? () => _showSelectionModal(context) : null,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadius),
           child: Row(
             children: [
               if (_currentIcon != null) ...[
                 Container(
                   width: 40,
-                  height: 43,
-                  padding: const EdgeInsets.only(left: 16, right: 8),
+                  height: height,
+                  padding: EdgeInsets.only(
+                    left: horizontalPadding,
+                    right: 8,
+                  ),
                   child: Center(child: _currentIcon!),
                 ),
               ],
               Expanded(
                 child: Container(
-                  height: 43,
+                  height: height,
                   alignment: Alignment.centerLeft,
                   child: Text(
                     _displayText,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: MetamorfoseColors.greyMedium,
-                      fontSize: 16,
+                      fontSize: fontSize,
                       fontFamily: 'DIN Next for Duolingo',
                       fontWeight: FontWeight.w400,
                     ),
@@ -206,13 +247,16 @@ class SelectField<T> extends StatelessWidget {
               ),
               Container(
                 width: 40,
-                height: 43,
-                padding: const EdgeInsets.only(right: 16, left: 8),
-                child: const Center(
+                height: height,
+                padding: EdgeInsets.only(
+                  right: horizontalPadding,
+                  left: 8,
+                ),
+                child: Center(
                   child: Icon(
                     Icons.keyboard_arrow_down,
                     color: MetamorfoseColors.purpleLight,
-                    size: 20,
+                    size: fontSize * 1.25,
                   ),
                 ),
               ),
