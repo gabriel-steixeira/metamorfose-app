@@ -510,56 +510,50 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ],
     ).value;
 
-    // Layout responsivo - coluna em mobile, linha em tablet+
-    if (ResponsiveBreakpoints.of(context).isMobile) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
-        child: Column(
-          children: [
-            _buildQuoteCard(state),
-            SizedBox(height: spacing),
-            _buildPlantCareCard(),
-          ],
-        ),
-      );
-    }
-
+    // Layout unificado - sempre em linha, mas com flex responsivo e altura dinâmica
     return Container(
       margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
-      child: Row(
-        children: [
-          // Quote card
-          Expanded(
-            flex: 3,
-            child: _buildQuoteCard(state),
-          ),
-          SizedBox(width: spacing),
-          // Plant care card
-          Expanded(
-            flex: 2,
-            child: _buildPlantCareCard(),
-          ),
-        ],
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            // Quote card
+            Expanded(
+              flex: ResponsiveValue<int>(
+                context,
+                defaultValue: 3,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 2),
+                  Condition.largerThan(name: TABLET, value: 3),
+                ],
+              ).value,
+              child: _buildQuoteCard(state),
+            ),
+            SizedBox(width: spacing),
+            // Plant care card
+            Expanded(
+              flex: ResponsiveValue<int>(
+                context,
+                defaultValue: 2,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: 1),
+                  Condition.largerThan(name: TABLET, value: 2),
+                ],
+              ).value,
+              child: _buildPlantCareCard(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildQuoteCard(HomeState state) {
     // Valores responsivos
-    final height = ResponsiveValue<double>(
-      context,
-      defaultValue: 180.0,
-      conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 160.0),
-        Condition.largerThan(name: TABLET, value: 200.0),
-      ],
-    ).value;
-
     final padding = ResponsiveValue<double>(
       context,
       defaultValue: 24.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.smallerThan(name: MOBILE, value: 12.0),
         Condition.largerThan(name: TABLET, value: 32.0),
       ],
     ).value;
@@ -568,13 +562,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       context,
       defaultValue: 24.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.smallerThan(name: MOBILE, value: 12.0),
         Condition.largerThan(name: TABLET, value: 32.0),
       ],
     ).value;
 
     return Container(
-      height: height,
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: MetamorfoseColors.whiteLight,
@@ -611,64 +604,120 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: MetamorfoseColors.purpleNormal.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+              // Layout responsivo - linha única em desktop, coluna em mobile
+              ResponsiveBreakpoints.of(context).isMobile
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Linha 1: Ícone
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MetamorfoseColors.purpleNormal.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.auto_awesome,
+                            color: MetamorfoseColors.purpleNormal,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Linha 2: Título
+                        Text(
+                          'Inspiração',
+                          style: AppTypography.titleLarge.copyWith(
+                            color: MetamorfoseColors.blackLight,
+                            fontSize: ResponsiveValue<double>(
+                              context,
+                              defaultValue: AppTypography.titleLarge.fontSize,
+                              conditionalValues: [
+                                Condition.smallerThan(name: MOBILE, value: 16.0),
+                                Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                              ],
+                            ).value,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MetamorfoseColors.purpleNormal.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.auto_awesome,
+                            color: MetamorfoseColors.purpleNormal,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Inspiração',
+                          style: AppTypography.titleLarge.copyWith(
+                            color: MetamorfoseColors.blackLight,
+                            fontSize: ResponsiveValue<double>(
+                              context,
+                              defaultValue: AppTypography.titleLarge.fontSize,
+                              conditionalValues: [
+                                Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                              ],
+                            ).value,
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Icon(
-                      Icons.auto_awesome,
-                      color: MetamorfoseColors.purpleNormal,
-                      size: 18,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Inspiração',
-                    style: AppTypography.titleLarge.copyWith(
-                      color: MetamorfoseColors.blackLight,
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 16),
-              Expanded(
-                child: Builder(
-                  builder: (_) {
-                    if (state.quoteLoadingState == LoadingState.loading) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              MetamorfoseColors.purpleNormal),
-                          strokeWidth: 2,
-                        ),
-                      );
-                    } else if (state.quoteLoadingState ==
-                            LoadingState.success &&
-                        state.quote != null) {
-                      return Text(
-                        '"${state.quote!.text}"',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: MetamorfoseColors.greyMedium,
-                          height: 1.5,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        maxLines: 5,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    } else {
-                      return Text(
-                        'Erro ao carregar mensagem inspiradora',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: MetamorfoseColors.greyLight,
-                        ),
-                      );
-                    }
-                  },
-                ),
+              Builder(
+                builder: (_) {
+                  if (state.quoteLoadingState == LoadingState.loading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            MetamorfoseColors.purpleNormal),
+                        strokeWidth: 2,
+                      ),
+                    );
+                  } else if (state.quoteLoadingState ==
+                          LoadingState.success &&
+                      state.quote != null) {
+                    return Text(
+                      '"${state.quote!.text}"',
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: MetamorfoseColors.greyMedium,
+                        height: 1.5,
+                        fontStyle: FontStyle.italic,
+                        fontSize: ResponsiveValue<double>(
+                          context,
+                          defaultValue: AppTypography.bodyMedium.fontSize,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 12.0),
+                            Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                          ],
+                        ).value,
+                      ),
+                      maxLines: ResponsiveValue<int>(
+                        context,
+                        defaultValue: 5,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 3),
+                          Condition.largerThan(name: TABLET, value: 6),
+                        ],
+                      ).value,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  } else {
+                    return Text(
+                      'Erro ao carregar mensagem inspiradora',
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: MetamorfoseColors.greyLight,
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -679,20 +728,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildPlantCareCard() {
     // Valores responsivos
-    final height = ResponsiveValue<double>(
-      context,
-      defaultValue: 180.0,
-      conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 160.0),
-        Condition.largerThan(name: TABLET, value: 200.0),
-      ],
-    ).value;
-
     final padding = ResponsiveValue<double>(
       context,
       defaultValue: 20.0,
       conditionalValues: [
-        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.smallerThan(name: MOBILE, value: 12.0),
         Condition.largerThan(name: TABLET, value: 24.0),
       ],
     ).value;
@@ -711,11 +751,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       },
       child: Container(
-        height: height,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           gradient: MetamorfoseGradients.darkGreenGradient,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(ResponsiveValue<double>(
+            context,
+            defaultValue: 24.0,
+            conditionalValues: [
+              Condition.smallerThan(name: MOBILE, value: 12.0),
+              Condition.largerThan(name: TABLET, value: 32.0),
+            ],
+          ).value),
           boxShadow: [
             BoxShadow(
               color: MetamorfoseColors.greenNormal.withOpacity(0.3),
@@ -729,11 +775,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             // Decorative plant icon background
             Positioned(
-              bottom: -20,
-              right: -20,
+              bottom: ResponsiveValue<double>(
+                context,
+                defaultValue: -20.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: -15.0),
+                  Condition.largerThan(name: TABLET, value: -25.0),
+                ],
+              ).value,
+              right: ResponsiveValue<double>(
+                context,
+                defaultValue: -20.0,
+                conditionalValues: [
+                  Condition.smallerThan(name: MOBILE, value: -15.0),
+                  Condition.largerThan(name: TABLET, value: -25.0),
+                ],
+              ).value,
               child: Icon(
                 Icons.eco,
-                size: 80,
+                size: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 80.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 60.0),
+                    Condition.largerThan(name: TABLET, value: 100.0),
+                  ],
+                ).value,
                 color: MetamorfoseColors.whiteLight.withOpacity(0.1),
               ),
             ),
@@ -742,33 +809,91 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(ResponsiveValue<double>(
+                    context,
+                    defaultValue: 12.0,
+                    conditionalValues: [
+                      Condition.smallerThan(name: MOBILE, value: 8.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value),
                   decoration: BoxDecoration(
                     color: MetamorfoseColors.whiteLight.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(ResponsiveValue<double>(
+                      context,
+                      defaultValue: 16.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 12.0),
+                        Condition.largerThan(name: TABLET, value: 20.0),
+                      ],
+                    ).value),
                   ),
                   child: Icon(
                     Icons.eco,
                     color: MetamorfoseColors.whiteLight,
-                    size: 20,
+                    size: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 20.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 16.0),
+                        Condition.largerThan(name: TABLET, value: 24.0),
+                      ],
+                    ).value,
                   ),
                 ),
-                const Spacer(),
+                SizedBox(height: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 20.0),
+                  ],
+                ).value),
                 Text(
                   'Planta',
                   style: AppTypography.titleLarge.copyWith(
                     color: MetamorfoseColors.whiteDark,
                     fontWeight: FontWeight.w700,
+                    fontSize: ResponsiveValue<double>(
+                      context,
+                      defaultValue: AppTypography.titleLarge.fontSize,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 16.0),
+                        Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                      ],
+                    ).value,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 4.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 2.0),
+                    Condition.largerThan(name: TABLET, value: 6.0),
+                  ],
+                ).value),
                 Text(
                   'Cuidar agora',
                   style: AppTypography.bodyMedium.copyWith(
                     color: MetamorfoseColors.whiteDark.withOpacity(0.9),
+                    fontSize: ResponsiveValue<double>(
+                      context,
+                      defaultValue: AppTypography.bodyMedium.fontSize,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 12.0),
+                        Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                      ],
+                    ).value,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: ResponsiveValue<double>(
+                  context,
+                  defaultValue: 12.0,
+                  conditionalValues: [
+                    Condition.smallerThan(name: MOBILE, value: 8.0),
+                    Condition.largerThan(name: TABLET, value: 16.0),
+                  ],
+                ).value),
                 Row(
                   children: [
                     Text(
@@ -776,13 +901,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       style: AppTypography.bodyMedium.copyWith(
                         color: MetamorfoseColors.whiteLight,
                         fontWeight: FontWeight.w600,
+                        fontSize: ResponsiveValue<double>(
+                          context,
+                          defaultValue: AppTypography.bodyMedium.fontSize,
+                          conditionalValues: [
+                            Condition.smallerThan(name: MOBILE, value: 12.0),
+                            Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                          ],
+                        ).value,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 4.0,
+                      conditionalValues: [
+                        Condition.smallerThan(name: MOBILE, value: 2.0),
+                        Condition.largerThan(name: TABLET, value: 6.0),
+                      ],
+                    ).value),
                     Icon(
                       Icons.arrow_forward,
                       color: MetamorfoseColors.whiteLight,
-                      size: 14,
+                      size: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 14.0,
+                        conditionalValues: [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 16.0),
+                        ],
+                      ).value,
                     ),
                   ],
                 ),
