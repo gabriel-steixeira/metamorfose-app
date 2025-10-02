@@ -1,22 +1,19 @@
-/**
- * File: calendar_screen.dart
- * Description: Tela principal do calendário visual
- *
- * Responsabilidades:
- * - Exibir calendário mensal com fotos
- * - Permitir navegação entre meses
- * - Permitir tirar fotos
- * - Exibir detalhes das fotos
- * - Usar BLoC pattern para gerenciamento de estado
- *
- * Author: Assistant
- * Created on: 15-08-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: calendar_screen.dart
+/// Description: Tela principal do calendário visual
+///
+/// Responsabilidades:
+/// - Exibir calendário mensal com fotos
+/// - Permitir navegação entre meses
+/// - Permitir tirar fotos
+/// - Exibir detalhes das fotos
+/// - Usar BLoC pattern para gerenciamento de estado
+///
+/// Author: Assistant
+/// Created on: 15-08-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/foundation.dart';
@@ -54,7 +51,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
     _selectedDay = DateTime.now();
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-    // Inicializar o BLoC
     context.read<CalendarBloc>().add(InitializeCalendarEvent());
   }
 
@@ -66,15 +62,59 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói o header estilo referência com foto de perfil e estatísticas
   Widget _buildProfileHeader(CalendarState state) {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final avatarSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 80.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 70.0),
+        Condition.largerThan(name: TABLET, value: 90.0),
+      ],
+    ).value;
+
+    final nameFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      color: MetamorfoseColors.whiteLight,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(padding),
           child: Column(
             children: [
-              // Seta de voltar
               Align(
                 alignment: Alignment.topLeft,
                 child: GestureDetector(
@@ -83,42 +123,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   },
                   child: SvgPicture.asset(
                     'assets/images/arrow_back.svg',
-                    width: 24,
-                    height: 24,
+                    width: iconSize,
+                    height: iconSize,
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: spacing),
 
-              // Foto de perfil do usuário
               Container(
-                width: 80,
-                height: 80,
+                width: avatarSize,
+                height: avatarSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: MetamorfoseColors.purpleLight.withOpacity(0.1),
+                  color: MetamorfoseColors.purpleLight.withValues(alpha: 0.1),
                   border: Border.all(
                     color: MetamorfoseColors.purpleLight,
                     width: 2,
                   ),
                 ),
-                child: _buildUserPhoto(),
+                child: _buildUserPhoto(avatarSize),
               ),
               const SizedBox(height: 16),
 
-              // Nome do usuário
               Text(
                 _getUserName(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 20,
+                  fontSize: nameFontSize,
                   fontWeight: FontWeight.w600,
                   color: MetamorfoseColors.blackLight,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: spacing),
 
-              // Estatísticas em linha (apenas 2 colunas)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -137,25 +177,49 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói uma coluna de estatística suavizada
   Widget _buildStatisticColumn(String value, String label) {
+    final valueFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final labelFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Column(
       children: [
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 24,
+            fontSize: valueFontSize,
             fontWeight: FontWeight.w600,
             color: MetamorfoseColors.blackLight,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 14,
+            fontSize: labelFontSize,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -197,39 +261,51 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   /// Constrói a foto do usuário ou iniciais como fallback
-  Widget _buildUserPhoto() {
+  Widget _buildUserPhoto(double size) {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
         return ClipOval(
           child: Image.network(
             user.photoURL!,
-            width: 80,
-            height: 80,
+            width: size,
+            height: size,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return _buildUserInitials();
+              return _buildUserInitials(size);
             },
           ),
         );
       }
-      return _buildUserInitials();
+      return _buildUserInitials(size);
     } catch (e) {
-      return _buildUserInitials();
+      return _buildUserInitials(size);
     }
   }
 
   /// Constrói o widget com as iniciais do usuário
-  Widget _buildUserInitials() {
+  Widget _buildUserInitials(double size) {
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Center(
       child: Text(
         _getUserInitials(),
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: 'DinNext',
-          fontSize: 28,
+          fontSize: fontSize,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: MetamorfoseColors.whiteLight,
         ),
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -247,90 +323,113 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói o widget da foto para o calendário
   Widget _buildPhotoWidget(CalendarPhoto photo) {
+    final photoSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 52.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 44.0),
+        Condition.largerThan(name: TABLET, value: 60.0),
+      ],
+    ).value;
+
     try {
-      // Priorizar bytes da imagem (para web)
       if (photo.imageBytes != null) {
         return Image.memory(
           photo.imageBytes!,
-          width: 52,
-          height: 52,
+          width: photoSize,
+          height: photoSize,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return _buildPhotoPlaceholder();
+            return _buildPhotoPlaceholder(photoSize);
           },
         );
       }
 
-      // Fallback para arquivo local (mobile)
       if (photo.localPath != null && photo.localPath!.isNotEmpty) {
         final file = File(photo.localPath!);
         if (file.existsSync()) {
           return Image.file(
             file,
-            width: 52,
-            height: 52,
+            width: photoSize,
+            height: photoSize,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return _buildPhotoPlaceholder();
+              return _buildPhotoPlaceholder(photoSize);
             },
           );
         }
       }
 
-      // Fallback para placeholder
-      return _buildPhotoPlaceholder();
+      return _buildPhotoPlaceholder(photoSize);
     } catch (e) {
-      print('Erro ao carregar foto: $e');
-      return _buildPhotoPlaceholder();
+      debugPrint('Erro ao carregar foto: $e');
+      return _buildPhotoPlaceholder(photoSize);
     }
   }
 
   /// Constrói placeholder para foto
-  Widget _buildPhotoPlaceholder() {
+  Widget _buildPhotoPlaceholder(double size) {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Container(
-      width: 52,
-      height: 52,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: MetamorfoseColors.purpleLight,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(size / 2),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.photo,
-        color: Colors.white,
-        size: 28,
+        color: MetamorfoseColors.whiteLight,
+        size: iconSize,
       ),
     );
   }
 
   /// Retorna o caminho do SVG baseado na cor da planta
   String _getPlantSvgAsset(int? colorValue) {
-    if (colorValue == MetamorfoseColors.blueNormal.value) {
+    if (colorValue == MetamorfoseColors.blueNormal.toARGB32()) {
       return 'assets/images/plantsetup/plantsetup_blue.svg';
     }
-    if (colorValue == MetamorfoseColors.greenNormal.value) {
+    if (colorValue == MetamorfoseColors.greenNormal.toARGB32()) {
       return 'assets/images/plantsetup/plantsetup_green.svg';
     }
-    if (colorValue == MetamorfoseColors.pinkNormal.value) {
+    if (colorValue == MetamorfoseColors.pinkNormal.toARGB32()) {
       return 'assets/images/plantsetup/plantsetup_pink.svg';
     }
-    return 'assets/images/plantsetup/plantsetup.svg'; // Roxo padrão
+    return 'assets/images/plantsetup/plantsetup.svg';
   }
 
   /// Constrói o widget SVG da planta com a cor correta
   Widget _buildPlantSvgWidget(int? potColorValue) {
     final svgPath = _getPlantSvgAsset(potColorValue);
+    final svgSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 46.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
 
     return Container(
-      width: 46,
-      height: 46,
+      width: svgSize,
+      height: svgSize,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.transparent,
+        color: MetamorfoseColors.transparent,
       ),
       child: SvgPicture.asset(
         svgPath,
-        width: 46,
-        height: 46,
+        width: svgSize,
+        height: svgSize,
         fit: BoxFit.contain,
       ),
     );
@@ -338,7 +437,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói o calendário usando TableCalendar
   Widget _buildCalendar(CalendarState state) {
-    // Calcular dados do calendário
     final currentDate = state.currentDate;
     final year = currentDate.year;
     final month = currentDate.month;
@@ -347,16 +445,43 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final daysFromPreviousMonth = firstDayOfMonth.weekday % 7;
     final daysInPreviousMonth = DateTime(year, month, 0).day;
 
+    final horizontalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      margin: EdgeInsets.symmetric(horizontal: horizontalMargin, vertical: verticalMargin),
       decoration: BoxDecoration(
         color: MetamorfoseColors.whiteLight,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: const [
           BoxShadow(
             color: MetamorfoseColors.defaultButtonShadow,
             blurRadius: 0,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
@@ -367,9 +492,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       child: Column(
         children: [
-          // Header do mês com navegação - estilo limpo
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(horizontalMargin),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -378,8 +502,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       context.read<CalendarBloc>().add(PreviousMonthEvent()),
                   child: Icon(
                     Icons.chevron_left,
-                    color: Colors.grey.shade600,
-                    size: 28,
+                    color: MetamorfoseColors.greyMedium,
+                    size: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 28.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 24.0),
+                        Condition.largerThan(name: TABLET, value: 32.0),
+                      ],
+                    ).value,
                   ),
                 ),
                 Text(
@@ -391,38 +522,80 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           DateFormat('MMMM yyyy', 'pt_BR')
                               .format(state.currentDate)[0]
                               .toUpperCase()),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'DinNext',
-                    fontSize: 20,
+                    fontSize: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 20.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 18.0),
+                        Condition.largerThan(name: TABLET, value: 22.0),
+                      ],
+                    ).value,
                     fontWeight: FontWeight.w600,
                     color: MetamorfoseColors.blackLight,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 GestureDetector(
                   onTap: () =>
                       context.read<CalendarBloc>().add(NextMonthEvent()),
                   child: Icon(
                     Icons.chevron_right,
-                    color: Colors.grey.shade600,
-                    size: 28,
+                    color: MetamorfoseColors.greyMedium,
+                    size: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 28.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 24.0),
+                        Condition.largerThan(name: TABLET, value: 32.0),
+                      ],
+                    ).value,
                   ),
                 ),
               ],
             ),
           ),
 
-          // Calendário
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(horizontalMargin),
             child: Column(
               children: [
-                // Dias da semana
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 16.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 12.0),
+                        Condition.largerThan(name: TABLET, value: 20.0),
+                      ],
+                    ).value,
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 12.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 8.0),
+                        Condition.largerThan(name: TABLET, value: 16.0),
+                      ],
+                    ).value,
+                  ),
                   decoration: BoxDecoration(
-                    color: MetamorfoseColors.purpleNormal.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(16),
+                    color: MetamorfoseColors.purpleNormal.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveValue<double>(
+                        context,
+                        defaultValue: 16.0,
+                        conditionalValues: const [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value,
+                    ),
                   ),
                   child: Row(
                     children: ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
@@ -430,13 +603,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: Center(
                                 child: Text(
                                   day,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DinNext',
-                                    fontSize: 14,
+                                    fontSize: ResponsiveValue<double>(
+                                      context,
+                                      defaultValue: 14.0,
+                                      conditionalValues: const [
+                                        Condition.smallerThan(name: MOBILE, value: 12.0),
+                                        Condition.largerThan(name: TABLET, value: 16.0),
+                                      ],
+                                    ).value,
                                     fontWeight: FontWeight.bold,
                                     color: MetamorfoseColors.purpleNormal,
                                     letterSpacing: 0.5,
                                   ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ))
@@ -444,18 +627,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ),
 
-                // Grid do calendário
                 ...List.generate(
                     ((daysInMonth + daysFromPreviousMonth + 6) ~/ 7),
                     (weekIndex) {
+                  final dayHeight = ResponsiveValue<double>(
+                    context,
+                    defaultValue: 40.0,
+                    conditionalValues: const [
+                      Condition.smallerThan(name: MOBILE, value: 36.0),
+                      Condition.largerThan(name: TABLET, value: 48.0),
+                    ],
+                  ).value;
+
+                  final dayMargin = ResponsiveValue<double>(
+                    context,
+                    defaultValue: 2.0,
+                    conditionalValues: const [
+                      Condition.smallerThan(name: MOBILE, value: 1.0),
+                      Condition.largerThan(name: TABLET, value: 3.0),
+                    ],
+                  ).value;
+
+                  final dayFontSize = ResponsiveValue<double>(
+                    context,
+                    defaultValue: 14.0,
+                    conditionalValues: const [
+                      Condition.smallerThan(name: MOBILE, value: 12.0),
+                      Condition.largerThan(name: TABLET, value: 16.0),
+                    ],
+                  ).value;
+
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: EdgeInsets.only(
+                      bottom: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 8.0,
+                        conditionalValues: const [
+                          Condition.smallerThan(name: MOBILE, value: 6.0),
+                          Condition.largerThan(name: TABLET, value: 10.0),
+                        ],
+                      ).value,
+                    ),
                     child: Row(
                       children: List.generate(7, (dayIndex) {
                         final dayOfWeek = weekIndex * 7 + dayIndex;
                         final dayNumber = dayOfWeek - daysFromPreviousMonth + 1;
 
-                        // Dias do mês anterior
                         if (dayOfWeek < daysFromPreviousMonth) {
                           final previousDay = daysInPreviousMonth -
                               daysFromPreviousMonth +
@@ -463,124 +680,169 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               1;
                           return Expanded(
                             child: Container(
-                              height: 40,
-                              margin: const EdgeInsets.all(2),
+                              height: dayHeight,
+                              margin: EdgeInsets.all(dayMargin),
                               child: Center(
                                 child: Text(
                                   previousDay.toString(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DinNext',
-                                    fontSize: 14,
+                                    fontSize: dayFontSize,
                                     color: MetamorfoseColors.greyLight,
                                   ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
                           );
                         }
 
-                        // Dias do próximo mês
                         if (dayNumber > daysInMonth) {
                           final nextDay = dayNumber - daysInMonth;
                           return Expanded(
                             child: Container(
-                              height: 40,
-                              margin: const EdgeInsets.all(2),
+                              height: dayHeight,
+                              margin: EdgeInsets.all(dayMargin),
                               child: Center(
                                 child: Text(
                                   nextDay.toString(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DinNext',
-                                    fontSize: 14,
+                                    fontSize: dayFontSize,
                                     color: MetamorfoseColors.greyLight,
                                   ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
                           );
                         }
 
-                        // Dias do mês atual
                         final currentDate = DateTime(year, month, dayNumber);
                         final hasPhoto = state.hasPhotoOnDate(currentDate);
                         final isToday = currentDate.day == DateTime.now().day &&
                             currentDate.month == DateTime.now().month &&
                             currentDate.year == DateTime.now().year;
 
+                        final currentDayHeight = ResponsiveValue<double>(
+                          context,
+                          defaultValue: 44.0,
+                          conditionalValues: const [
+                            Condition.smallerThan(name: MOBILE, value: 40.0),
+                            Condition.largerThan(name: TABLET, value: 52.0),
+                          ],
+                        ).value;
+
+                        final currentDayMargin = ResponsiveValue<double>(
+                          context,
+                          defaultValue: 2.0,
+                          conditionalValues: const [
+                            Condition.smallerThan(name: MOBILE, value: 1.0),
+                            Condition.largerThan(name: TABLET, value: 3.0),
+                          ],
+                        ).value;
+
+                        final currentDayBorderRadius = ResponsiveValue<double>(
+                          context,
+                          defaultValue: 8.0,
+                          conditionalValues: const [
+                            Condition.smallerThan(name: MOBILE, value: 6.0),
+                            Condition.largerThan(name: TABLET, value: 10.0),
+                          ],
+                        ).value;
+
                         return Expanded(
                           child: GestureDetector(
                             onTap: () => _onDayTap(currentDate, state),
                             child: Container(
-                              height: 44,
-                              margin: const EdgeInsets.all(2),
+                              height: currentDayHeight,
+                              margin: EdgeInsets.all(currentDayMargin),
                               decoration: BoxDecoration(
                                 color: hasPhoto
                                     ? MetamorfoseColors.purpleNormal
-                                        .withOpacity(0.1)
+                                        .withValues(alpha: 0.1)
                                     : isToday
                                         ? MetamorfoseColors.purpleNormal
-                                        : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                        : MetamorfoseColors.transparent,
+                                borderRadius: BorderRadius.circular(currentDayBorderRadius),
                                 boxShadow: null,
                               ),
                               child: Center(
                                 child: hasPhoto
                                     ? Stack(
                                         children: [
-                                          // Foto com borda
                                           Container(
-                                            width: 36,
-                                            height: 36,
+                                            width: ResponsiveValue<double>(
+                                              context,
+                                              defaultValue: 36.0,
+                                              conditionalValues: const [
+                                                Condition.smallerThan(name: MOBILE, value: 32.0),
+                                                Condition.largerThan(name: TABLET, value: 40.0),
+                                              ],
+                                            ).value,
+                                            height: ResponsiveValue<double>(
+                                              context,
+                                              defaultValue: 36.0,
+                                              conditionalValues: const [
+                                                Condition.smallerThan(name: MOBILE, value: 32.0),
+                                                Condition.largerThan(name: TABLET, value: 40.0),
+                                              ],
+                                            ).value,
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                              borderRadius: BorderRadius.circular(currentDayBorderRadius),
                                               border: Border.all(
-                                                color: MetamorfoseColors
-                                                    .purpleNormal,
+                                                color: MetamorfoseColors.purpleNormal,
                                                 width: 3,
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: MetamorfoseColors
-                                                      .purpleNormal
-                                                      .withOpacity(0.3),
+                                                  color: MetamorfoseColors.purpleNormal.withValues(alpha: 0.3),
                                                   blurRadius: 6,
                                                   offset: const Offset(0, 3),
                                                 ),
                                               ],
                                             ),
                                             child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(currentDayBorderRadius - 2),
                                               child: _buildPhotoWidget(
-                                                  state.getPhotoOnDate(
-                                                      currentDate)!),
+                                                  state.getPhotoOnDate(currentDate)!),
                                             ),
                                           ),
-                                          // Número do dia sobreposto
                                           Positioned(
                                             bottom: -2,
                                             right: -2,
                                             child: Container(
                                               padding: const EdgeInsets.all(2),
                                               decoration: BoxDecoration(
-                                                color: MetamorfoseColors
-                                                    .purpleNormal,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                                color: MetamorfoseColors.purpleNormal,
+                                                borderRadius: BorderRadius.circular(currentDayBorderRadius),
                                                 border: Border.all(
-                                                  color: Colors.white,
+                                                  color: MetamorfoseColors.whiteLight,
                                                   width: 1,
                                                 ),
                                               ),
                                               child: Text(
                                                 dayNumber.toString(),
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontFamily: 'DinNext',
-                                                  fontSize: 10,
+                                                  fontSize: ResponsiveValue<double>(
+                                                    context,
+                                                    defaultValue: 10.0,
+                                                    conditionalValues: const [
+                                                      Condition.smallerThan(name: MOBILE, value: 8.0),
+                                                      Condition.largerThan(name: TABLET, value: 12.0),
+                                                    ],
+                                                  ).value,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
+                                                  color: MetamorfoseColors.whiteLight,
                                                 ),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ),
@@ -590,14 +852,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                         dayNumber.toString(),
                                         style: TextStyle(
                                           fontFamily: 'DinNext',
-                                          fontSize: 16,
+                                          fontSize: ResponsiveValue<double>(
+                                            context,
+                                            defaultValue: 16.0,
+                                            conditionalValues: const [
+                                              Condition.smallerThan(name: MOBILE, value: 14.0),
+                                              Condition.largerThan(name: TABLET, value: 18.0),
+                                            ],
+                                          ).value,
                                           fontWeight: isToday
                                               ? FontWeight.bold
                                               : FontWeight.w500,
                                           color: isToday
-                                              ? Colors.white
+                                              ? MetamorfoseColors.whiteLight
                                               : MetamorfoseColors.blackLight,
                                         ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                               ),
                             ),
@@ -617,8 +889,53 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói o botão "Ver tudo" estilo padrão
   Widget _buildViewAllRecordsButton(CalendarState state) {
+    final horizontalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalMargin = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      margin: EdgeInsets.symmetric(horizontal: horizontalMargin, vertical: verticalMargin),
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(
@@ -630,21 +947,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: Container(
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: padding, vertical: 12),
           decoration: ShapeDecoration(
             color: MetamorfoseColors.whiteLight,
             shape: RoundedRectangleBorder(
-              side: BorderSide(
+              side: const BorderSide(
                 width: 1,
                 color: MetamorfoseColors.greyLightest2,
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
             ),
-            shadows: [
+            shadows: const [
               BoxShadow(
                 color: MetamorfoseColors.defaultButtonShadow,
                 blurRadius: 0,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
                 spreadRadius: 0,
               ),
             ],
@@ -655,18 +972,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: MetamorfoseColors.purpleNormal,
-                fontSize: 16,
+                fontSize: fontSize,
                 fontFamily: 'DinNext',
                 fontWeight: FontWeight.w700,
                 height: 1.27,
-                shadows: [
+                shadows: const [
                   Shadow(
-                    offset: const Offset(0, 1),
+                    offset: Offset(0, 1),
                     blurRadius: 15,
                     color: MetamorfoseColors.shadowText,
                   ),
                 ],
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -676,18 +995,63 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   /// Constrói o botão flutuante de câmera
   Widget _buildFloatingCameraButton(CalendarState state) {
+    final buttonSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 60.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 52.0),
+        Condition.largerThan(name: TABLET, value: 68.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 28.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final bottomPosition = ResponsiveValue<double>(
+      context,
+      defaultValue: 100.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 80.0),
+        Condition.largerThan(name: TABLET, value: 120.0),
+      ],
+    ).value;
+
+    final rightPosition = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
     return Positioned(
-      bottom: 100,
-      right: 24,
+      bottom: bottomPosition,
+      right: rightPosition,
       child: Container(
-        width: 60,
-        height: 60,
+        width: buttonSize,
+        height: buttonSize,
         decoration: BoxDecoration(
           color: MetamorfoseColors.purpleLight,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
-              color: MetamorfoseColors.purpleLight.withOpacity(0.3),
+              color: MetamorfoseColors.purpleLight.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -697,10 +1061,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
           onPressed: state.isUploading
               ? null
               : () => _showNewRecordModal(state.currentDate),
-          icon: const Icon(
+          icon: Icon(
             Icons.camera_alt,
-            color: Colors.white,
-            size: 28,
+            color: MetamorfoseColors.whiteLight,
+            size: iconSize,
           ),
         ),
       ),
@@ -756,28 +1120,82 @@ class _CalendarScreenState extends State<CalendarScreen> {
   /// Mostra pop-up com dica da planta
   void _showPlantTipDialog(String feeling, String reason) async {
     final tip = PlantTipsService.generateTip(feeling);
-    // Usar PlantCareService diretamente (mesma lógica do plant-care)
     final plantCareService = PlantCareService();
     final plantData = await plantCareService.loadPlantInfo();
     debugPrint('🌱 Dicas: Dados da planta carregados: $plantData');
     final plantName = plantData['name'] ?? 'Plantinha';
     final plantImage = plantData['plantImageUrl'];
 
+    if (!mounted) return;
+
+    final dialogBorderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final plantImageSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 50.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 44.0),
+        Condition.largerThan(name: TABLET, value: 56.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final contentFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final buttonFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
         ),
         title: Row(
           children: [
-            // Imagem da planta do usuário
             Container(
-              width: 50,
-              height: 50,
+              width: plantImageSize,
+              height: plantImageSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: MetamorfoseColors.purpleLight.withOpacity(0.2),
+                color: MetamorfoseColors.purpleLight.withValues(alpha: 0.2),
                 border: Border.all(
                   color: MetamorfoseColors.purpleNormal,
                   width: 2,
@@ -787,13 +1205,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ? ClipOval(
                       child: Image.network(
                         plantImage,
-                        width: 46,
-                        height: 46,
+                        width: plantImageSize - 4,
+                        height: plantImageSize - 4,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          // Fallback para SVG da planta com cor correta
-                          return _buildPlantSvgWidget(
-                              plantData['potColorValue']);
+                          return _buildPlantSvgWidget(plantData['potColorValue']);
                         },
                       ),
                     )
@@ -803,26 +1219,32 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Expanded(
               child: Text(
                 '$plantName',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 18,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.blackLight,
                 ),
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
         content: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(padding),
           child: Text(
             tip,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: contentFontSize,
               color: MetamorfoseColors.blackLight,
               height: 1.5,
             ),
+            textAlign: TextAlign.start,
+            maxLines: 5,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         actions: [
@@ -832,10 +1254,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
               'Entendi, $plantName! 💚',
               style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 16,
+                fontSize: buttonFontSize,
                 fontWeight: FontWeight.w600,
                 color: MetamorfoseColors.purpleNormal,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -856,7 +1281,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<CalendarBloc, CalendarState>(
       listener: (context, state) {
-        // Tratar erros
         if (state.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -867,7 +1291,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
           context.read<CalendarBloc>().add(ClearErrorEvent());
         }
 
-        // Tratar sucessos
         if (state.hasSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -876,9 +1299,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           );
 
-          // Mostrar pop-up com dica se foi um registro novo
           if (state.successMessage!.contains('Registro salvo')) {
-            // Extrair sentimento da última foto salva
             final lastPhoto = state.photos.last;
             if (lastPhoto.description != null) {
               final parts = lastPhoto.description!.split(' - ');
@@ -894,37 +1315,40 @@ class _CalendarScreenState extends State<CalendarScreen> {
         }
       },
       builder: (context, state) {
+        final bottomSpacing = ResponsiveValue<double>(
+          context,
+          defaultValue: 100.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 80.0),
+            Condition.largerThan(name: TABLET, value: 120.0),
+          ],
+        ).value;
+
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: MetamorfoseColors.whiteLight,
           body: Stack(
             children: [
               Column(
                 children: [
-                  // Header roxo com perfil
                   _buildProfileHeader(state),
-
-                  // Calendário
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
                           _buildCalendar(state),
                           _buildViewAllRecordsButton(state),
-                          const SizedBox(
-                              height: 100), // Espaço para o botão flutuante
+                          SizedBox(height: bottomSpacing),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-
-              // Botão flutuante de câmera
               _buildFloatingCameraButton(state),
             ],
           ),
-          bottomNavigationBar: BottomNavigationMenu(
-            activeIndex: 2, // Assumindo que é a terceira aba
+          bottomNavigationBar: const BottomNavigationMenu(
+            activeIndex: 2,
           ),
         );
       },

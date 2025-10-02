@@ -1,23 +1,21 @@
-/**
- * File: user_profile_screen.dart
- * Description: Tela de perfil do usuário
- *
- * Responsabilidades:
- * - Exibir informações do usuário (nome, data de nascimento, telefone, email)
- * - Calcular e exibir idade baseada na data de nascimento
- * - Fornecer botões para atualizar cadastro, trocar senha e sair
- * - Gerenciar navegação para telas relacionadas
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 06-08-2025
- * Last modified: 31-08-2025
- * 
- * Changes:
- * - Adicionado MetamorphosisProgress. (Evelin Cordeiro)
- * 
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: user_profile_screen.dart
+/// Description: Tela de perfil do usuário
+///
+/// Responsabilidades:
+/// - Exibir informações do usuário (nome, data de nascimento, telefone, email)
+/// - Calcular e exibir idade baseada na data de nascimento
+/// - Fornecer botões para atualizar cadastro, trocar senha e sair
+/// - Gerenciar navegação para telas relacionadas
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 06-08-2025
+/// Last modified: 31-08-2025
+/// 
+/// Changes:
+/// - Adicionado MetamorphosisProgress. (Evelin Cordeiro)
+/// 
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -25,13 +23,10 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
-import 'package:metamorfose_flutter/theme/text_styles.dart';
 import 'package:metamorfose_flutter/components/bottom_navigation_menu.dart';
 import 'package:metamorfose_flutter/components/custom_button.dart';
-import 'package:metamorfose_flutter/components/confirmation_dialog.dart';
 import 'package:metamorfose_flutter/services/auth_service.dart';
 import 'package:metamorfose_flutter/models/user_model.dart';
-import 'package:metamorfose_flutter/routes/routes.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// Enum para as fases da metamorfose
@@ -74,18 +69,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       if (user != null) {
         final userData = await _authService.getUserData(user.uid);
         // Se não tem foto no Firestore, usar a do Firebase Auth
-        final finalUserData = userData?.photoUrl != null
+        final finalUserData = userData.photoUrl != null
             ? userData
             : UserModel(
-                id: userData?.id ?? user.uid,
-                email: userData?.email ?? user.email ?? '',
-                name: userData?.name ?? user.displayName,
-                completeName: userData?.completeName ?? user.displayName,
-                photoUrl: userData?.photoUrl ?? user.photoURL,
-                phoneNumber: userData?.phoneNumber ?? user.phoneNumber,
-                birthDate: userData?.birthDate,
-                createdAt: userData?.createdAt ?? DateTime.now(),
-                updatedAt: userData?.updatedAt ?? DateTime.now(),
+                id: userData.id,
+                email: userData.email,
+                name: userData.name,
+                completeName: userData.completeName,
+                photoUrl: userData.photoUrl,
+                phoneNumber: userData.phoneNumber,
+                birthDate: userData.birthDate,
+                createdAt: userData.createdAt,
+                updatedAt: userData.updatedAt,
               );
         setState(() {
           _userModel = finalUserData;
@@ -127,39 +122,111 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   /// Retorna o BoxDecoration padrão com shadow para os cards
-  BoxDecoration get _cardDecoration => BoxDecoration(
-        color: MetamorfoseColors.whiteLight,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: MetamorfoseColors.greyLightest2,
-          width: 1,
+  BoxDecoration _getCardDecoration() {
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    return BoxDecoration(
+      color: MetamorfoseColors.whiteLight,
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: MetamorfoseColors.greyLightest2,
+        width: 1,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: MetamorfoseColors.defaultButtonShadow,
+          blurRadius: 0,
+          offset: const Offset(0, 4),
+          spreadRadius: 0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: MetamorfoseColors.defaultButtonShadow,
-            blurRadius: 0,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
-      );
+      ],
+    );
+  }
 
   /// Constrói o header com informações básicas do usuário
   Widget _buildUserHeader() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final avatarSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 80.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 70.0),
+        Condition.largerThan(name: TABLET, value: 90.0),
+      ],
+    ).value;
+
+    final nameFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final subtitleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(
-        minHeight: 230, // Altura mínima para igualar ao card de informações
+      constraints: BoxConstraints(
+        minHeight: ResponsiveValue<double>(
+          context,
+          defaultValue: 230.0,
+          conditionalValues: const [
+            Condition.smallerThan(name: MOBILE, value: 200.0),
+            Condition.largerThan(name: TABLET, value: 260.0),
+          ],
+        ).value,
       ),
-      padding: const EdgeInsets.all(20),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Avatar do usuário
           Container(
-            width: 80,
-            height: 80,
+            width: avatarSize,
+            height: avatarSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: MetamorfoseColors.purpleLight.withOpacity(0.1),
@@ -168,49 +235,55 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 width: 2,
               ),
             ),
-            child: _buildUserAvatar(),
+            child: _buildUserAvatar(avatarSize),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: spacing),
 
           // Nome completo do usuário
           Text(
             _userModel?.completeName ?? 'Nome não informado',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 24,
+              fontSize: nameFontSize,
               fontWeight: FontWeight.bold,
               color: MetamorfoseColors.greyMedium,
             ),
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: smallSpacing),
 
           // Username do usuário
           Text(
             _userModel?.name ?? 'Username não informado',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: subtitleFontSize,
               fontWeight: FontWeight.normal,
               color: MetamorfoseColors.greyMedium,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: smallSpacing),
 
           // Email do usuário
           Text(
             _userModel?.email ?? 'Email não informado',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: subtitleFontSize,
               fontWeight: FontWeight.normal,
               color: MetamorfoseColors.greyMedium,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -218,7 +291,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   /// Constrói o avatar do usuário
-  Widget _buildUserAvatar() {
+  Widget _buildUserAvatar(double size) {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     // Prioriza a foto do Firebase Auth primeiro, depois Firestore
@@ -228,33 +301,87 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       return ClipOval(
         child: Image.network(
           photoUrl,
-          width: 80,
-          height: 80,
+          width: size,
+          height: size,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return _buildDefaultAvatar();
+            return _buildDefaultAvatar(size);
           },
         ),
       );
     }
 
-    return _buildDefaultAvatar();
+    return _buildDefaultAvatar(size);
   }
 
   /// Constrói o avatar padrão
-  Widget _buildDefaultAvatar() {
-    return const Icon(
+  Widget _buildDefaultAvatar(double size) {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: size * 0.5,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 30.0),
+        Condition.largerThan(name: TABLET, value: 50.0),
+      ],
+    ).value;
+
+    return Icon(
       Icons.person,
-      size: 40,
+      size: iconSize,
       color: MetamorfoseColors.purpleLight,
     );
   }
 
   /// Constrói as informações detalhadas do usuário
   Widget _buildUserInfo() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final rowSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -263,22 +390,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               Icon(
                 Icons.info_outline,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 'Informações Pessoais',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 18,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: spacing),
 
           // Data de nascimento e idade na mesma linha
           _buildInfoRow(
@@ -289,7 +418,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 : 'Não informado',
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: rowSpacing),
 
           // Telefone
           _buildInfoRow(
@@ -298,7 +427,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             value: _userModel?.phoneNumber ?? 'Não informado',
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: rowSpacing),
 
           // Email
           _buildInfoRow(
@@ -317,44 +446,120 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     required String label,
     required String value,
   }) {
+    final iconContainerSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 40.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 36.0),
+        Condition.largerThan(name: TABLET, value: 44.0),
+      ],
+    ).value;
+
+    final iconContainerHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 43.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 40.0),
+        Condition.largerThan(name: TABLET, value: 52.0),
+      ],
+    ).value;
+
+    final iconPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 10.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 8.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final labelFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final valueFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 4.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 3.0),
+        Condition.largerThan(name: TABLET, value: 5.0),
+      ],
+    ).value;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 40,
-          height: 43,
-          padding: const EdgeInsets.all(10),
+          width: iconContainerSize,
+          height: iconContainerHeight,
+          padding: EdgeInsets.all(iconPadding),
           child: Center(
             child: Icon(
               icon,
               color: MetamorfoseColors.purpleLight,
-              size: 20,
+              size: iconSize,
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: spacing),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 14,
+                  fontSize: labelFontSize,
                   fontWeight: FontWeight.w500,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: smallSpacing),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: valueFontSize,
                   fontWeight: FontWeight.normal,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -371,9 +576,108 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     const userProgress = 10; // Exemplo: 75% de progresso
     final currentPhase = _getPhaseByProgress(userProgress);
 
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final imageSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 120.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 140.0),
+      ],
+    ).value;
+
+    final phaseTitleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final descriptionFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final progressFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final percentageFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final smallSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final mediumSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -382,28 +686,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               Icon(
                 Icons.auto_awesome,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 'Minha Metamorfose',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 18,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: spacing),
 
           // Imagem da fase atual
           Center(
             child: Container(
-              width: 120,
-              height: 120,
+              width: imageSize,
+              height: imageSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: MetamorfoseColors.purpleLight.withOpacity(0.1),
@@ -413,44 +719,48 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
               ),
               child: ClipOval(
-                child: _getPhaseImage(currentPhase),
+                child: _getPhaseImage(currentPhase, imageSize),
               ),
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: mediumSpacing),
 
           // Título da fase
           Center(
             child: Text(
               _getPhaseTitle(currentPhase),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 20,
+                fontSize: phaseTitleFontSize,
                 fontWeight: FontWeight.bold,
                 color: MetamorfoseColors.purpleNormal,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: smallSpacing),
 
           // Descrição da fase
           Center(
             child: Text(
               _getPhaseDescription(currentPhase),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 16,
+                fontSize: descriptionFontSize,
                 fontWeight: FontWeight.normal,
                 color: MetamorfoseColors.greyMedium,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: spacing),
 
           // Barra de progresso
           Column(
@@ -461,25 +771,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 children: [
                   Text(
                     'Progresso',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 16,
+                      fontSize: progressFontSize,
                       fontWeight: FontWeight.bold,
                       color: MetamorfoseColors.greyMedium,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     '$userProgress%',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 14,
+                      fontSize: percentageFontSize,
                       fontWeight: FontWeight.bold,
                       color: MetamorfoseColors.purpleNormal,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: smallSpacing),
               Container(
                 height: 8,
                 decoration: BoxDecoration(
@@ -510,26 +824,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   /// Retorna a imagem da fase atual
-  Widget _getPhaseImage(MetamorphosisPhase phase) {
+  Widget _getPhaseImage(MetamorphosisPhase phase, double size) {
     switch (phase) {
       case MetamorphosisPhase.egg:
         return Image.asset(
           'assets/images/onboarding/ic_egg.png',
+          width: size,
+          height: size,
           fit: BoxFit.contain,
         );
       case MetamorphosisPhase.caterpillar:
         return Image.asset(
           'assets/images/onboarding/ic_caterpillar.png',
+          width: size,
+          height: size,
           fit: BoxFit.contain,
         );
       case MetamorphosisPhase.chrysalis:
         return Image.asset(
           'assets/images/onboarding/ic_chrysalis.png',
+          width: size,
+          height: size,
           fit: BoxFit.contain,
         );
       case MetamorphosisPhase.butterfly:
         return SvgPicture.asset(
           'assets/images/onboarding/ic_butterfly.svg',
+          width: size,
+          height: size,
           fit: BoxFit.contain,
         );
     }
@@ -563,19 +885,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
-  /// Retorna o progresso da fase (0-100)
-  int _getPhaseProgress(MetamorphosisPhase phase) {
-    switch (phase) {
-      case MetamorphosisPhase.egg:
-        return 15;
-      case MetamorphosisPhase.caterpillar:
-        return 45;
-      case MetamorphosisPhase.chrysalis:
-        return 75;
-      case MetamorphosisPhase.butterfly:
-        return 100;
-    }
-  }
 
   /// Determina a fase baseada na porcentagem de progresso
   MetamorphosisPhase _getPhaseByProgress(int progress) {
@@ -592,6 +901,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   /// Constrói os botões de ação
   Widget _buildActionButtons() {
+    final buttonSpacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Column(
       children: [
         // Botão Atualizar Cadastro
@@ -607,7 +925,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           strokeColor: MetamorfoseColors.purpleNormal,
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: buttonSpacing),
 
         // Botão Trocar Senha
         CustomButton(
@@ -636,26 +954,55 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   /// Constrói o estado de erro
   Widget _buildErrorState() {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 64.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 48.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.error_outline,
-            size: 64,
+            size: iconSize,
             color: MetamorfoseColors.redNormal,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: spacing),
           Text(
             _errorMessage ?? 'Erro desconhecido',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: fontSize,
               color: MetamorfoseColors.redNormal,
             ),
             textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: spacing),
           CustomButton(
             text: 'TENTAR NOVAMENTE',
             onPressed: _loadUserData,
@@ -671,16 +1018,44 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos globais
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
     return Scaffold(
       backgroundColor: MetamorfoseColors.whiteLight,
       appBar: AppBar(
         backgroundColor: MetamorfoseColors.whiteLight,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Meu Perfil',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 20,
+            fontSize: titleFontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
@@ -693,29 +1068,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ? _buildErrorState()
               : SafeArea(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: EdgeInsets.all(horizontalPadding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Header com informações básicas
                         _buildUserHeader(),
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: verticalPadding),
 
                         // Informações detalhadas
                         _buildUserInfo(),
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: verticalPadding),
 
                         // Card de progresso da metamorfose
                         _buildMetamorphosisProgress(),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: verticalPadding + 4),
 
                         // Botões de ação
                         _buildActionButtons(),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: verticalPadding),
                       ],
                     ),
                   ),

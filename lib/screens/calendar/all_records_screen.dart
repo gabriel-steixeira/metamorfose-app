@@ -1,22 +1,20 @@
-/**
- * File: all_records_screen.dart
- * Description: Tela para exibir todos os registros do calendário
- *
- * Responsabilidades:
- * - Exibir lista de todos os registros
- * - Mostrar detalhes de cada registro
- * - Permitir navegação de volta
- *
- * Author: Assistant
- * Created on: 15-08-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: all_records_screen.dart
+/// Description: Tela para exibir todos os registros do calendário
+///
+/// Responsabilidades:
+/// - Exibir lista de todos os registros
+/// - Mostrar detalhes de cada registro
+/// - Permitir navegação de volta
+///
+/// Author: Assistant
+/// Created on: 15-08-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/models/calendar_photo.dart';
@@ -33,18 +31,18 @@ class AllRecordsScreen extends StatelessWidget {
     required this.photos,
   });
 
-  /// Constrói widget da foto
-  Widget _buildPhotoWidget(CalendarPhoto photo) {
+  /// Constrói widget da foto responsivo
+  Widget _buildResponsivePhotoWidget(CalendarPhoto photo, double size) {
     try {
       // Priorizar bytes da imagem (para web)
       if (photo.imageBytes != null) {
         return Image.memory(
           photo.imageBytes!,
-          width: 80,
-          height: 80,
+          width: size,
+          height: size,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return _buildPhotoPlaceholder();
+            return _buildResponsivePhotoPlaceholder(size);
           },
         );
       }
@@ -55,64 +53,102 @@ class AllRecordsScreen extends StatelessWidget {
         if (file.existsSync()) {
           return Image.file(
             file,
-            width: 80,
-            height: 80,
+            width: size,
+            height: size,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return _buildPhotoPlaceholder();
+              return _buildResponsivePhotoPlaceholder(size);
             },
           );
         }
       }
 
       // Fallback para placeholder
-      return _buildPhotoPlaceholder();
+      return _buildResponsivePhotoPlaceholder(size);
     } catch (e) {
-      print('Erro ao carregar foto: $e');
-      return _buildPhotoPlaceholder();
+      // Log error in debug mode only
+      if (kDebugMode) {
+        print('Erro ao carregar foto: $e');
+      }
+      return _buildResponsivePhotoPlaceholder(size);
     }
   }
 
-  /// Constrói placeholder para foto
-  Widget _buildPhotoPlaceholder() {
+  /// Constrói placeholder responsivo para foto
+  Widget _buildResponsivePhotoPlaceholder(double size) {
+    final iconSize = size * 0.4; // 40% do tamanho da imagem
+    final borderRadius = size * 0.15; // 15% do tamanho da imagem
+
     return Container(
-      width: 80,
-      height: 80,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: MetamorfoseColors.purpleLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.photo,
-        color: Colors.white,
-        size: 32,
+        color: MetamorfoseColors.whiteLight,
+        size: iconSize,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos
+    final appBarFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MetamorfoseColors.whiteLight,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: MetamorfoseColors.whiteLight,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: SvgPicture.asset(
             'assets/images/arrow_back.svg',
-            width: 24,
-            height: 24,
+            width: iconSize,
+            height: iconSize,
           ),
         ),
-        title: const Text(
+        title: Text(
           'Todos os Registros',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 20,
+            fontSize: appBarFontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
       ),
@@ -123,38 +159,178 @@ class AllRecordsScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.photo_library_outlined,
-                    size: 64,
+                    size: ResponsiveValue<double>(
+                      context,
+                      defaultValue: 64.0,
+                      conditionalValues: const [
+                        Condition.smallerThan(name: MOBILE, value: 48.0),
+                        Condition.largerThan(name: TABLET, value: 80.0),
+                      ],
+                    ).value,
                     color: MetamorfoseColors.greyLight,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 16.0,
+                    conditionalValues: const [
+                      Condition.smallerThan(name: MOBILE, value: 12.0),
+                      Condition.largerThan(name: TABLET, value: 20.0),
+                    ],
+                  ).value),
                   Text(
                     'Nenhum registro encontrado',
                     style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 18,
+                      fontSize: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 18.0,
+                        conditionalValues: const [
+                          Condition.smallerThan(name: MOBILE, value: 16.0),
+                          Condition.largerThan(name: TABLET, value: 20.0),
+                        ],
+                      ).value,
                       color: MetamorfoseColors.greyMedium,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: ResponsiveValue<double>(
+                    context,
+                    defaultValue: 8.0,
+                    conditionalValues: const [
+                      Condition.smallerThan(name: MOBILE, value: 6.0),
+                      Condition.largerThan(name: TABLET, value: 10.0),
+                    ],
+                  ).value),
                   Text(
                     'Adicione fotos ao seu calendário para vê-las aqui',
                     style: TextStyle(
                       fontFamily: 'DinNext',
-                      fontSize: 14,
+                      fontSize: ResponsiveValue<double>(
+                        context,
+                        defaultValue: 14.0,
+                        conditionalValues: const [
+                          Condition.smallerThan(name: MOBILE, value: 12.0),
+                          Condition.largerThan(name: TABLET, value: 16.0),
+                        ],
+                      ).value,
                       color: MetamorfoseColors.greyLight,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(horizontalPadding),
               itemCount: photos.length,
               itemBuilder: (context, index) {
                 final photo = photos[index];
                 final dateFormat = DateFormat('dd/MM/yyyy');
                 final timeFormat = DateFormat('HH:mm');
+
+                // Valores responsivos para os itens da lista
+                final itemPadding = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 20.0),
+                  ],
+                ).value;
+
+                final itemMargin = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 20.0),
+                  ],
+                ).value;
+
+                final borderRadius = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 20.0),
+                  ],
+                ).value;
+
+                final imageBorderRadius = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 12.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 8.0),
+                    Condition.largerThan(name: TABLET, value: 16.0),
+                  ],
+                ).value;
+
+                final imageSize = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 80.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 60.0),
+                    Condition.largerThan(name: TABLET, value: 100.0),
+                  ],
+                ).value;
+
+                final titleFontSize = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 14.0),
+                    Condition.largerThan(name: TABLET, value: 18.0),
+                  ],
+                ).value;
+
+                final subtitleFontSize = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 14.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 16.0),
+                  ],
+                ).value;
+
+                final spacing = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 16.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 12.0),
+                    Condition.largerThan(name: TABLET, value: 20.0),
+                  ],
+                ).value;
+
+                final smallSpacing = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 4.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 2.0),
+                    Condition.largerThan(name: TABLET, value: 6.0),
+                  ],
+                ).value;
+
+                final mediumSpacing = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 8.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 6.0),
+                    Condition.largerThan(name: TABLET, value: 10.0),
+                  ],
+                ).value;
+
+                final iconSize = ResponsiveValue<double>(
+                  context,
+                  defaultValue: 24.0,
+                  conditionalValues: const [
+                    Condition.smallerThan(name: MOBILE, value: 20.0),
+                    Condition.largerThan(name: TABLET, value: 28.0),
+                  ],
+                ).value;
 
                 return GestureDetector(
                   onTap: () {
@@ -165,15 +341,15 @@ class AllRecordsScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: EdgeInsets.only(bottom: itemMargin),
                     decoration: BoxDecoration(
                       color: MetamorfoseColors.whiteLight,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      boxShadow: const [
                         BoxShadow(
                           color: MetamorfoseColors.defaultButtonShadow,
                           blurRadius: 0,
-                          offset: const Offset(0, 4),
+                          offset: Offset(0, 4),
                           spreadRadius: 0,
                         ),
                       ],
@@ -183,15 +359,15 @@ class AllRecordsScreen extends StatelessWidget {
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(itemPadding),
                       child: Row(
                         children: [
                           // Foto
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: _buildPhotoWidget(photo),
+                            borderRadius: BorderRadius.circular(imageBorderRadius),
+                            child: _buildResponsivePhotoWidget(photo, imageSize),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: spacing),
 
                           // Detalhes
                           Expanded(
@@ -201,36 +377,43 @@ class AllRecordsScreen extends StatelessWidget {
                                 // Data
                                 Text(
                                   dateFormat.format(photo.date),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DinNext',
-                                    fontSize: 16,
+                                    fontSize: titleFontSize,
                                     fontWeight: FontWeight.bold,
                                     color: MetamorfoseColors.blackLight,
                                   ),
+                                  textAlign: TextAlign.start,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: smallSpacing),
 
                                 // Horário
                                 Text(
                                   timeFormat.format(photo.createdAt),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DinNext',
-                                    fontSize: 14,
+                                    fontSize: subtitleFontSize,
                                     color: MetamorfoseColors.greyMedium,
                                   ),
+                                  textAlign: TextAlign.start,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: mediumSpacing),
 
                                 // Descrição
                                 if (photo.description != null &&
                                     photo.description!.isNotEmpty)
                                   Text(
                                     photo.description!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: 'DinNext',
-                                      fontSize: 14,
+                                      fontSize: subtitleFontSize,
                                       color: MetamorfoseColors.greyMedium,
                                     ),
+                                    textAlign: TextAlign.start,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -242,6 +425,7 @@ class AllRecordsScreen extends StatelessWidget {
                           Icon(
                             Icons.chevron_right,
                             color: MetamorfoseColors.greyLight,
+                            size: iconSize,
                           ),
                         ],
                       ),

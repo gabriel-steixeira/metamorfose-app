@@ -1,24 +1,20 @@
-/**
- * File: photo_details_screen.dart
- * Description: Tela de detalhes da foto do calendário
- *
- * Responsabilidades:
- * - Exibir foto em tamanho grande
- * - Permitir editar descrição
- * - Permitir deletar foto
- * - Exibir dica da planta
- *
- * Author: Assistant
- * Created on: 15-08-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: photo_details_screen.dart
+/// Description: Tela de detalhes da foto do calendário
+///
+/// Responsabilidades:
+/// - Exibir foto em tamanho grande
+/// - Permitir editar descrição
+/// - Permitir deletar foto
+/// - Exibir dica da planta
+///
+/// Author: Assistant
+/// Created on: 15-08-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metamorfose_flutter/theme/colors.dart';
 import 'package:metamorfose_flutter/models/calendar_photo.dart';
@@ -56,92 +52,135 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
     super.dispose();
   }
 
-  /// Retorna o BoxDecoration padrão com shadow para os cards
-  BoxDecoration get _cardDecoration => BoxDecoration(
-        color: MetamorfoseColors.whiteLight,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: MetamorfoseColors.greyLightest2,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: MetamorfoseColors.defaultButtonShadow,
-            blurRadius: 0,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
-      );
+  BoxDecoration _getCardDecoration() {
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
 
-  /// Constrói o header da tela
+    return BoxDecoration(
+      color: MetamorfoseColors.whiteLight,
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(
+        color: MetamorfoseColors.greyLightest2,
+        width: 1,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: MetamorfoseColors.defaultButtonShadow,
+          blurRadius: 0,
+          offset: const Offset(0, 4),
+          spreadRadius: 0,
+        ),
+      ],
+    );
+  }
+
   Widget _buildHeader() {
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Row(
       children: [
         IconButton(
           onPressed: () => context.pop(),
           icon: SvgPicture.asset(
             'assets/images/arrow_back.svg',
-            width: 24,
-            height: 24,
+            width: iconSize,
+            height: iconSize,
           ),
         ),
         Expanded(
           child: Text(
             'Detalhes da Foto',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 18,
+              fontSize: titleFontSize,
               fontWeight: FontWeight.bold,
               color: MetamorfoseColors.greyMedium,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         IconButton(
           onPressed: _showDeleteDialog,
-          icon: const Icon(
+          icon: Icon(
             Icons.delete_outline,
             color: MetamorfoseColors.redNormal,
-            size: 24,
+            size: iconSize,
           ),
         ),
       ],
     );
   }
 
-  /// Constrói a imagem da foto
   Widget _buildPhotoImage() {
+    final imageHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 300.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 250.0),
+        Condition.largerThan(name: TABLET, value: 350.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      height: 300,
+      height: imageHeight,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: _buildImageWidget(),
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: _buildImageWidget(imageHeight),
       ),
     );
   }
 
-  /// Constrói o widget da imagem baseado na plataforma
-  Widget _buildImageWidget() {
+  Widget _buildImageWidget(double height) {
     try {
-      // Priorizar bytes da imagem (para web)
       if (widget.photo.imageBytes != null) {
         return Image.memory(
           widget.photo.imageBytes!,
           width: double.infinity,
-          height: 300,
+          height: height,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return _buildPhotoPlaceholder();
+            return _buildPhotoPlaceholder(height);
           },
         );
       }
 
-      // Fallback para arquivo local (mobile)
       if (widget.photo.localPath != null &&
           widget.photo.localPath!.isNotEmpty) {
         final file = File(widget.photo.localPath!);
@@ -149,45 +188,96 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
           return Image.file(
             file,
             width: double.infinity,
-            height: 300,
+            height: height,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return _buildPhotoPlaceholder();
+              return _buildPhotoPlaceholder(height);
             },
           );
         }
       }
 
-      // Fallback para placeholder
-      return _buildPhotoPlaceholder();
+      return _buildPhotoPlaceholder(height);
     } catch (e) {
       print('Erro ao carregar foto: $e');
-      return _buildPhotoPlaceholder();
+      return _buildPhotoPlaceholder(height);
     }
   }
 
-  /// Constrói placeholder para foto
-  Widget _buildPhotoPlaceholder() {
+  Widget _buildPhotoPlaceholder(double height) {
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 64.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 48.0),
+        Condition.largerThan(name: TABLET, value: 80.0),
+      ],
+    ).value;
+
     return Container(
       width: double.infinity,
-      height: 300,
+      height: height,
       decoration: BoxDecoration(
         color: MetamorfoseColors.purpleLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.photo,
-        color: Colors.white,
-        size: 64,
+        color: MetamorfoseColors.whiteLight,
+        size: iconSize,
       ),
     );
   }
 
-  /// Constrói informações da foto
   Widget _buildPhotoInfo() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -196,68 +286,124 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Icon(
                 Icons.calendar_today,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Data',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: spacing),
           Text(
             DateFormat('dd/MM/yyyy', 'pt_BR').format(widget.photo.date),
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: fontSize,
               color: MetamorfoseColors.greyMedium,
             ),
+            textAlign: TextAlign.start,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: spacing * 2),
           Row(
             children: [
               Icon(
                 Icons.access_time,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Horário',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: spacing),
           Text(
             DateFormat('HH:mm', 'pt_BR').format(widget.photo.date),
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: fontSize,
               color: MetamorfoseColors.greyMedium,
             ),
+            textAlign: TextAlign.start,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  /// Constrói seção de descrição
   Widget _buildDescription() {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -266,31 +412,34 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Icon(
                 Icons.description,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Descrição',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const Spacer(),
               if (!_isEditing)
                 IconButton(
                   onPressed: () => setState(() => _isEditing = true),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit,
                     color: MetamorfoseColors.purpleNormal,
-                    size: 20,
+                    size: iconSize,
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: spacing),
           if (_isEditing) ...[
             TextField(
               controller: _descriptionController,
@@ -298,20 +447,20 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               decoration: InputDecoration(
                 hintText: 'Adicione uma descrição...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   borderSide: const BorderSide(
                     color: MetamorfoseColors.greyLightest2,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   borderSide: const BorderSide(
                     color: MetamorfoseColors.purpleNormal,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: spacing),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -321,30 +470,38 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                     _descriptionController.text =
                         widget.photo.description ?? '';
                   },
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
                     style: TextStyle(
                       fontFamily: 'DinNext',
                       color: MetamorfoseColors.greyMedium,
+                      fontSize: fontSize,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: spacing),
                 ElevatedButton(
                   onPressed: _saveDescription,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: MetamorfoseColors.purpleNormal,
                     foregroundColor: MetamorfoseColors.whiteLight,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(borderRadius),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Salvar',
                     style: TextStyle(
                       fontFamily: 'DinNext',
                       fontWeight: FontWeight.bold,
+                      fontSize: fontSize,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -354,7 +511,7 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               widget.photo.description ?? 'Nenhuma descrição',
               style: TextStyle(
                 fontFamily: 'DinNext',
-                fontSize: 16,
+                fontSize: fontSize,
                 color: widget.photo.description != null
                     ? MetamorfoseColors.greyMedium
                     : MetamorfoseColors.greyLight,
@@ -362,6 +519,9 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                     ? FontStyle.normal
                     : FontStyle.italic,
               ),
+              textAlign: TextAlign.start,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
@@ -369,15 +529,50 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
     );
   }
 
-  /// Constrói seção de mensagem da planta
   Widget _buildPlantTip() {
     if (widget.photo.tip == null || widget.photo.tip!.isEmpty) {
       return const SizedBox.shrink();
     }
 
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration,
+      padding: EdgeInsets.all(padding),
+      decoration: _getCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -386,43 +581,66 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Icon(
                 Icons.eco,
                 color: MetamorfoseColors.purpleLight,
-                size: 20,
+                size: iconSize,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: spacing),
               Text(
                 'Mensagem da sua Planta',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DinNext',
-                  fontSize: 16,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: MetamorfoseColors.greyMedium,
                 ),
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: spacing * 1.5),
           Text(
             widget.photo.tip!,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'DinNext',
-              fontSize: 16,
+              fontSize: fontSize,
               color: MetamorfoseColors.greyMedium,
               height: 1.5,
             ),
+            textAlign: TextAlign.start,
+            maxLines: 5,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  /// Salva a descrição
   void _saveDescription() {
     final newDescription = _descriptionController.text.trim();
     if (newDescription != widget.photo.description) {
-      // TODO: Implementar atualização da descrição
+      final fontSize = ResponsiveValue<double>(
+        context,
+        defaultValue: 16.0,
+        conditionalValues: const [
+          Condition.smallerThan(name: MOBILE, value: 14.0),
+          Condition.largerThan(name: TABLET, value: 18.0),
+        ],
+      ).value;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Descrição atualizada com sucesso!'),
+        SnackBar(
+          content: Text(
+            'Descrição atualizada com sucesso!',
+            style: TextStyle(
+              fontFamily: 'DinNext',
+              fontSize: fontSize,
+              color: MetamorfoseColors.whiteLight,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           backgroundColor: MetamorfoseColors.greenNormal,
         ),
       );
@@ -430,37 +648,64 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
     setState(() => _isEditing = false);
   }
 
-  /// Mostra diálogo de confirmação para deletar
   void _showDeleteDialog() {
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 18.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final contentFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(
+        title: Text(
           'Deletar foto',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 18,
+            fontSize: titleFontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        content: const Text(
+        content: Text(
           'Tem certeza que deseja deletar esta foto? Esta ação não pode ser desfeita.',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 16,
+            fontSize: contentFontSize,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.start,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
+            child: Text(
               'Cancelar',
               style: TextStyle(
                 fontFamily: 'DinNext',
                 color: MetamorfoseColors.greyMedium,
+                fontSize: contentFontSize,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           TextButton(
@@ -468,13 +713,17 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Navigator.of(context).pop();
               _deletePhoto();
             },
-            child: const Text(
+            child: Text(
               'Deletar',
               style: TextStyle(
                 fontFamily: 'DinNext',
                 color: MetamorfoseColors.redNormal,
                 fontWeight: FontWeight.bold,
+                fontSize: contentFontSize,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -482,12 +731,29 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
     );
   }
 
-  /// Deleta a foto
   void _deletePhoto() {
-    // TODO: Implementar deleção da foto
+    final fontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Foto deletada com sucesso!'),
+      SnackBar(
+        content: Text(
+          'Foto deletada com sucesso!',
+          style: TextStyle(
+            fontFamily: 'DinNext',
+            fontSize: fontSize,
+            color: MetamorfoseColors.whiteLight,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: MetamorfoseColors.greenNormal,
       ),
     );
@@ -496,35 +762,40 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
     return Scaffold(
       backgroundColor: MetamorfoseColors.whiteLight,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(padding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               _buildHeader(),
-
-              const SizedBox(height: 16),
-
-              // Imagem da foto
+              SizedBox(height: spacing),
               _buildPhotoImage(),
-
-              const SizedBox(height: 16),
-
-              // Informações da foto
+              SizedBox(height: spacing),
               _buildPhotoInfo(),
-
-              const SizedBox(height: 16),
-
-              // Descrição
+              SizedBox(height: spacing),
               _buildDescription(),
-
-              const SizedBox(height: 16),
-
-              // Dica da planta
+              SizedBox(height: spacing),
               _buildPlantTip(),
             ],
           ),

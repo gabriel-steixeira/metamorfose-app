@@ -1,24 +1,22 @@
-/**
- * File: update_profile_form.dart
- * Description: Formulário para atualização dos dados do usuário
- *
- * Responsabilidades:
- * - Permitir edição dos dados pessoais do usuário
- * - Validar campos obrigatórios
- * - Salvar alterações no Firebase
- * - Exibir feedback de sucesso ou erro
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 06-08-2025
- * Last modified: 31-08-2025
- * 
- * Changes:
- * - UI Ajustada. (Evelin Cordeiro)
- * 
- * 
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: update_profile_form.dart
+/// Description: Formulário para atualização dos dados do usuário
+///
+/// Responsabilidades:
+/// - Permitir edição dos dados pessoais do usuário
+/// - Validar campos obrigatórios
+/// - Salvar alterações no Firebase
+/// - Exibir feedback de sucesso ou erro
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 06-08-2025
+/// Last modified: 31-08-2025
+/// 
+/// Changes:
+/// - UI Ajustada. (Evelin Cordeiro)
+/// 
+/// 
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -84,7 +82,6 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
       if (user != null) {
         final userData = await _authService.getUserData(user.uid);
 
-        // Buscar dados adicionais do Firestore
         final userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
@@ -97,11 +94,9 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           _usernameController.text = userData.name ?? '';
           _completeNameController.text = userDocData?['completeName'] ?? '';
 
-          // Aplicar máscara no telefone
           final phone = userData.phoneNumber ?? '';
           _phoneController.text = phone.isNotEmpty ? _formatPhone(phone) : '';
 
-          // Carregar data de nascimento do Firestore
           if (userDocData?['birthDate'] != null) {
             final birthDateTimestamp = userDocData!['birthDate'] as Timestamp;
             _selectedBirthDate = birthDateTimestamp.toDate();
@@ -146,7 +141,6 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
       if (value.isEmpty) {
         _phoneError = 'Telefone é obrigatório';
       } else {
-        // Remove formatação para validar
         final cleanPhone = value.replaceAll(RegExp(r'[^0-9]'), '');
         if (cleanPhone.length != 11) {
           _phoneError = 'Telefone deve ter 11 dígitos';
@@ -210,12 +204,10 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
 
   /// Salva as alterações
   Future<void> _saveProfile() async {
-    // Validar campos
     _validateUsername();
     _validateCompleteName();
     _validatePhone();
 
-    // Verificar se há erros
     if (_usernameError != null ||
         _completeNameError != null ||
         _phoneError != null) {
@@ -230,16 +222,14 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
         throw Exception('Usuário não encontrado');
       }
 
-      // Atualiza o nome de usuário no Firebase Auth
       await user.updateDisplayName(_usernameController.text.trim());
 
-      // Atualiza os dados no Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .update({
-        'name': _usernameController.text.trim(), // Nome de usuário
-        'completeName': _completeNameController.text.trim(), // Nome completo
+        'name': _usernameController.text.trim(),
+        'completeName': _completeNameController.text.trim(),
         'phoneNumber': _phoneController.text.trim().isEmpty
             ? null
             : _phoneController.text.trim(),
@@ -250,7 +240,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
 
       if (mounted) {
         _showSuccessSnackBar('Dados atualizados com sucesso!');
-        context.go(Routes.userProfile); // Volta para a tela de perfil
+        context.go(Routes.userProfile);
       }
     } catch (e) {
       _showErrorSnackBar('Erro ao salvar: $e');
@@ -283,25 +273,138 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
 
   @override
   Widget build(BuildContext context) {
+    // Valores responsivos
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final verticalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final labelFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final infoFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final containerPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final spacingSmall = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final spacingMedium = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final spacingLarge = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacingXLarge = ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
     return Scaffold(
       backgroundColor: MetamorfoseColors.whiteLight,
       appBar: AppBar(
         backgroundColor: MetamorfoseColors.whiteLight,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Atualizar Cadastro',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 20,
+            fontSize: titleFontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
             color: MetamorfoseColors.greyMedium,
+            size: iconSize,
           ),
           onPressed: () {
             context.go(Routes.userProfile);
@@ -316,18 +419,17 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
             )
           : SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(horizontalPadding),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Informações atuais
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(containerPadding),
                         decoration: BoxDecoration(
                           color: MetamorfoseColors.purpleLight.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(borderRadius),
                           border: Border.all(
                             color:
                                 MetamorfoseColors.purpleLight.withOpacity(0.3),
@@ -338,84 +440,93 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                             Icon(
                               Icons.info_outline,
                               color: MetamorfoseColors.purpleNormal,
-                              size: 20,
+                              size: iconSize,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: spacingSmall),
                             Expanded(
                               child: Text(
                                 'Atualize suas informações pessoais abaixo',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'DinNext',
-                                  fontSize: 14,
+                                  fontSize: infoFontSize,
                                   color: MetamorfoseColors.greyMedium,
                                 ),
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: spacingLarge),
 
-                      // Campo Nome de Usuário
-                      const Text(
+                      Text(
                         'Nome de Usuário *',
                         style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 16,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w600,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       InputField(
                         hintText: 'Digite seu nome de usuário',
                         controller: _usernameController,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.alternate_email,
                           color: MetamorfoseColors.purpleLight,
-                          size: 20,
+                          size: iconSize,
                         ),
                         errorText: _usernameError,
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: spacingMedium),
 
-                      // Campo Nome Completo
-                      const Text(
+                      Text(
                         'Nome Completo *',
                         style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 16,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w600,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       InputField(
                         hintText: 'Digite seu nome completo',
                         controller: _completeNameController,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.person_outline,
                           color: MetamorfoseColors.purpleLight,
-                          size: 20,
+                          size: iconSize,
                         ),
                         errorText: _completeNameError,
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: spacingMedium),
 
-                      // Campo Telefone
-                      const Text(
+                      Text(
                         'Telefone',
                         style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 16,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w600,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       InputField(
                         hintText: '(11) 99999-9999',
                         controller: _phoneController,
@@ -431,50 +542,50 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                             );
                           }
                         },
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.phone_outlined,
                           color: MetamorfoseColors.purpleLight,
-                          size: 20,
+                          size: iconSize,
                         ),
                         errorText: _phoneError,
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: spacingMedium),
 
-                      // Campo Data de Nascimento
-                      const Text(
+                      Text(
                         'Data de Nascimento',
                         style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 16,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w600,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       InputField(
                         hintText: 'DD/MM/AAAA',
                         controller: _birthDateController,
                         readOnly: true,
                         onTap: _selectBirthDate,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.cake_outlined,
                           color: MetamorfoseColors.purpleLight,
-                          size: 20,
+                          size: iconSize,
                         ),
-                        suffixIcon: const Icon(
+                        suffixIcon: Icon(
                           Icons.calendar_today,
                           color: MetamorfoseColors.purpleLight,
-                          size: 20,
+                          size: iconSize,
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      SizedBox(height: spacingXLarge),
 
-                      // Botões
                       Row(
                         children: [
-                          // Botão Cancelar
                           Expanded(
                             child: MetamorfeseSecondaryButton(
                               text: 'CANCELAR',
@@ -486,9 +597,8 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                             ),
                           ),
 
-                          const SizedBox(width: 16),
+                          SizedBox(width: spacingSmall * 2),
 
-                          // Botão Salvar
                           Expanded(
                             child: CustomButton(
                               text: _isSaving ? 'SALVANDO...' : 'SALVAR',
@@ -502,7 +612,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                         ],
                       ),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: spacingLarge),
                     ],
                   ),
                 ),

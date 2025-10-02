@@ -1,20 +1,18 @@
-/**
- * File: change_password_screen.dart
- * Description: Tela para alteração de senha do usuário
- *
- * Responsabilidades:
- * - Permitir alteração da senha atual
- * - Validar senha atual antes da alteração
- * - Validar nova senha e confirmação
- * - Atualizar senha no Firebase Auth
- * - Exibir feedback de sucesso ou erro
- *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 06-08-2025
- * Last modified: 06-08-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: change_password_screen.dart
+/// Description: Tela para alteração de senha do usuário
+///
+/// Responsabilidades:
+/// - Permitir alteração da senha atual
+/// - Validar senha atual antes da alteração
+/// - Validar nova senha e confirmação
+/// - Atualizar senha no Firebase Auth
+/// - Exibir feedback de sucesso ou erro
+///
+/// Author: Gabriel Teixeira e Vitoria Lana
+/// Created on: 06-08-2025
+/// Last modified: 06-08-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -37,14 +35,12 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores dos campos
   final TextEditingController _currentPasswordController =
       TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  // Estados de visibilidade das senhas
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -128,12 +124,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   /// Altera a senha do usuário
   Future<void> _changePassword() async {
-    // Validar todos os campos
     _validateCurrentPassword();
     _validateNewPassword();
     _validateConfirmPassword();
 
-    // Verificar se há erros
     if (_currentPasswordError != null ||
         _newPasswordError != null ||
         _confirmPasswordError != null) {
@@ -143,7 +137,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     setState(() => _isChanging = true);
 
     try {
-      // Primeiro, reautentica o usuário
       final isReauthenticated = await _reauthenticateUser(
         _currentPasswordController.text,
       );
@@ -153,7 +146,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         return;
       }
 
-      // Se a reautenticação foi bem-sucedida, altera a senha
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.updatePassword(_newPasswordController.text);
@@ -161,7 +153,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         if (mounted) {
           _showSuccessSnackBar('Senha alterada com sucesso!');
 
-          // Aguarda um pouco para mostrar a mensagem e depois volta
           await Future.delayed(const Duration(seconds: 2));
 
           if (mounted) {
@@ -230,28 +221,58 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     required VoidCallback onToggleVisibility,
     String? errorText,
   }) {
+    final labelFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final spacingSmall = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 16,
+            fontSize: labelFontSize,
             fontWeight: FontWeight.w600,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.start,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: spacingSmall),
         PasswordInputField(
           hintText: hint,
           controller: controller,
           initiallyVisible: isVisible,
           onVisibilityChanged: (visible) => onToggleVisibility(),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.lock_outline,
             color: MetamorfoseColors.purpleLight,
-            size: 20,
+            size: iconSize,
           ),
           errorText: errorText,
         ),
@@ -261,43 +282,128 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final containerPadding = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 20.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final spacingSmall = ResponsiveValue<double>(
+      context,
+      defaultValue: 8.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 6.0),
+        Condition.largerThan(name: TABLET, value: 10.0),
+      ],
+    ).value;
+
+    final spacingMedium = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final spacingLarge = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final spacingXLarge = ResponsiveValue<double>(
+      context,
+      defaultValue: 32.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 40.0),
+      ],
+    ).value;
+
     return Scaffold(
       backgroundColor: MetamorfoseColors.whiteLight,
       appBar: AppBar(
         backgroundColor: MetamorfoseColors.whiteLight,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Trocar Senha',
           style: TextStyle(
             fontFamily: 'DinNext',
-            fontSize: 20,
+            fontSize: titleFontSize,
             fontWeight: FontWeight.bold,
             color: MetamorfoseColors.greyMedium,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
             color: MetamorfoseColors.greyMedium,
+            size: iconSize,
           ),
           onPressed: () => context.go(Routes.userProfile),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(horizontalPadding),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Informações de segurança
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(containerPadding),
                   decoration: BoxDecoration(
                     color: MetamorfoseColors.blueLight.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(borderRadius),
                     border: Border.all(
                       color: MetamorfoseColors.blueLight.withOpacity(0.3),
                     ),
@@ -309,38 +415,43 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           Icon(
                             Icons.security,
                             color: MetamorfoseColors.blueNormal,
-                            size: 20,
+                            size: iconSize,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: spacingSmall),
                           Expanded(
                             child: Text(
                               'Segurança da Conta',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: titleFontSize * 0.8,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.greyMedium,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       Text(
                         'Para sua segurança, você precisa informar sua senha atual antes de definir uma nova senha.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 14,
+                          fontSize: titleFontSize * 0.7,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: spacingLarge),
 
-                // Campo Senha Atual
                 _buildPasswordField(
                   label: 'Senha Atual *',
                   hint: 'Digite sua senha atual',
@@ -354,9 +465,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   errorText: _currentPasswordError,
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: spacingMedium),
 
-                // Campo Nova Senha
                 _buildPasswordField(
                   label: 'Nova Senha *',
                   hint: 'Digite sua nova senha',
@@ -370,9 +480,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   errorText: _newPasswordError,
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: spacingMedium),
 
-                // Campo Confirmar Nova Senha
                 _buildPasswordField(
                   label: 'Confirmar Nova Senha *',
                   hint: 'Digite novamente sua nova senha',
@@ -386,14 +495,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   errorText: _confirmPasswordError,
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: spacingLarge),
 
-                // Dicas de senha
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(containerPadding),
                   decoration: BoxDecoration(
                     color: MetamorfoseColors.greenLight.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(borderRadius),
                     border: Border.all(
                       color: MetamorfoseColors.greenLight.withOpacity(0.3),
                     ),
@@ -406,39 +514,43 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           Icon(
                             Icons.tips_and_updates,
                             color: MetamorfoseColors.greenNormal,
-                            size: 20,
+                            size: iconSize,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: spacingSmall),
                           Text(
                             'Dicas para uma senha segura:',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'DinNext',
-                              fontSize: 14,
+                              fontSize: titleFontSize * 0.7,
                               fontWeight: FontWeight.bold,
                               color: MetamorfoseColors.greyMedium,
                             ),
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: spacingSmall),
                       Text(
                         '• Pelo menos 6 caracteres\n• Combine letras e números\n• Evite informações pessoais\n• Use uma senha única',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DinNext',
-                          fontSize: 12,
+                          fontSize: titleFontSize * 0.6,
                           color: MetamorfoseColors.greyMedium,
                         ),
+                        textAlign: TextAlign.start,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: spacingXLarge),
 
-                // Botões
                 Row(
                   children: [
-                    // Botão Cancelar
                     Expanded(
                       child: MetamorfeseSecondaryButton(
                         text: 'CANCELAR',
@@ -446,9 +558,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ),
 
-                    const SizedBox(width: 16),
+                    SizedBox(width: spacingSmall * 2),
 
-                    // Botão Alterar Senha
                     Expanded(
                       child: CustomButton(
                         text: _isChanging ? 'ALTERANDO...' : 'ALTERAR SENHA',
@@ -462,7 +573,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: spacingLarge),
               ],
             ),
           ),

@@ -1,18 +1,16 @@
-/**
- * File: new_record_modal.dart
- * Description: Modal para criar novo registro com foto e sentimentos
- *
- * Responsabilidades:
- * - Permitir upload de foto
- * - Seleção de sentimentos
- * - Seleção de motivos
- * - Validação antes de salvar
- *
- * Author: Assistant
- * Created on: 15-08-2025
- * Version: 1.0.0
- * Squad: Metamorfose
- */
+/// File: new_record_modal.dart
+/// Description: Modal para criar novo registro com foto e sentimentos
+///
+/// Responsabilidades:
+/// - Permitir upload de foto
+/// - Seleção de sentimentos
+/// - Seleção de motivos
+/// - Validação antes de salvar
+///
+/// Author: Assistant
+/// Created on: 15-08-2025
+/// Version: 1.0.0
+/// Squad: Metamorfose
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -41,17 +39,15 @@ class NewRecordModal extends StatefulWidget {
 
 class _NewRecordModalState extends State<NewRecordModal> {
   File? _selectedImage;
-  Uint8List? _selectedImageBytes; // Para web
+  Uint8List? _selectedImageBytes;
   String _selectedFeeling = '';
   String _selectedReason = '';
   final ImagePicker _picker = ImagePicker();
 
-  // Estados de validação
   bool _showImageError = false;
   bool _showFeelingError = false;
   bool _showReasonError = false;
 
-  // Opções de sentimentos
   final List<Map<String, String>> _feelings = [
     {'emoji': '😊', 'label': 'Feliz e contente'},
     {'emoji': '😌', 'label': 'Calmo e tranquilo'},
@@ -63,7 +59,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
     {'emoji': '🙏', 'label': 'Grato e agradecido'},
   ];
 
-  // Opções de motivos
   final List<String> _reasons = [
     'Trabalho',
     'Saúde',
@@ -84,21 +79,17 @@ class _NewRecordModalState extends State<NewRecordModal> {
 
       if (image != null) {
         if (kIsWeb) {
-          // Na web, ler os bytes da imagem
           final bytes = await image.readAsBytes();
           setState(() {
             _selectedImageBytes = bytes;
             _selectedImage = null;
-            _showImageError =
-                false; // Limpar erro quando imagem for selecionada
+            _showImageError = false;
           });
         } else {
-          // No mobile, usar File
           setState(() {
             _selectedImage = File(image.path);
             _selectedImageBytes = null;
-            _showImageError =
-                false; // Limpar erro quando imagem for selecionada
+            _showImageError = false;
           });
         }
       }
@@ -116,8 +107,7 @@ class _NewRecordModalState extends State<NewRecordModal> {
   void _selectFeeling(String feeling) {
     setState(() {
       _selectedFeeling = feeling;
-      _showFeelingError =
-          false; // Limpar erro quando sentimento for selecionado
+      _showFeelingError = false;
     });
   }
 
@@ -125,14 +115,13 @@ class _NewRecordModalState extends State<NewRecordModal> {
   void _selectReason(String reason) {
     setState(() {
       _selectedReason = reason;
-      _showReasonError = false; // Limpar erro quando motivo for selecionado
+      _showReasonError = false;
     });
   }
 
   /// Constrói widget de imagem
   Widget _buildImageWidget() {
     if (_selectedImageBytes != null) {
-      // Na web, usar Image.memory
       return Image.memory(
         _selectedImageBytes!,
         width: double.infinity,
@@ -140,7 +129,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
         fit: BoxFit.cover,
       );
     } else if (_selectedImage != null) {
-      // No mobile, usar Image.file
       return Image.file(
         _selectedImage!,
         width: double.infinity,
@@ -148,7 +136,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
         fit: BoxFit.cover,
       );
     } else {
-      // Placeholder
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -165,6 +152,9 @@ class _NewRecordModalState extends State<NewRecordModal> {
               fontSize: 14,
               color: MetamorfoseColors.greyMedium,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );
@@ -175,7 +165,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
   void _saveRecord() {
     bool hasError = false;
 
-    // Validar imagem
     if (_selectedImage == null && _selectedImageBytes == null) {
       setState(() {
         _showImageError = true;
@@ -183,7 +172,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
       hasError = true;
     }
 
-    // Validar sentimento
     if (_selectedFeeling.isEmpty) {
       setState(() {
         _showFeelingError = true;
@@ -191,7 +179,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
       hasError = true;
     }
 
-    // Validar motivo
     if (_selectedReason.isEmpty) {
       setState(() {
         _showReasonError = true;
@@ -203,7 +190,6 @@ class _NewRecordModalState extends State<NewRecordModal> {
       return;
     }
 
-    // Chamar callback com os dados corretos
     widget.onSave(
         _selectedImageBytes, _selectedImage, _selectedFeeling, _selectedReason);
 
@@ -212,22 +198,147 @@ class _NewRecordModalState extends State<NewRecordModal> {
 
   @override
   Widget build(BuildContext context) {
+    final padding = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 22.0),
+      ],
+    ).value;
+
+    final sectionFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final borderRadius = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final imageHeight = ResponsiveValue<double>(
+      context,
+      defaultValue: 120.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 100.0),
+        Condition.largerThan(name: TABLET, value: 140.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final smallIconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 16.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 18.0),
+      ],
+    ).value;
+
+    final feelingFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 10.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 9.0),
+        Condition.largerThan(name: TABLET, value: 12.0),
+      ],
+    ).value;
+
+    final reasonFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 14.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 12.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final errorFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final buttonFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 15.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
+    final emojiSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 20.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 18.0),
+        Condition.largerThan(name: TABLET, value: 24.0),
+      ],
+    ).value;
+
+    final feelingsCrossAxisCount = ResponsiveValue<int>(
+      context,
+      defaultValue: 4,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 3),
+        Condition.largerThan(name: TABLET, value: 5),
+      ],
+    ).value;
+
+    final reasonsCrossAxisCount = ResponsiveValue<int>(
+      context,
+      defaultValue: 2,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 1),
+        Condition.largerThan(name: TABLET, value: 3),
+      ],
+    ).value;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
       minChildSize: 0.5,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
         return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: MetamorfoseColors.whiteLight,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
+                topLeft: Radius.circular(borderRadius * 2),
+                topRight: Radius.circular(borderRadius * 2),
               ),
             ),
             child: Column(
               children: [
-                // Barra de arrastar
                 Container(
                   width: 40,
                   height: 4,
@@ -238,92 +349,95 @@ class _NewRecordModalState extends State<NewRecordModal> {
                   ),
                 ),
 
-                // Header com título
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(padding),
                   child: Row(
                     children: [
-                      // Ícone da câmera
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: MetamorfoseColors.purpleLight,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(borderRadius * 0.67),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt,
-                          color: Colors.white,
-                          size: 20,
+                          color: MetamorfoseColors.whiteLight,
+                          size: iconSize,
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Título
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Novo Registro',
                           style: TextStyle(
                             fontFamily: 'DinNext',
-                            fontSize: 20,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
                             color: MetamorfoseColors.greyMedium,
                           ),
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      // Botão fechar
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.close,
                           color: MetamorfoseColors.greyMedium,
+                          size: iconSize,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                // Conteúdo
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: padding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Seção de foto
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               'Foto da sua planta',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.greyMedium,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '*',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.redNormal,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
 
-                        // Área de upload
                         GestureDetector(
                           onTap: _pickImage,
                           child: Container(
                             width: double.infinity,
-                            height: 120,
+                            height: imageHeight,
                             decoration: BoxDecoration(
                               color: MetamorfoseColors.greyLightest2,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(borderRadius),
                               border: Border.all(
                                 color: _showImageError
                                     ? MetamorfoseColors.redNormal
@@ -335,14 +449,13 @@ class _NewRecordModalState extends State<NewRecordModal> {
                           ),
                         ),
 
-                        // Mensagem de erro da imagem
                         if (_showImageError) ...[
                           const SizedBox(height: 8),
                           Row(
                             children: [
                               Icon(
                                 Icons.error_outline,
-                                size: 16,
+                                size: smallIconSize,
                                 color: MetamorfoseColors.redNormal,
                               ),
                               const SizedBox(width: 4),
@@ -350,9 +463,12 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                 'Selecione uma foto primeiro',
                                 style: TextStyle(
                                   fontFamily: 'DinNext',
-                                  fontSize: 12,
+                                  fontSize: errorFontSize,
                                   color: MetamorfoseColors.redNormal,
                                 ),
+                                textAlign: TextAlign.start,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -360,39 +476,42 @@ class _NewRecordModalState extends State<NewRecordModal> {
 
                         const SizedBox(height: 24),
 
-                        // Seção de sentimentos
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               'Como você está se sentindo hoje?',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.greyMedium,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '*',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.redNormal,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
 
-                        // Grid de sentimentos
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: feelingsCrossAxisCount,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
                             childAspectRatio: 1,
@@ -409,8 +528,8 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? MetamorfoseColors.purpleNormal
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
+                                      : MetamorfoseColors.whiteLight,
+                                  borderRadius: BorderRadius.circular(borderRadius * 0.67),
                                   border: Border.all(
                                     color: _showFeelingError && !isSelected
                                         ? MetamorfoseColors.redNormal
@@ -427,17 +546,20 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                   children: [
                                     Text(
                                       feeling['emoji']!,
-                                      style: const TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: emojiSize),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       feeling['label']!,
                                       style: TextStyle(
                                         fontFamily: 'DinNext',
-                                        fontSize: 10,
+                                        fontSize: feelingFontSize,
                                         fontWeight: FontWeight.w500,
                                         color: isSelected
-                                            ? Colors.white
+                                            ? MetamorfoseColors.whiteLight
                                             : MetamorfoseColors.greyMedium,
                                       ),
                                       textAlign: TextAlign.center,
@@ -451,14 +573,13 @@ class _NewRecordModalState extends State<NewRecordModal> {
                           },
                         ),
 
-                        // Mensagem de erro do sentimento
                         if (_showFeelingError) ...[
                           const SizedBox(height: 8),
                           Row(
                             children: [
                               Icon(
                                 Icons.error_outline,
-                                size: 16,
+                                size: smallIconSize,
                                 color: MetamorfoseColors.redNormal,
                               ),
                               const SizedBox(width: 4),
@@ -466,9 +587,12 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                 'Selecione como você está se sentindo',
                                 style: TextStyle(
                                   fontFamily: 'DinNext',
-                                  fontSize: 12,
+                                  fontSize: errorFontSize,
                                   color: MetamorfoseColors.redNormal,
                                 ),
+                                textAlign: TextAlign.start,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -476,39 +600,42 @@ class _NewRecordModalState extends State<NewRecordModal> {
 
                         const SizedBox(height: 24),
 
-                        // Seção de motivos
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               'Por que você está se sentindo assim?',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.greyMedium,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '*',
                               style: TextStyle(
                                 fontFamily: 'DinNext',
-                                fontSize: 16,
+                                fontSize: sectionFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: MetamorfoseColors.redNormal,
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
 
-                        // Grid de motivos
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: reasonsCrossAxisCount,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
                             childAspectRatio: 3,
@@ -524,8 +651,8 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? MetamorfoseColors.purpleNormal
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
+                                      : MetamorfoseColors.whiteLight,
+                                  borderRadius: BorderRadius.circular(borderRadius * 0.67),
                                   border: Border.all(
                                     color: _showReasonError && !isSelected
                                         ? MetamorfoseColors.redNormal
@@ -541,13 +668,15 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                     reason,
                                     style: TextStyle(
                                       fontFamily: 'DinNext',
-                                      fontSize: 14,
+                                      fontSize: reasonFontSize,
                                       fontWeight: FontWeight.w500,
                                       color: isSelected
-                                          ? Colors.white
+                                          ? MetamorfoseColors.whiteLight
                                           : MetamorfoseColors.greyMedium,
                                     ),
                                     textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
@@ -555,14 +684,13 @@ class _NewRecordModalState extends State<NewRecordModal> {
                           },
                         ),
 
-                        // Mensagem de erro do motivo
                         if (_showReasonError) ...[
                           const SizedBox(height: 8),
                           Row(
                             children: [
                               Icon(
                                 Icons.error_outline,
-                                size: 16,
+                                size: smallIconSize,
                                 color: MetamorfoseColors.redNormal,
                               ),
                               const SizedBox(width: 4),
@@ -570,9 +698,12 @@ class _NewRecordModalState extends State<NewRecordModal> {
                                 'Selecione o motivo do seu sentimento',
                                 style: TextStyle(
                                   fontFamily: 'DinNext',
-                                  fontSize: 12,
+                                  fontSize: errorFontSize,
                                   color: MetamorfoseColors.redNormal,
                                 ),
+                                textAlign: TextAlign.start,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -584,11 +715,10 @@ class _NewRecordModalState extends State<NewRecordModal> {
                   ),
                 ),
 
-                // Botão salvar
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(padding),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: MetamorfoseColors.whiteLight,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -611,7 +741,7 @@ class _NewRecordModalState extends State<NewRecordModal> {
                             width: 1,
                             color: MetamorfoseColors.purpleNormal,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(borderRadius),
                         ),
                         shadows: [
                           BoxShadow(
@@ -628,7 +758,7 @@ class _NewRecordModalState extends State<NewRecordModal> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: MetamorfoseColors.whiteLight,
-                            fontSize: 15,
+                            fontSize: buttonFontSize,
                             fontFamily: 'DinNext',
                             fontWeight: FontWeight.w700,
                             height: 1.27,
@@ -640,6 +770,8 @@ class _NewRecordModalState extends State<NewRecordModal> {
                               ),
                             ],
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
