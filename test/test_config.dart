@@ -52,7 +52,8 @@ class TestConfig {
   static const int testWarningColor = 0xFFF39C12;
 
   // Configurações de validação
-  static const String validEmailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  static const String validEmailRegex =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   static const String validPhoneRegex = r'^\+?[1-9]\d{1,14}$';
   static const int minPasswordLength = 6;
   static const int maxPasswordLength = 128;
@@ -109,7 +110,8 @@ class TestConfig {
 
   // Configurações de CI/CD
   static const String ciTestCommand = 'flutter test --coverage';
-  static const String ciIntegrationTestCommand = 'flutter test integration_test/';
+  static const String ciIntegrationTestCommand =
+      'flutter test integration_test/';
   static const String ciBuildCommand = 'flutter build apk --release';
 
   // Configurações de debug
