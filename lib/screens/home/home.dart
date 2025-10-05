@@ -7,9 +7,7 @@
 /// - Exibir funcionalidades em breve organizadas em carrosseis
 /// - Usar BLoC pattern para gerenciamento de estado
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 30-05-2025
-/// Last modified: 19-08-2025
+/// Author: Ester Santos
 ///
 /// Changes:
 /// - UI Refatorado e Adicionado Card para Cuidados (Evelin Cordeiro)

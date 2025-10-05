@@ -7,9 +7,7 @@
 /// - Salvar alterações no Firebase
 /// - Exibir feedback de sucesso ou erro
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 06-08-2025
-/// Last modified: 31-08-2025
+/// Author: Evelin Brandão
 /// 
 /// Changes:
 /// - UI Ajustada. (Evelin Cordeiro)

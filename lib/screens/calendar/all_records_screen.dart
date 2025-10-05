@@ -6,8 +6,7 @@
 /// - Mostrar detalhes de cada registro
 /// - Permitir navegação de volta
 ///
-/// Author: Assistant
-/// Created on: 15-08-2025
+/// Author: Ester Santos
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

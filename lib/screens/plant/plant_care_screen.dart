@@ -8,9 +8,7 @@
 /// - Permitir tirar fotos e compartilhar progresso
 /// - Usar BLoC pattern para gerenciamento de estado
 ///
-/// Author: Evelin Cordeiro
-/// Created on: 06-08-2025
-/// Last modified: 31-08-2025
+/// Author: Evelin Brandão
 /// 
 /// Changes:
 /// - UI Ajustada. (Evelin Cordeiro)

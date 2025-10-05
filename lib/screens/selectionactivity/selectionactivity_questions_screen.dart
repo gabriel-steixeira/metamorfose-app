@@ -1,3 +1,16 @@
+/// File: selectionactivity_questions_screen.dart
+/// Description: Tela de perguntas para personalização do usuário.
+///
+/// Responsabilidades:
+/// - Exibir perguntas de personalização
+/// - Coletar respostas do usuário
+/// - Navegar para a próxima etapa
+/// - Personalizar experiência do usuário
+///
+/// Author: Gabriel Teixeira
+/// Version: 1.0.0
+/// Squad: Metamorfose
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';

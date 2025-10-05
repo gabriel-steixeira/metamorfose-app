@@ -7,9 +7,7 @@
 /// - Fornecer botões para atualizar cadastro, trocar senha e sair
 /// - Gerenciar navegação para telas relacionadas
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 06-08-2025
-/// Last modified: 31-08-2025
+/// Author: Vitoria Lana
 /// 
 /// Changes:
 /// - Adicionado MetamorphosisProgress. (Evelin Cordeiro)

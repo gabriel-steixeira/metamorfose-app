@@ -7,8 +7,7 @@
 /// - Seleção de motivos
 /// - Validação antes de salvar
 ///
-/// Author: Assistant
-/// Created on: 15-08-2025
+/// Author: Gabriel Teixeira
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

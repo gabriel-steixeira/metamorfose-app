@@ -1,0 +1,26 @@
+* [33m545e2e5[m[33m ([m[1;36mHEAD -> [m[1;32mdev/teste-responsividade[m[33m, [m[1;31morigin/dev/teste-responsividade[m[33m)[m feat: improve home screen responsive layout and card heights
+* [33m45432c1[m feat: enhance bottom navigation menu responsiveness
+* [33m208b97c[m feat: implement responsive design and update app icons
+* [33m4682db3[m fix: reduce logo spacing to fit screen without scroll
+* [33m1157aa8[m feat: implement complete app responsiveness
+* [33m9a430f9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/dev/evelin[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m feat: add visual diary, UI design chat refactored
+*   [33me714a1f[m Merge remote-tracking branch 'origin/main' into dev/evelin
+[32m|[m[33m\[m  
+[32m|[m * [33m36d730f[m fix: update API key and rename emergency button to SOS
+[32m|[m *   [33m9015284[m Merge branch 'dev/vitoria-lana' - Add SOS functionality and resolve conflicts with user profile features
+[32m|[m [34m|[m[35m\[m  
+[32m|[m [34m|[m * [33mb7adb9e[m feat: adiciona sombras roxas claras ao botão SOS para efeito visual aprimorado
+[32m|[m [34m|[m * [33m25693e9[m feat: implementa sistema completo de SOS com contatos de emergência e técnicas de enfrentamento - Adiciona tela SOS responsiva com botão pulsante - Implementa gestão de contatos de emergência (CRUD) - Integra botão WhatsApp para envio de mensagens - Adiciona técnicas de enfrentamento baseadas em TCC, ACT e EM - Implementa BLoC para gerenciamento de estado - Adiciona serviços para persistência de dados - Refatora layout para consistência visual com outras opções
+[32m|[m [34m|[m * [33mc335bf7[m fix: resolve ClearErrorEvent conflicts in blocs index.dart
+[32m|[m * [35m|[m [33mb85c9f5[m feat: change README.md
+[32m|[m * [35m|[m   [33m9e61ce3[m Merge branch 'main' of https://github.com/gabriel-steixeira/metamorfose-app
+[32m|[m [36m|[m[1;31m\[m [35m\[m  
+[32m|[m [36m|[m * [35m|[m [33mcab9445[m fix: resolve conflitos de namespace ClearErrorEvent nos blocs usando hide
+[32m|[m [36m|[m [35m|[m[35m/[m  
+[32m|[m * [35m|[m [33m90c5787[m[33m ([m[1;31morigin/dev/gabriel-steixeira[m[33m)[m feat(auth): add forgot password dialog with email reset functionality
+[32m|[m * [35m|[m [33m56eae65[m feat(auth): add complete name and birth date fields to registration
+[32m|[m * [35m|[m [33md495215[m feat: Crate user perfil screen, functions to update profile data and password, logoof to.
+[32m|[m [35m|[m[35m/[m  
+* [35m/[m [33m909ff9f[m fix: fix empty state message on visual diary
+[35m|[m[35m/[m  
+* [33mfed3196[m fix: map_screen had a error when open the map, the cause is CORS policy, but this is resolved!

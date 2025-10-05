@@ -5,9 +5,7 @@
 /// - Interface de chat híbrido (voz e texto)
 /// - Integração com personalidades
 ///
-/// Author: Evelin Cordeiro
-/// Created on: 31-08-2025
-/// Last modified: 31-08-2025
+/// Author: Gabriel Teixeira
 ///
 /// Version: 1.0.0
 /// Squad: Metamorfose

@@ -7,8 +7,7 @@
 /// - Interface de busca reativa
 /// - Gerenciar localização do usuário via BLoC
 ///
-/// Author: Gabriel Teixeira
-/// Created on: 31-08-2025
+/// Author: Pabllo Vinicyus
 /// 
 /// Changes:
 /// - UI Ajustada. (Evelin Cordeiro)

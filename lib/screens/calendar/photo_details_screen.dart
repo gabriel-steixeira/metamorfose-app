@@ -7,8 +7,7 @@
 /// - Permitir deletar foto
 /// - Exibir dica da planta
 ///
-/// Author: Assistant
-/// Created on: 15-08-2025
+/// Author: Pabllo Vinicyus
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

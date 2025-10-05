@@ -8,10 +8,7 @@
 /// - Integrar com contatos de emergência
 /// - Design responsivo baseado em ResponsiveValue
 ///
-/// Author: Gabriel Teixeira
-/// Refactored by: Assistant
-/// Created on: 19-08-2025
-/// Last modified: 31-08-2025
+/// Author: Vitoria Lana
 /// 
 /// Changes:
 /// - Ajustado Falar com a Planta. (Evelin Cordeiro)

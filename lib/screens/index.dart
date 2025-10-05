@@ -7,9 +7,7 @@
  * - Facilitar importação de telas no projeto
  * - Organizar estrutura de telas
  *
- * Author: Gabriel Teixeira e Vitoria Lana
- * Created on: 29-05-2025
- * Last modified: 31-08-2025
+ * Author: Ester Santos
  * 
  * Changes:
  * - Adicionado Calendar. (Evelin Cordeiro)

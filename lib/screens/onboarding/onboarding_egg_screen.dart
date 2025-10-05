@@ -6,9 +6,7 @@
 /// - Explicar o processo de transformação
 /// - Navegação para próxima etapa do onboarding
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 29-05-2025
-/// Last modified: 29-05-2025
+/// Author: Ester Santos
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

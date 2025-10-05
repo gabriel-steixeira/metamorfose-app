@@ -1,3 +1,15 @@
+/// File: onboarding_welcome_screen.dart
+/// Description: Tela de boas-vindas do fluxo de onboarding.
+///
+/// Responsabilidades:
+/// - Apresentar uma introdução sobre o conceito do aplicativo
+/// - Exibir a proposta de valor do Metamorfose
+/// - Navegar para a próxima tela do onboarding
+///
+/// Author: Gabriel Teixeira
+/// Version: 1.0.0
+/// Squad: Metamorfose
+
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';

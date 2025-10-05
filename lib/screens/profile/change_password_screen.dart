@@ -8,9 +8,7 @@
 /// - Atualizar senha no Firebase Auth
 /// - Exibir feedback de sucesso ou erro
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 06-08-2025
-/// Last modified: 06-08-2025
+/// Author: Evelin Brandão
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

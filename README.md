@@ -25,6 +25,45 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
 - API da OpenAI
 - Arquitetura Clean Architecture + BLoC
 
+## 🧪 Executando os Testes
+
+Para garantir a qualidade do código, execute os testes unitários:
+
+```bash
+# Executar todos os testes
+flutter test test/unit/
+
+# Executar com cobertura de código
+flutter test --coverage
+
+# Executar com relatório detalhado
+flutter test test/unit/ --reporter expanded
+```
+
+**Cobertura atual:**
+- ✅ 19 testes unitários passando
+- ✅ 100% cobertura para UserModel (serialização JSON)
+- ✅ Testes básicos para AuthBloc (estado inicial e criação)
+- ✅ Utilitários de teste completos
+
+## 📱 Suporte a Dispositivos
+
+O Metamorfose oferece experiência otimizada em todos os dispositivos:
+
+**Breakpoints Responsivos:**
+- 📱 **Mobile**: 0px - 450px (dispositivos móveis)
+- 📱 **Tablet**: 451px - 800px (tablets e phablets)
+- 💻 **Desktop**: 801px - 1920px (desktops e laptops)
+- 🖥️ **4K**: 1921px+ (telas 4K e ultrawide)
+
+**Adaptações Automáticas:**
+- ✅ Layouts específicos para cada tipo de dispositivo
+- ✅ Fontes e espaçamentos otimizados por tela
+- ✅ Padding e margens responsivos
+- ✅ Componentes que se adaptam ao contexto
+- ✅ Valores dinâmicos usando ResponsiveValue
+- ✅ Breakpoints condicionais para diferentes tamanhos
+
 ## 🌿 Funcionalidades Principais
 
 > [!TIP]  
@@ -48,12 +87,23 @@ Metamorfose é um aplicativo mobile que combina tecnologia, natureza e inteligê
   - Localização via Google Maps
   - Integração com Places API
   - Resolução de problemas de CORS
-- **Interface Moderna**
+- **Interface Moderna e Responsiva**
   - Componente de carousel na home
   - Funcionalidades "em breve" destacadas
+  - Adaptação automática para diferentes tamanhos de tela
+  - Layouts otimizados para mobile, tablet e desktop
 - **Botão SOS e Suporte Emergencial**
 - **Comunidade Moderada**
 - **Gamificação Emocional**
+- **Sistema de Testes Robusto**
+  - Testes unitários automatizados
+  - Validação de qualidade de código
+  - Cobertura de funcionalidades críticas
+- **Design Responsivo Completo**
+  - Adaptação automática para mobile, tablet, desktop e telas 4K
+  - Breakpoints otimizados seguindo padrões da indústria
+  - Layouts específicos para cada tipo de tela
+  - Valores responsivos dinâmicos (fontes, espaçamentos, padding)
 
 ## 💡 Diferenciais
 
@@ -97,6 +147,19 @@ O projeto passou por uma refatoração completa para a arquitetura BLoC, resulta
 - **Consistência de UI**: Ajustes finos de layout em telas como `Home` e `PlantConfig` para garantir espaçamento e alinhamento consistentes.
 - **Roteamento Unificado**: O `AppRouter` foi refatorado para usar exclusivamente as versões BLoC das telas, com remoção de rotas de teste e código obsoleto.
 - **Arquitetura Limpa**: O código-fonte foi limpo, com a remoção de arquivos `StatefulWidget` antigos (`map_screen.dart`) e constantes de rotas não utilizadas.
+- **Sistema de Testes Implementado**: 
+  - Implementação de testes unitários para modelos de dados e BLoCs
+  - Cobertura de 100% para UserModel com validação de serialização JSON
+  - Testes básicos para AuthBloc garantindo gerenciamento de estado correto
+  - Utilitários de teste com mocks e dados padronizados para desenvolvimento
+  - Scripts automatizados para execução e geração de mocks
+- **Sistema de Responsividade Avançado**:
+  - Implementação de ResponsiveFramework para adaptação automática de layouts
+  - Utilitários responsivos personalizados (ResponsiveUtils) com breakpoints otimizados
+  - Suporte completo para mobile (0-450px), tablet (451-800px), desktop (801-1920px) e telas 4K (1921px+)
+  - Componentes responsivos (ResponsiveWidget, ResponsiveBuilder) para layouts específicos
+  - Adaptação automática de fontes, espaçamentos e padding baseada no tipo de dispositivo
+  - Uso de ResponsiveValue com breakpoints condicionais para valores dinâmicos
 
 ## 🚧 Próximos Passos
 

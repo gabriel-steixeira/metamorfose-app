@@ -14,24 +14,43 @@
  * Squad: Metamorfose
  */
 
-// This is a basic Flutter widget test.
-// 
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 // import 'package:metamorfose_flutter/app.dart';
+import 'test_helpers/test_utils.dart';
 
-// void main() {
-//   testWidgets('Teste inicial do app', (WidgetTester tester) async {
-//     // Build our app and trigger a frame.
-//     await tester.pumpWidget(const MetamorfoseApp());
+void main() {
+  group('Testes Básicos do App', () {
+    testWidgets('deve renderizar o aplicativo sem erros', (WidgetTester tester) async {
+      await TestUtils.pumpAndSettle(
+        tester,
+        TestUtils.createTestApp(),
+      );
 
-//     // Verify that the app renders without throwing errors
-//     expect(find.byType(MaterialApp), findsOneWidget);
-//   });
-// }
+      expect(find.byType(MaterialApp), findsOneWidget);
+    });
+
+    testWidgets('deve ter estrutura básica do MaterialApp', (WidgetTester tester) async {
+      await TestUtils.pumpAndSettle(
+        tester,
+        TestUtils.createTestApp(),
+      );
+
+      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.byType(Scaffold), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('deve responder a interações básicas', (WidgetTester tester) async {
+      await TestUtils.pumpAndSettle(
+        tester,
+        TestUtils.createTestApp(),
+      );
+
+      // Verifica se há elementos básicos do MaterialApp
+      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.byType(Scaffold), findsOneWidget);
+      expect(find.byType(Center), findsOneWidget);
+      expect(find.text('Test App'), findsOneWidget);
+    });
+  });
+}

@@ -1,3 +1,15 @@
+/// File: onboarding_final_screen.dart
+/// Description: Tela final do onboarding.
+///
+/// Responsabilidades:
+/// - Apresentar a conclusão do fluxo de onboarding
+/// - Permitir navegação para a tela principal
+/// - Finalizar a configuração inicial do usuário
+///
+/// Author: Vitoria Lana
+/// Version: 1.0.0
+/// Squad: Metamorfose
+
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';

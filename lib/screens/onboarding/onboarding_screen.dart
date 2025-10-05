@@ -6,9 +6,7 @@
 /// - Gerenciar a navegação para as próximas telas
 /// - Apresentar a proposta do aplicativo
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 29-05-2025
-/// Last modified: 29-05-2025
+/// Author: Pabllo Vinicyus
 /// Version: 1.0.0
 /// Squad: Metamorfose
 

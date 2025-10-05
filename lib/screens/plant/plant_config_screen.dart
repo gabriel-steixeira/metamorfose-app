@@ -7,9 +7,7 @@
 /// - Criar conexão emocional com o usuário
 /// - Usar BLoC pattern para gerenciamento de estado
 ///
-/// Author: Gabriel Teixeira e Vitoria Lana
-/// Created on: 29-05-2025
-/// Last modified: 29-05-2025
+/// Author: Evelin Brandão
 /// Version: 2.0.0 (BLoC)
 /// Squad: Metamorfose  
 
