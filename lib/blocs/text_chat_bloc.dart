@@ -25,6 +25,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:metamorfose_flutter/models/chat_message.dart';
 import 'package:metamorfose_flutter/services/gemini_service.dart';
+import 'package:metamorfose_flutter/models/user_model.dart';
 
 // Events
 abstract class TextChatEvent {}
@@ -33,10 +34,9 @@ class SendMessageEvent extends TextChatEvent {
   final String message;
   final PersonalityType personality;
   final String? plantName;
-  final String? userName;
+  final UserModel? user;
 
-  SendMessageEvent(this.message, this.personality,
-      {this.plantName, this.userName});
+  SendMessageEvent(this.message, this.personality, {this.plantName, this.user});
 }
 
 class ClearChatEvent extends TextChatEvent {}
@@ -121,13 +121,13 @@ class TextChatBloc extends Bloc<TextChatEvent, TextChatState> {
 
       _geminiService.setPersonalityByType(event.personality);
 
-      final userName = state.isFirstMessage ? event.userName : null;
+      final userName = state.isFirstMessage ? event.user?.name : null;
 
       debugPrint(
           '💬 Text Chat - isFirstMessage: ${state.isFirstMessage}, userName: $userName, plantName: ${event.plantName}');
 
       final geminiResponse = await _geminiService.sendMessage(event.message,
-          plantName: event.plantName, userName: userName);
+          plantName: event.plantName, user: event.user);
 
       final plantName = event.plantName ?? 'Plantinha';
       if (geminiResponse.isSuccess) {

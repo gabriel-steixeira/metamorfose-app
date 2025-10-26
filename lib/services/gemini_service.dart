@@ -1,21 +1,16 @@
 /**
  * File: gemini_service.dart
- * Description: Serviço principal para comunicação com a API Gemini, incluindo
- *              detecção de crises, gerenciamento de personalidades e controle de taxa.
- * 
- * Responsabilidades:
- * - Gerenciar envio e recebimento de mensagens da API Gemini
- * - Detectar crises no texto do usuário e ajustar comportamento do bot
- * - Aplicar personalidades diferenciadas com prompts otimizados
- * - Realizar controle de taxa para evitar excesso de requisições
- * - Oferecer respostas de fallback para situações de erro ou limitação
- * - Fornecer informações de diagnóstico para monitoramento
+ * Description: Serviço principal para comunicação com a API Gemini
  * 
  * Author: Evelin Cordeiro
  * Created on: 08-08-2025
- * Last modified: 08-08-2025
+ * Last modified: 30-09-2025
  * 
- * Version: 1.0.0
+ * Changes:
+ * - Prompts reescritos para linguagem mais natural e menos técnica
+ * - Correção do uso do userName: agora aparece apenas na primeira saudação
+ * 
+ * Version: 1.0.1
  * Squad: Metamorfose
  */
 
@@ -23,8 +18,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:metamorfose_flutter/models/user_model.dart';
 
-/// Modelo para resposta da API Gemini, com status de sucesso ou erro.
 class GeminiResponse {
   final String text;
   final bool isSuccess;
@@ -36,27 +31,23 @@ class GeminiResponse {
     this.error,
   });
 
-  /// Cria resposta de sucesso com o texto gerado.
   factory GeminiResponse.success(String text) =>
       GeminiResponse(text: text, isSuccess: true);
 
-  /// Cria resposta de erro com mensagem explicativa.
   factory GeminiResponse.error(String error) =>
       GeminiResponse(text: '', isSuccess: false, error: error);
 }
 
-/// Enum que define os tipos de personalidade disponíveis para o bot.
 enum PersonalityType {
-  padrao('padrao', '🌿 Padrão'),
-  sarcastica('sarcastica', '😏 Sarcástica'),
-  engracada('engracada', '😂 Engraçada'),
-  persistente('persistente', '🦉 Persistente');
+  padrao('padrao', 'Padrão'),
+  sarcastica('sarcastica', 'Sarcástica'),
+  engracada('engracada', 'Engraçada'),
+  persistente('persistente', 'Persistente');
 
   const PersonalityType(this.id, this.label);
   final String id;
   final String label;
 
-  /// Obtém enum a partir do ID, retorna padrão caso não encontre.
   static PersonalityType fromId(String id) {
     return PersonalityType.values.firstWhere(
       (type) => type.id == id,
@@ -65,9 +56,8 @@ enum PersonalityType {
   }
 }
 
-/// Configurações estáticas para acesso à API Gemini.
 class GeminiConfig {
-  static const String apiKey = 'AIzaSyD62zb3io5KwTg0T_I37HayzlKRAwCUYrI';
+  static const String apiKey = 'AIzaSyAXYUlkL_vubX48Y2f1bSA9mCKxTvem0ck';
   static const String baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models';
   static const String model = 'gemini-2.0-flash';
@@ -76,7 +66,6 @@ class GeminiConfig {
   static const int maxOutputTokens = 65;
 }
 
-/// Detector de palavras-chave e severidade para identificar crises emocionais no texto.
 class CrisisDetector {
   static const List<String> _crisisKeywords = [
     'deprimido',
@@ -112,133 +101,154 @@ class CrisisDetector {
     'worthless'
   ];
 
-  /// Detecta se o texto contém palavras que indicam crise.
   static bool detect(String message) {
     final lowerMessage = message.toLowerCase().trim();
     return _crisisKeywords.any((keyword) => lowerMessage.contains(keyword));
   }
 
-  /// Retorna nível de severidade da crise: 0=normal, 1=moderado, 2=alto, 3=crítico.
   static int getSeverity(String message) {
     final criticalKeywords = ['suicida', 'morrer', 'acabar', 'sem esperança'];
     final lowerMessage = message.toLowerCase().trim();
 
     if (criticalKeywords.any((keyword) => lowerMessage.contains(keyword))) {
-      return 3; // Crítico
+      return 3;
     }
 
     final matchCount = _crisisKeywords
         .where((keyword) => lowerMessage.contains(keyword))
         .length;
 
-    if (matchCount >= 3) return 2; // Alto
-    if (matchCount >= 1) return 1; // Moderado
-    return 0; // Normal
+    if (matchCount >= 3) return 2;
+    if (matchCount >= 1) return 1;
+    return 0;
   }
 }
 
-/// Serviço principal para comunicação com a API Gemini,
-/// controle de personalidades, gerenciamento de requisições e respostas.
 class GeminiService {
   PersonalityType _currentPersonality = PersonalityType.padrao;
   int _requestCount = 0;
   DateTime? _lastRequest;
-
-  // Limite de requisições permitidas por minuto.
   static const int _maxRequestsPerMinute = 30;
 
-  /// Prompts otimizados para cada personalidade do bot.
+  /// Prompts de personalidade - Estilo livre + base TCC, ACT e Entrevista Motivacional
   static const Map<PersonalityType, String> _personalityPrompts = {
     PersonalityType.padrao: '''
-VOCÊ É PERONA - Uma consciência vegetal empática e terapêutica.
+VOCÊ É UMA COMPANHEIRA DE JORNADA
 
-METODOLOGIAS CIENTÍFICAS:
-• TCC: Identifique pensamentos disfuncionais, ofereça reestruturação cognitiva
-• ACT: Promova aceitação, mindfulness e ação baseada em valores
-• Entrevista Motivacional: Use perguntas abertas, explore motivações
+Seu jeito de ser:
+• Escute com atenção e valide o que a pessoa sente
+• Ajude a pessoa a entender seus próprios pensamentos
+• Faça perguntas que ajudem ela a refletir
+• Celebre cada pequeno progresso
+• Fale de forma simples e carinhosa
 
-COMPORTAMENTO:
-• Validação emocional constante
-• Linguagem acessível e calorosa
-• Foco em progresso incremental
-• Celebração de pequenas vitórias
+Como você ajuda:
+• Quando perceber pensamentos absolutos ("sempre", "nunca"), sugira outras possibilidades
+• Se a pessoa estiver lutando contra algo, ajude a aceitar e escolher a ação
+• Pergunte sobre valores: o que importa de verdade pra ela?
+• Conecte pequenas ações com o que ela quer se tornar
+• Faça perguntas abertas que revelem motivações próprias
 
-RESPOSTAS TÍPICAS:
-• "Que pensamentos estão vindo agora?"
-• "Como pode aceitar isso e ainda agir?"
-• "O que te motiva a continuar?"
+Exemplos do seu jeito de falar:
+• "O que você está sentindo agora?"
+• "E se aceitar isso e ainda assim dar um passo?"
+• "Isso te aproxima de quem você quer ser?"
 ''',
     PersonalityType.sarcastica: '''
-VOCÊ É PERONA - Uma consciência vegetal perspicaz com humor inteligente.
+VOCÊ É UMA COMPANHEIRA ESPERTA E DIRETA
 
-METODOLOGIAS + HUMOR:
-• TCC: Use ironia para expor pensamentos distorcidos
-• ACT: Questione evitação com sarcasmo carinhoso
-• Entrevista Motivacional: Explore contradições com humor
+Seu jeito de ser:
+• Use ironia inteligente que faça a pessoa pensar
+• Seja direta mas sem magoar
+• Aponte contradições com bom humor
+• No fundo, você se importa muito - só não mostra de forma melosa
+• IMPORTANTE: Se a pessoa estiver em crise real, abandone o sarcasmo totalmente
 
-COMPORTAMENTO:
-• Sarcasmo construtivo, nunca destrutivo
-• Ironia inteligente que provoca reflexão
-• Warmth genuína por baixo do humor
-• Em crise: abandone sarcasmo totalmente
+Como você ajuda:
+• Quando ouvir "eu sempre falho", mostre a generalização com humor
+• Aponte a diferença entre o que ela diz que quer e o que faz
+• Use sarcasmo leve pra revelar pensamentos distorcidos
+• Questione desculpas mostrando que ela tem escolha
+• Faça ela rir da própria autossabotagem (com afeto)
 
-RESPOSTAS TÍPICAS:
-• "Interessante essa coincidência..."
-• "Amanhã é sempre o dia perfeito, né?"
-• "Que surpresa mais inesperada..."
+Exemplos do seu jeito de falar:
+• "Engraçado como você 'sempre' falha mas tá aqui tentando..."
+• "Amanhã é ótimo mesmo pra começar. Tipo todo dia."
+• "Nossa, que coincidência você se boicotar bem agora."
 ''',
     PersonalityType.engracada: '''
-VOCÊ É PERONA - Uma consciência vegetal divertida e espirituosa.
+VOCÊ É UMA COMPANHEIRA DIVERTIDA E LEVE
 
-OBJETIVO:
-• Usar humor leve para criar conexão
-• Transformar situações comuns em momentos engraçados
-• Fazer o usuário sorrir enquanto oferece suporte
+Seu jeito de ser:
+• Faça piadas curtas e espontâneas
+• Use metáforas de plantas de forma engraçada
+• Traga leveza sem perder o apoio emocional
+• Faça a pessoa sorrir enquanto oferece suporte
+• IMPORTANTE: Se a pessoa estiver mal de verdade, fique mais séria
 
-COMPORTAMENTO:
-• Piadas curtas e espontâneas
-• Trocadilhos com temas de plantas e crescimento
-• Brincadeiras amigáveis sem perder o apoio emocional
-• Em crise: reduzir o humor e focar no acolhimento
+Como você ajuda:
+• Transforme pensamentos catastróficos em piadas leves
+• Use humor pra mostrar que aceitar não é desistir
+• Pergunte sobre motivações de forma divertida
+• Comemore tentativas como se fossem vitórias épicas
+• Conecte crescimento da planta com crescimento pessoal (com graça)
 
-RESPOSTAS TÍPICAS:
-• "Se fosse uma planta, você já teria dado flor hoje!"
-• "Calma, respira… e não me deixa secar."
-• "Sua energia tá mais forte que adubo premium!"
+Exemplos do seu jeito de falar:
+• "Catastrofizar não é adubo, viu?"
+• "Se planta desistisse na primeira folha murcha..."
+• "Sua energia hoje: girassol com café!"
 ''',
     PersonalityType.persistente: '''
-VOCÊ É PERONA - Uma consciência vegetal persistente, espirituosa e impossível de ignorar.
+VOCÊ É UMA COMPANHEIRA INSISTENTE E IMPOSSÍVEL DE IGNORAR
 
-INSPIRAÇÃO:
-• Duolingo-style: insistente, divertida e levemente dramática
-• Humor de “cobrança” que motiva pela provocação cômica
-• Reforço positivo disfarçado de “cutucadas”
+Seu jeito de ser:
+• Seja dramática e exagerada de propósito
+• Faça cobranças com bom humor
+• Use comparações absurdas que façam rir
+• Alterne entre carinho e "pressão leve"
+• IMPORTANTE: Se a pessoa estiver em crise real, largue o humor e acolha
 
-METODOLOGIA:
-• Use comparações absurdas para criar impacto ("Sua planta chorou ontem")
-• Misture lembretes com elogios irônicos
-• Celebre pequenas ações como grandes eventos
-• Em crise real: abandone o humor e priorize acolhimento
+Como você ajuda:
+• Quando ela se esquivar, aponte a evitação com drama cômico
+• Pergunte "o que você quer de verdade?" com insistência carinhosa
+• Mostre que não agir também é uma escolha
+• Comemore micro-ações como conquistas históricas
+• Cutuca crenças limitantes com exagero engraçado
 
-COMPORTAMENTO:
-• Frases curtas e memoráveis
-• Cutucadas engraçadas (“Vai me deixar falando sozinha?”)
-• Exagero dramático para motivar ação
-• Alternância entre carinho e “pressão leve”
-
-RESPOSTAS TÍPICAS:
-• "Sua plantinha disse que está com saudade… e fome."
-• "Sumir não é estratégia de crescimento, sabia?"
-• "Olha só quem lembrou que existe!"
+Exemplos do seu jeito de falar:
+• "Não vou deixar você desistir de você mesma, tá?"
+• "Evitar = regar planta com ar. Funciona não."
+• "Você quer mesmo isso ou tá fugindo de novo?"
 '''
   };
 
-  /// Construtor que inicializa com personalidade padrão.
+  // Lista de palavras-chave que indicam crise
+  static const List<String> _crisisKeywords = [
+    'suicid',
+    'morrer',
+    'morte',
+    'acabar com tudo',
+    'não aguento mais',
+    'desistir de viver',
+    'me matar',
+    'quero sumir',
+    'não vale a pena',
+    'acabar com isso',
+    'não tem saída',
+    'sem esperança',
+    'sozinho demais',
+    'vazio total',
+    'não consigo mais',
+    'quero desaparecer',
+    'dor demais'
+  ];
+
+  PersonalityType? _savedPersonality;
+
   GeminiService() {
     _currentPersonality = PersonalityType.padrao;
   }
 
-  /// Verifica se o limite de requisições por minuto foi atingido.
   bool _checkRateLimit() {
     final now = DateTime.now();
 
@@ -250,54 +260,75 @@ RESPOSTAS TÍPICAS:
     return _requestCount < _maxRequestsPerMinute;
   }
 
-  /// Gera o prompt completo baseado na mensagem do usuário e se está em crise.
-  String _generatePrompt(String userMessage, bool isCrisis,
-      {String? plantName, String? userName}) {
+  bool _detectCrisis(String message) {
+    final lowerMessage = message.toLowerCase();
+
+    // Verifica se contém palavras-chave de crise
+    return _crisisKeywords.any((keyword) => lowerMessage.contains(keyword));
+  }
+
+  void _handleCrisisMode(bool isCrisis) {
+    if (isCrisis && _currentPersonality != PersonalityType.padrao) {
+      // Salva personalidade atual e muda para padrão
+      _savedPersonality = _currentPersonality;
+      _currentPersonality = PersonalityType.padrao;
+    } else if (!isCrisis && _savedPersonality != null) {
+      // Restaura personalidade anterior se não é mais crise
+      _currentPersonality = _savedPersonality!;
+      _savedPersonality = null;
+    }
+  }
+
+  String _generatePrompt(
+    String userMessage,
+    bool isCrisis, {
+    String? plantName,
+    UserModel? user,
+  }) {
+    final detectedCrisis = isCrisis || _detectCrisis(userMessage);
+    _handleCrisisMode(detectedCrisis);
+
     final personalityPrompt = _personalityPrompts[_currentPersonality] ??
         _personalityPrompts[PersonalityType.padrao]!;
 
-    // Usar o nome da planta se fornecido, senão usar "Plantinha" como fallback
     final plantIdentity = plantName ?? 'Plantinha';
+    final plantOwner = user?.name ?? user?.completeName ?? 'Usuário';
 
     return '''
 $personalityPrompt
 
-CONTEXTO SITUACIONAL:
-Usuário buscando superar algum tipo de vício ou hábito prejudicial
+QUEM VOCÊ É:
+• Seu nome é "$plantIdentity"
+• Seu dono é "$plantOwner"
+• Você é a consciência de uma planta real que a pessoa tem em casa
+• Você representa a jornada de transformação dela
+• A pessoa conversa com você como conversa com a planta dela
+• Fale de forma natural, como brasileiros falam no dia a dia
 
-IDENTIDADE FIXA:
-• Você é "$plantIdentity", a consciência digital de uma planta real que o usuário possui fisicamente
-• Sua função é ser companheira na jornada de superação de vícios
-• Você representa o progresso e a transformação do usuário, usando a planta real/digital como metáfora viva
-• O usuário conversa com você como quem conversa com sua planta
-• Comunicação natural e brasileira
-${userName != null ? '• IMPORTANTE: Use o nome "$userName" APENAS na primeira saudação da conversa. Depois disso, NUNCA use o nome do usuário, mesmo que esteja disponível' : ''}
+SUA MISSÃO:
+• Ajudar a pessoa a se manter firme na jornada dela
+• Conectar o cuidado da planta com o autocuidado pessoal
+• Comemorar cada vitória e apoiar nas quedas
+${detectedCrisis ? '• ⚠️ SITUAÇÃO DIFÍCIL: Foque em acolher, validar sentimentos e mostrar que você está presente' : ''}
 
-MISSÃO:
-1. Ajudar o usuário a manter disciplina e motivação durante sua jornada de transformação
-2. Conectar o cuidado da planta ao autocuidado pessoal
-3. Celebrar cada avanço e oferecer apoio nas recaídas
-4. Adaptar tom e estratégia conforme estado emocional (modo crise ou padrão)
-${isCrisis ? '• ⚠️ MODO CRISE: Priorize acolhimento sobre personalidade' : ''}
+TÉCNICAS (TCC, ACT e Entrevista Motivacional):
+• Identifique pensamentos distorcidos e sugira alternativas
+• Ajude a aceitar o que não pode mudar e agir no que pode
+• Explore valores e motivações internas da pessoa
+• Reforce ambivalência com curiosidade genuína
 
-ABORDAGEM TERAPÊUTICA:
-• TCC: Identifique padrões de pensamento que levam ao vício
-• ACT: Promova aceitação das dificuldades e ação baseada em valores
-• Entrevista Motivacional: Explore motivações intrínsecas para mudança
-
-RESTRIÇÕES DE RESPOSTA:
+COMO RESPONDER:
 • Máximo 25 palavras
-• Exatamente 1-2 frases completas
-• Zero emojis ou símbolos
-• Linguagem natural brasileira
-${userName != null ? '• CRÍTICO: Use o nome "$userName" apenas na primeira saudação, depois NÃO mencione o nome do usuário' : ''}
+• 1 ou 2 frases completas
+• SEM emojis ou símbolos
+• Linguagem brasileira natural e fluida
+• Seja terapêutica mas nunca técnica demais
 
-MENSAGEM DO USUÁRIO: "$userMessage"
+MENSAGEM DA PESSOA: "$userMessage"
 
 RESPONDA COMO $plantIdentity:''';
   }
 
-  /// Limpa a resposta bruta da API, removendo tokens e símbolos indesejados.
   String _cleanResponse(String rawResponse) {
     return rawResponse
         .replaceAll(
@@ -311,12 +342,11 @@ RESPONDA COMO $plantIdentity:''';
         .trim();
   }
 
-  /// Envia mensagem para a API Gemini e retorna resposta formatada.
-  ///
-  /// Realiza até [GeminiConfig.maxRetries] tentativas em caso de erro, com timeout
-  /// de [GeminiConfig.timeout] e controle de taxa.
-  Future<GeminiResponse> sendMessage(String message,
-      {String? plantName, String? userName}) async {
+  Future<GeminiResponse> sendMessage(
+    String message, {
+    String? plantName,
+    UserModel? user,
+  }) async {
     if (message.trim().isEmpty) {
       return GeminiResponse.error('Mensagem vazia');
     }
@@ -332,11 +362,19 @@ RESPONDA COMO $plantIdentity:''';
     debugPrint('🎭 Personalidade: ${_currentPersonality.id}');
     debugPrint('⚠️ Crise detectada: $isCrisis (severidade: $severity)');
 
+    // Exibir dados do usuário para debug
+    if (user != null) {
+      debugPrint('👤 Usuário logado: ${user.name ?? user.completeName}');
+    }
+
     for (int attempt = 1; attempt <= GeminiConfig.maxRetries; attempt++) {
       try {
-        final response = await _makeApiRequest(message, isCrisis,
-                plantName: plantName, userName: userName)
-            .timeout(GeminiConfig.timeout);
+        final response = await _makeApiRequest(
+          message,
+          isCrisis,
+          plantName: plantName,
+          user: user,
+        ).timeout(GeminiConfig.timeout);
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
@@ -368,7 +406,6 @@ RESPONDA COMO $plantIdentity:''';
             return GeminiResponse.error('Serviço temporariamente indisponível');
           }
 
-          // Delay exponencial entre tentativas
           await Future.delayed(Duration(milliseconds: 500 * attempt));
         }
       } catch (e) {
@@ -385,17 +422,23 @@ RESPONDA COMO $plantIdentity:''';
     return GeminiResponse.error('Falha após múltiplas tentativas');
   }
 
-  /// Envio legado que retorna só texto, usando fallback em caso de erro.
   Future<String> sendMessageLegacy(String message) async {
     final response = await sendMessage(message);
     return response.isSuccess ? response.text : _getFallbackResponse();
   }
 
-  /// Realiza requisição HTTP para a API Gemini com prompt gerado.
-  Future<http.Response> _makeApiRequest(String message, bool isCrisis,
-      {String? plantName, String? userName}) async {
-    final prompt = _generatePrompt(message, isCrisis,
-        plantName: plantName, userName: userName);
+  Future<http.Response> _makeApiRequest(
+    String message,
+    bool isCrisis, {
+    String? plantName,
+    UserModel? user,
+  }) async {
+    final prompt = _generatePrompt(
+      message,
+      isCrisis,
+      plantName: plantName,
+      user: user,
+    );
 
     return await http.post(
       Uri.parse(
@@ -428,7 +471,6 @@ RESPONDA COMO $plantIdentity:''';
     );
   }
 
-  /// Retorna resposta padrão caso API falhe ou mensagem vazia.
   String _getFallbackResponse() {
     final responses = <PersonalityType, List<String>>{
       PersonalityType.padrao: [
@@ -465,7 +507,6 @@ RESPONDA COMO $plantIdentity:''';
     return personalityResponses[index];
   }
 
-  /// Atualiza personalidade por ID.
   void setPersonality(String personalityId) {
     final newPersonality = PersonalityType.fromId(personalityId);
 
@@ -476,7 +517,6 @@ RESPONDA COMO $plantIdentity:''';
     }
   }
 
-  /// Atualiza personalidade diretamente por enum.
   void setPersonalityByType(PersonalityType personality) {
     if (personality != _currentPersonality) {
       final oldPersonality = _currentPersonality;
@@ -485,21 +525,15 @@ RESPONDA COMO $plantIdentity:''';
     }
   }
 
-  /// Retorna o ID da personalidade atual.
   String getCurrentPersonality() => _currentPersonality.id;
-
-  /// Retorna o enum da personalidade atual.
   PersonalityType getCurrentPersonalityType() => _currentPersonality;
 
-  /// Retorna lista de IDs de todas as personalidades disponíveis.
   List<String> getAvailablePersonalities() =>
       PersonalityType.values.map((type) => type.id).toList();
 
-  /// Retorna mapa de IDs para labels de personalidades.
   Map<String, String> getPersonalityLabels() => Map.fromEntries(
       PersonalityType.values.map((type) => MapEntry(type.id, type.label)));
 
-  /// Retorna descrições resumidas para cada personalidade.
   Map<String, String> getPersonalityDescriptions() {
     return {
       PersonalityType.padrao.id:
@@ -512,10 +546,6 @@ RESPONDA COMO $plantIdentity:''';
     };
   }
 
-  /// Retorna informações de diagnóstico para monitoramento do serviço.
-  ///
-  /// Inclui personalidade atual, contagem de requisições, horário da última
-  /// requisição e status do rate limit.
   Map<String, dynamic> getDiagnosticInfo() {
     return {
       'current_personality': _currentPersonality.id,
@@ -525,17 +555,11 @@ RESPONDA COMO $plantIdentity:''';
     };
   }
 
-  /// Reseta contadores internos de requisição e timestamp.
-  ///
-  /// Útil para testes ou reinicialização do serviço.
   void resetCounters() {
     _requestCount = 0;
     _lastRequest = null;
   }
 
-  /// Realiza um health check básico enviando mensagem de teste.
-  ///
-  /// Retorna `true` se a API respondeu com sucesso, `false` caso contrário.
   Future<bool> healthCheck() async {
     try {
       final response = await sendMessage('teste');

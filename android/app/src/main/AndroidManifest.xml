@@ -1,38 +1,42 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.metamorfose.metamorfose_flutter">
+    <!-- Permissões para gravação de áudio -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Permissões para internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Permissões para localização -->
     <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"/>
+        android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+        android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission
-        android:name="android.permission.INTERNET"/>
+        android:name="android.permission.INTERNET" />
     <!-- Permissões para câmera -->
     <uses-permission
-        android:name="android.permission.CAMERA"/>
+        android:name="android.permission.CAMERA" />
     <!-- Permissões para url_launcher e WhatsApp -->
     <uses-permission
-        android:name="android.permission.QUERY_ALL_PACKAGES"/>
+        android:name="android.permission.QUERY_ALL_PACKAGES" />
     <!-- Permissões para notificações -->
     <uses-permission
-        android:name="android.permission.VIBRATE"/>
+        android:name="android.permission.VIBRATE" />
     <uses-permission
-        android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
-        android:name="android.permission.WAKE_LOCK"/>
+        android:name="android.permission.WAKE_LOCK" />
     <!-- Para Android 13+ (API 33+) -->
     <uses-permission
-        android:name="android.permission.POST_NOTIFICATIONS"/>
+        android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Características opcionais que podem ser úteis -->
     <uses-feature
         android:name="android.hardware.location"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.location.gps"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.location.network"
-        android:required="false"/>
+        android:required="false" />
     <application
         android:label="Metamorfose"
         android:name="${applicationName}"
@@ -43,23 +47,23 @@
         <!-- API Key para Google Maps (Principal) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD2DQAH9nE9Q-IFLNyvv7-X8Vwrw_cEWlk"/>
+            android:value="AIzaSyD2DQAH9nE9Q-IFLNyvv7-X8Vwrw_cEWlk" />
         <!-- API Key para Google Maps v2 (Compatibilidade) -->
         <meta-data
             android:name="com.google.android.gms.maps.v2.API_KEY"
-            android:value="AIzaSyD2DQAH9nE9Q-IFLNyvv7-X8Vwrw_cEWlk"/>
+            android:value="AIzaSyD2DQAH9nE9Q-IFLNyvv7-X8Vwrw_cEWlk" />
         <!-- Versão do Google Play Services -->
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
         <!-- Facebook App ID -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
         <!-- Facebook Client Token -->
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token"/>
+            android:value="@string/facebook_client_token" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -74,18 +78,18 @@
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme"/>
+                android:resource="@style/NormalTheme" />
             <intent-filter
                 android:autoVerify="true">
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2"/>
+            android:value="2" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -95,19 +99,19 @@
     <queries>
         <intent>
             <action
-                android:name="android.intent.action.PROCESS_TEXT"/>
+                android:name="android.intent.action.PROCESS_TEXT" />
             <data
-                android:mimeType="text/plain"/>
+                android:mimeType="text/plain" />
         </intent>
         <package
-            android:name="com.whatsapp"/>
+            android:name="com.whatsapp" />
         <package
-            android:name="com.whatsapp.w4b"/>
+            android:name="com.whatsapp.w4b" />
         <package
-            android:name="com.google.android.apps.maps"/>
+            android:name="com.google.android.apps.maps" />
         <package
-            android:name="com.android.chrome"/>
+            android:name="com.android.chrome" />
         <package
-            android:name="com.android.browser"/>
+            android:name="com.android.browser" />
     </queries>
 </manifest>

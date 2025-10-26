@@ -25,6 +25,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../services/speech_service.dart';
 import '../services/gemini_service.dart';
+import '../models/user_model.dart';
 
 /// Estado atual do chat de voz, contendo mensagem, flags de estado, personalidade e confiança do reconhecimento.
 class VoiceChatState {
@@ -38,7 +39,7 @@ class VoiceChatState {
   final SpeechState speechState;
   final double confidence;
   final String? plantName;
-  final String? userName;
+  final UserModel? user;
   final bool isFirstMessage;
 
   /// Construtor com valores padrão.
@@ -53,7 +54,7 @@ class VoiceChatState {
     this.speechState = SpeechState.idle,
     this.confidence = 0.0,
     this.plantName,
-    this.userName,
+    this.user,
     this.isFirstMessage = false,
   });
 
@@ -69,7 +70,7 @@ class VoiceChatState {
     SpeechState? speechState,
     double? confidence,
     String? plantName,
-    String? userName,
+    UserModel? user,
     bool? isFirstMessage,
   }) {
     return VoiceChatState(
@@ -83,7 +84,7 @@ class VoiceChatState {
       speechState: speechState ?? this.speechState,
       confidence: confidence ?? this.confidence,
       plantName: plantName ?? this.plantName,
-      userName: userName ?? this.userName,
+      user: user ?? this.user,
       isFirstMessage: isFirstMessage ?? this.isFirstMessage,
     );
   }
@@ -119,15 +120,15 @@ class VoiceChatSetPlantNameEvent extends VoiceChatEvent {
 
 /// Evento para definir o nome do usuário.
 class VoiceChatSetUserNameEvent extends VoiceChatEvent {
-  final String userName;
+  final UserModel user;
 
-  VoiceChatSetUserNameEvent(this.userName);
+  VoiceChatSetUserNameEvent(this.user);
 }
 
 /// Evento para trocar a personalidade da IA.
 class VoiceChatChangePersonalityEvent extends VoiceChatEvent {
   final PersonalityType personality;
-  final bool silent; 
+  final bool silent;
 
   VoiceChatChangePersonalityEvent(this.personality, {this.silent = false});
 }
@@ -207,8 +208,7 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
           isProcessing: false,
           currentMessage: 'Oi, eu sou Perona! Como está hoje?',
           speechState: SpeechState.idle,
-          isFirstMessage:
-              true)); 
+          isFirstMessage: true));
 
       debugPrint('✅ Inicialização completa');
     } catch (e) {
@@ -257,13 +257,13 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
             currentMessage: "Pensando na resposta...",
             confidence: result.confidence));
 
-        final userName = state.isFirstMessage ? state.userName : null;
+        final userName = state.isFirstMessage ? state.user?.name : null;
 
         debugPrint(
             '🎤 Voice Chat - isFirstMessage: ${state.isFirstMessage}, userName: $userName, plantName: ${state.plantName}');
 
         final geminiResponse = await _geminiService.sendMessage(result.text,
-            plantName: state.plantName, userName: userName);
+            plantName: state.plantName, user: state.user);
 
         if (!geminiResponse.isSuccess) {
           throw Exception(geminiResponse.error ?? 'Erro no processamento');
@@ -370,8 +370,8 @@ class VoiceChatBloc extends Bloc<VoiceChatEvent, VoiceChatState> {
     VoiceChatSetUserNameEvent event,
     Emitter<VoiceChatState> emit,
   ) {
-    emit(state.copyWith(userName: event.userName));
-    debugPrint('👤 Nome do usuário definido: ${event.userName}');
+    emit(state.copyWith(user: event.user));
+    debugPrint('👤 Nome do usuário definido: ${event.user.name}');
   }
 
   /// Reseta a conversa para primeira mensagem.

@@ -36,6 +36,7 @@ class MetamorfoseApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Metamorfose',
         theme: MetamorfoseTheme.lightTheme,
         themeMode: ThemeMode.light,

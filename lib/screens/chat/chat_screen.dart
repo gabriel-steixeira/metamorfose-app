@@ -5,7 +5,9 @@
 /// - Interface de chat híbrido (voz e texto)
 /// - Integração com personalidades
 ///
-/// Author: Gabriel Teixeira
+/// Author: Evelin Cordeiro
+/// Created on: 31-08-2025
+/// Last modified: 31-08-2025
 ///
 /// Version: 1.0.0
 /// Squad: Metamorfose
@@ -191,7 +193,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           final userName = _currentUser?.name ?? _currentUser?.completeName;
           context
               .read<VoiceChatBloc>()
-              .add(VoiceChatSetUserNameEvent(userName!));
+              .add(VoiceChatSetUserNameEvent(_currentUser!));
         }
       }
     } catch (e) {
@@ -236,7 +238,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         final plantName = _plantInfo?['name'] as String?;
         final userName = _currentUser?.name ?? _currentUser?.completeName;
         textChatBloc.add(SendMessageEvent(message, currentPersonality,
-            plantName: plantName, userName: userName));
+            plantName: plantName, user: _currentUser));
 
         _textController.clear();
         debugPrint('✅ Mensagem enviada com sucesso via contexto');
@@ -442,7 +444,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           child: Icon(
             icon,
             size: iconSize,
-            color: isSelected ? MetamorfoseColors.purpleNormal : MetamorfoseColors.whiteLight,
+            color: isSelected
+                ? MetamorfoseColors.purpleNormal
+                : MetamorfoseColors.whiteLight,
           ),
         ),
       ),
@@ -924,7 +928,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: MetamorfoseColors.purpleNormal.withValues(alpha: 0.2),
+                    color:
+                        MetamorfoseColors.purpleNormal.withValues(alpha: 0.2),
                     blurRadius: blurRadius,
                     offset: const Offset(0, 5),
                   ),
@@ -998,8 +1003,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color:
-                              MetamorfoseColors.purpleNormal.withValues(alpha: 0.8),
+                          color: MetamorfoseColors.purpleNormal
+                              .withValues(alpha: 0.8),
                           width: 3,
                         ),
                       ),
@@ -1017,7 +1022,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.greenLight.withValues(alpha: 0.7),
+                          color: MetamorfoseColors.greenLight
+                              .withValues(alpha: 0.7),
                           width: 2,
                         ),
                       ),
@@ -1035,7 +1041,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.purpleLight.withValues(alpha: 0.5),
+                          color: MetamorfoseColors.purpleLight
+                              .withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
@@ -1053,7 +1060,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: MetamorfoseColors.greenNormal.withValues(alpha: 0.4),
+                          color: MetamorfoseColors.greenNormal
+                              .withValues(alpha: 0.4),
                           width: 1,
                         ),
                       ),
@@ -1070,8 +1078,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: MetamorfoseColors.purpleNormal
-                          .withValues(alpha: 0.2 + 0.1 * _pulseController.value),
+                      color: MetamorfoseColors.purpleNormal.withValues(
+                          alpha: 0.2 + 0.1 * _pulseController.value),
                       blurRadius: 15 + 10 * _pulseController.value,
                       offset: const Offset(0, 5),
                     ),
@@ -1250,31 +1258,34 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     final horizontalPadding = ResponsiveValue<double>(
       context,
-      defaultValue: 24.0,
+      defaultValue: 40.0,
       conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 16.0),
-        Condition.largerThan(name: TABLET, value: 32.0),
+        Condition.smallerThan(name: MOBILE, value: 24.0),
+        Condition.largerThan(name: TABLET, value: 56.0),
       ],
     ).value;
 
     // Se está ouvindo, mostrar "Ouvindo..."
     if (_isListening) {
-      return Text(
-        'Ouvindo...',
-        textAlign: TextAlign.center,
-        style: AppTypography.displayMedium.copyWith(
-          fontWeight: FontWeight.w600,
-          color: MetamorfoseColors.greyMedium,
-          fontSize: fontSize,
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Text(
+          'Ouvindo...',
+          textAlign: TextAlign.center,
+          style: AppTypography.displayMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: MetamorfoseColors.greyMedium,
+            fontSize: fontSize,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
       );
     }
 
     // Se tem status text (planta falando), mostrar com animação
     if (_currentStatusText.isNotEmpty && _currentStatusText != 'Ouvindo...') {
-      return Container(
+      return Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Text(
           _currentStatusText,
@@ -1291,29 +1302,32 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     }
 
     // Mensagem padrão
-    return RichText(
-      textAlign: TextAlign.center,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: userName,
-            style: AppTypography.displayMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: MetamorfoseColors.greenLight,
-              fontSize: fontSize,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      child: RichText(
+        textAlign: TextAlign.center,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: userName,
+              style: AppTypography.displayMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: MetamorfoseColors.greenLight,
+                fontSize: fontSize,
+              ),
             ),
-          ),
-          TextSpan(
-            text: ', vamos\nconversar?',
-            style: AppTypography.displayMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: MetamorfoseColors.greyMedium,
-              fontSize: fontSize,
+            TextSpan(
+              text: ', vamos\nconversar?',
+              style: AppTypography.displayMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: MetamorfoseColors.greyMedium,
+                fontSize: fontSize,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1591,8 +1605,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         child: InkWell(
                           onTap: () => _sendTextMessageWithContext(context),
                           borderRadius: BorderRadius.circular(borderRadius),
-                          splashColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.2),
-                          highlightColor: MetamorfoseColors.whiteLight.withValues(alpha: 0.1),
+                          splashColor: MetamorfoseColors.whiteLight
+                              .withValues(alpha: 0.2),
+                          highlightColor: MetamorfoseColors.whiteLight
+                              .withValues(alpha: 0.1),
                           child: Container(
                             width: buttonSize,
                             height: buttonSize,
@@ -1601,7 +1617,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: MetamorfoseColors.blackNormal.withValues(alpha: 0.1),
+                                  color: MetamorfoseColors.blackNormal
+                                      .withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -1645,14 +1662,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     backgroundColor: MetamorfoseColors.redNormal,
                   ),
                 );
-              }
-
-              // Quando para de gravar
-              if (!state.isRecording && _isListening) {
-                setState(() {
-                  _isListening = false;
-                  _currentStatusText = '';
-                });
               }
 
               // Quando a planta está falando
