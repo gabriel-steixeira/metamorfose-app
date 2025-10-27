@@ -4,13 +4,14 @@
  * 
  * Author: Evelin Cordeiro
  * Created on: 08-08-2025
- * Last modified: 30-09-2025
+ * Last modified: 26-10-2025
  * 
  * Changes:
- * - Prompts reescritos para linguagem mais natural e menos técnica
- * - Correção do uso do userName: agora aparece apenas na primeira saudação
+ * - Removida classe CrisisDetector duplicada
+ * - Detector de crise agora integrado em GeminiService
+ * - Lista de palavras-chave unificada
  * 
- * Version: 1.0.1
+ * Version: 1.0.2
  * Squad: Metamorfose
  */
 
@@ -66,69 +67,36 @@ class GeminiConfig {
   static const int maxOutputTokens = 65;
 }
 
-class CrisisDetector {
-  static const List<String> _crisisKeywords = [
-    'deprimido',
-    'depressão',
-    'triste',
-    'tristeza',
-    'sozinho',
-    'solidão',
-    'desistir',
-    'desisto',
-    'não aguento',
-    'não consigo',
-    'impossível',
-    'recaída',
-    'recaí',
-    'usei',
-    'falhei',
-    'fracassei',
-    'difícil',
-    'ansioso',
-    'ansiedade',
-    'desesperado',
-    'perdido',
-    'medo',
-    'pânico',
-    'vontade forte',
-    'tentação',
-    'quase usei',
-    'suicida',
-    'morrer',
-    'acabar',
-    'sem esperança',
-    'worthless'
-  ];
-
-  static bool detect(String message) {
-    final lowerMessage = message.toLowerCase().trim();
-    return _crisisKeywords.any((keyword) => lowerMessage.contains(keyword));
-  }
-
-  static int getSeverity(String message) {
-    final criticalKeywords = ['suicida', 'morrer', 'acabar', 'sem esperança'];
-    final lowerMessage = message.toLowerCase().trim();
-
-    if (criticalKeywords.any((keyword) => lowerMessage.contains(keyword))) {
-      return 3;
-    }
-
-    final matchCount = _crisisKeywords
-        .where((keyword) => lowerMessage.contains(keyword))
-        .length;
-
-    if (matchCount >= 3) return 2;
-    if (matchCount >= 1) return 1;
-    return 0;
-  }
-}
-
 class GeminiService {
   PersonalityType _currentPersonality = PersonalityType.padrao;
   int _requestCount = 0;
   DateTime? _lastRequest;
   static const int _maxRequestsPerMinute = 30;
+  PersonalityType? _savedPersonality;
+
+  // Lista de palavras-chave que indicam crise
+  static const List<String> _crisisKeywords = [
+    'suicidio',
+    'suicida',
+    'morrer',
+    'morte',
+    'acabar',
+    'me matar',
+    'quero morrer',
+    'acabar com tudo',
+    'acabar com isso',
+    'não aguento mais',
+    'desistir de viver',
+    'quero sumir',
+    'quero desaparecer',
+    'não vale a pena',
+    'não tem saída',
+    'sem esperança',
+    'sozinho demais',
+    'vazio total',
+    'não consigo mais',
+    'dor demais',
+  ];
 
   /// Prompts de personalidade - Estilo livre + base TCC, ACT e Entrevista Motivacional
   static const Map<PersonalityType, String> _personalityPrompts = {
@@ -148,6 +116,18 @@ Como você ajuda:
 • Pergunte sobre valores: o que importa de verdade pra ela?
 • Conecte pequenas ações com o que ela quer se tornar
 • Faça perguntas abertas que revelem motivações próprias
+
+⚠️ MODO CRISE - REGRAS CRÍTICAS:
+• NUNCA tente resolver problemas de crise sozinha
+• SEMPRE direcione para profissionais qualificados
+• Primeiro valide e acolha, depois direcione
+• Seja empática mas firme sobre buscar ajuda profissional
+• Mantenha o foco em conectar a pessoa com suporte apropriado
+
+Exemplos do seu jeito de falar em CRISE:
+• "Entendo que está difícil agora. Você não precisa passar por isso sozinho."
+• "Vamos juntos encontrar alguém que possa te ajudar melhor do que eu."
+• "Existem profissionais prontos para te ouvir. Vou te ajudar a encontrar."
 
 Exemplos do seu jeito de falar:
 • "O que você está sentindo agora?"
@@ -219,31 +199,8 @@ Exemplos do seu jeito de falar:
 • "Não vou deixar você desistir de você mesma, tá?"
 • "Evitar = regar planta com ar. Funciona não."
 • "Você quer mesmo isso ou tá fugindo de novo?"
-'''
+''',
   };
-
-  // Lista de palavras-chave que indicam crise
-  static const List<String> _crisisKeywords = [
-    'suicid',
-    'morrer',
-    'morte',
-    'acabar com tudo',
-    'não aguento mais',
-    'desistir de viver',
-    'me matar',
-    'quero sumir',
-    'não vale a pena',
-    'acabar com isso',
-    'não tem saída',
-    'sem esperança',
-    'sozinho demais',
-    'vazio total',
-    'não consigo mais',
-    'quero desaparecer',
-    'dor demais'
-  ];
-
-  PersonalityType? _savedPersonality;
 
   GeminiService() {
     _currentPersonality = PersonalityType.padrao;
@@ -262,18 +219,41 @@ Exemplos do seu jeito de falar:
 
   bool _detectCrisis(String message) {
     final lowerMessage = message.toLowerCase();
+    final hasCrisis = _crisisKeywords.any((keyword) => lowerMessage.contains(keyword));
 
-    // Verifica se contém palavras-chave de crise
-    return _crisisKeywords.any((keyword) => lowerMessage.contains(keyword));
+    if (hasCrisis) {
+      final matchedKeywords = _crisisKeywords
+          .where((keyword) => lowerMessage.contains(keyword))
+          .toList();
+      debugPrint('🚨 CRISE DETECTADA! Palavras-chave encontradas: $matchedKeywords');
+      debugPrint('📝 Mensagem: "$message"');
+    }
+
+    return hasCrisis;
+  }
+
+  int _getCrisisSeverity(String message) {
+    final criticalKeywords = ['suicid', 'suicida', 'morrer', 'morte', 'me matar', 'sem esperança'];
+    final lowerMessage = message.toLowerCase().trim();
+
+    if (criticalKeywords.any((keyword) => lowerMessage.contains(keyword))) {
+      return 3; // Crítico
+    }
+
+    final matchCount = _crisisKeywords
+        .where((keyword) => lowerMessage.contains(keyword))
+        .length;
+
+    if (matchCount >= 3) return 2; // Alto
+    if (matchCount >= 1) return 1; // Moderado
+    return 0; // Nenhum
   }
 
   void _handleCrisisMode(bool isCrisis) {
     if (isCrisis && _currentPersonality != PersonalityType.padrao) {
-      // Salva personalidade atual e muda para padrão
       _savedPersonality = _currentPersonality;
       _currentPersonality = PersonalityType.padrao;
     } else if (!isCrisis && _savedPersonality != null) {
-      // Restaura personalidade anterior se não é mais crise
       _currentPersonality = _savedPersonality!;
       _savedPersonality = null;
     }
@@ -294,8 +274,24 @@ Exemplos do seu jeito de falar:
     final plantIdentity = plantName ?? 'Plantinha';
     final plantOwner = user?.name ?? user?.completeName ?? 'Usuário';
 
-    return '''
-$personalityPrompt
+    if (detectedCrisis) {
+      final userName = user?.name ?? user?.completeName ?? 'Meu amigo';
+
+      return '''
+VOCÊ ESTÁ EM MODO CRISE - SEGUE O TEMPLATE ABAIXO USANDO O NOME "$userName":
+
+TEMPLATE OBRIGATÓRIO:
+
+$userName, eu sinto muito que você esteja passando por um momento tão difícil. O que você está sentindo é real e importante, e estou aqui com você agora. Por favor, saiba que você não precisa enfrentar isso sozinho. Existem pessoas prontas para te ajudar neste momento: CVV Centro de Valorização da Vida: 188 ligação gratuita, 24 horas. CAPS Centro de Atenção Psicossocial: busque a unidade mais próxima. SAMU: 192 emergências. Chat do CVV: cvv.org.br se preferir escrever. Você também pode ligar para alguém de confiança agora, ir ao pronto-socorro mais próximo, ou pedir para alguém ficar com você. Importante: Mesmo que pareça impossível agora, esses sentimentos podem mudar. Dê a si mesmo a chance de receber ajuda profissional - você merece esse apoio. Você está conversando com alguém sobre o que está sentindo? Tem alguém que você pode chamar neste momento? Estou aqui e me importo com você, mas preciso que você busque apoio profissional urgente. Você não está sozinho nisso.
+
+AGORA VARIAR ESTE TEMPLATE, MUDANDO AS PALAVRAS MAS MANTENDO TODAS AS INFORMAÇÕES DE AJUDA (CVV 188, SAMU 192, CAPS, chat CVV).
+
+MENSAGEM DA PESSOA: "$userMessage"
+
+RESPONDA AGORA VARIANDO O TEMPLATE ACIMA:''';
+    }
+
+    return '''$personalityPrompt
 
 QUEM VOCÊ É:
 • Seu nome é "$plantIdentity"
@@ -309,7 +305,6 @@ SUA MISSÃO:
 • Ajudar a pessoa a se manter firme na jornada dela
 • Conectar o cuidado da planta com o autocuidado pessoal
 • Comemorar cada vitória e apoiar nas quedas
-${detectedCrisis ? '• ⚠️ SITUAÇÃO DIFÍCIL: Foque em acolher, validar sentimentos e mostrar que você está presente' : ''}
 
 TÉCNICAS (TCC, ACT e Entrevista Motivacional):
 • Identifique pensamentos distorcidos e sugira alternativas
@@ -319,10 +314,10 @@ TÉCNICAS (TCC, ACT e Entrevista Motivacional):
 
 COMO RESPONDER:
 • Máximo 25 palavras
-• 1 ou 2 frases completas
+• Linguagem natural em português do Brasil
 • SEM emojis ou símbolos
-• Linguagem brasileira natural e fluida
 • Seja terapêutica mas nunca técnica demais
+• Use o nome da pessoa: ${user?.name ?? user?.completeName ?? 'Meu amigo'}
 
 MENSAGEM DA PESSOA: "$userMessage"
 
@@ -332,13 +327,17 @@ RESPONDA COMO $plantIdentity:''';
   String _cleanResponse(String rawResponse) {
     return rawResponse
         .replaceAll(
-            RegExp(r'[^\p{L}\p{N}\s.,!?áàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÜÇ-]',
-                unicode: true),
-            '')
+          RegExp(
+            r'[^\p{L}\p{N}\s.,!?áàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÜÇ-]',
+            unicode: true,
+          ),
+          '',
+        )
         .replaceAll(RegExp(r'\s+'), ' ')
         .replaceAll(
-            RegExp(r'^(Perona:|Resposta:|Output:)\s*', caseSensitive: false),
-            '')
+          RegExp(r'^(Perona:|Resposta:|Output:)\s*', caseSensitive: false),
+          '',
+        )
         .trim();
   }
 
@@ -356,13 +355,12 @@ RESPONDA COMO $plantIdentity:''';
     }
 
     _requestCount++;
-    final isCrisis = CrisisDetector.detect(message);
-    final severity = CrisisDetector.getSeverity(message);
+    final isCrisis = _detectCrisis(message);
+    final severity = _getCrisisSeverity(message);
 
     debugPrint('🎭 Personalidade: ${_currentPersonality.id}');
     debugPrint('⚠️ Crise detectada: $isCrisis (severidade: $severity)');
 
-    // Exibir dados do usuário para debug
     if (user != null) {
       debugPrint('👤 Usuário logado: ${user.name ?? user.completeName}');
     }
@@ -442,7 +440,8 @@ RESPONDA COMO $plantIdentity:''';
 
     return await http.post(
       Uri.parse(
-          '${GeminiConfig.baseUrl}/${GeminiConfig.model}:generateContent'),
+        '${GeminiConfig.baseUrl}/${GeminiConfig.model}:generateContent',
+      ),
       headers: {
         'Content-Type': 'application/json',
         'X-goog-api-key': GeminiConfig.apiKey,
@@ -451,22 +450,22 @@ RESPONDA COMO $plantIdentity:''';
         'contents': [
           {
             'parts': [
-              {'text': prompt}
-            ]
-          }
+              {'text': prompt},
+            ],
+          },
         ],
         'generationConfig': {
           'temperature':
               _currentPersonality == PersonalityType.engracada ? 0.9 : 0.75,
-          'maxOutputTokens': GeminiConfig.maxOutputTokens,
+          'maxOutputTokens': isCrisis ? 300 : GeminiConfig.maxOutputTokens,
           'topP': 0.85,
           'topK': 35,
-          'stopSequences': ['\n\n', 'Usuário:', 'Input:', 'Output:']
+          'stopSequences': ['\n\n', 'Usuário:', 'Input:', 'Output:'],
         },
         'safetySettings': [
           {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
-          {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'}
-        ]
+          {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
+        ],
       }),
     );
   }
@@ -477,26 +476,26 @@ RESPONDA COMO $plantIdentity:''';
         'Como você está hoje? Estou aqui para te apoiar.',
         'Cada pequeno passo importa. Vamos juntos.',
         'Sua jornada é única e valiosa.',
-        'Que bom te ver! Como posso ajudar?'
+        'Que bom te ver! Como posso ajudar?',
       ],
       PersonalityType.sarcastica: [
         'Sumiu de novo? Que surpresa inesperada.',
         'Deixe-me adivinhar, foi um dia complicado?',
         'Decidiu aparecer. Que bom te ver.',
-        'Interessante timing para conversar...'
+        'Interessante timing para conversar...',
       ],
       PersonalityType.engracada: [
         'Se fosse uma planta, já estava na primavera!',
         'Não esquece de regar… a si mesmo também!',
         'Sua energia hoje tá nível girassol!',
-        'Rindo sozinho aqui imaginando você dançando.'
+        'Rindo sozinho aqui imaginando você dançando.',
       ],
       PersonalityType.persistente: [
         'Sumiu e deixou sua plantinha no vácuo?',
         'Sua planta já está ensaiando um drama mexicano.',
         'Olha só quem resolveu lembrar que eu existo!',
-        'Vai me deixar falando sozinha de novo?'
-      ]
+        'Vai me deixar falando sozinha de novo?',
+      ],
     };
 
     final personalityResponses =
@@ -532,7 +531,8 @@ RESPONDA COMO $plantIdentity:''';
       PersonalityType.values.map((type) => type.id).toList();
 
   Map<String, String> getPersonalityLabels() => Map.fromEntries(
-      PersonalityType.values.map((type) => MapEntry(type.id, type.label)));
+        PersonalityType.values.map((type) => MapEntry(type.id, type.label)),
+      );
 
   Map<String, String> getPersonalityDescriptions() {
     return {
@@ -542,7 +542,7 @@ RESPONDA COMO $plantIdentity:''';
           'Humor inteligente que desafia com carinho',
       PersonalityType.engracada.id: 'Traz leveza e sorrisos para a jornada',
       PersonalityType.persistente.id:
-          'Nunca deixa você esquecer de cuidar de si mesmo'
+          'Nunca deixa você esquecer de cuidar de si mesmo',
     };
   }
 
