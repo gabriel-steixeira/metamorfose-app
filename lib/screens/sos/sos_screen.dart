@@ -1,19 +1,12 @@
 /// File: sos_screen.dart
-/// Description: Tela principal do Botão SOS do Metamorfose - Refatorada com Layout Responsivo
+/// Description: Tela SOS com opções de suporte
 ///
 /// Responsabilidades:
-/// - Exibir botão SOS central com animação pulsante
-/// - Mostrar menu de opções de suporte responsivo
-/// - Gerenciar exercícios de respiração
-/// - Integrar com contatos de emergência
-/// - Design responsivo baseado em ResponsiveValue
+/// - Exibir opções de suporte
 ///
 /// Author: Vitoria Lana
-/// 
-/// Changes:
-/// - Ajustado Falar com a Planta. (Evelin Cordeiro)
-/// 
-/// Version: 3.0.0 - Layout Responsivo
+/// Created on: 26-10-2025
+/// Version: 2.0.0
 /// Squad: Metamorfose
 
 import 'package:flutter/material.dart';
@@ -25,164 +18,55 @@ import 'package:metamorfose_flutter/theme/typography.dart';
 import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
 import 'package:metamorfose_flutter/state/sos/sos_state.dart';
 import 'package:metamorfose_flutter/state/sos/sos_events.dart';
-import 'package:metamorfose_flutter/models/breathing_exercise.dart';
 import 'package:metamorfose_flutter/models/sos_contact.dart';
-import 'package:metamorfose_flutter/services/gemini_service.dart';
 import 'package:metamorfose_flutter/services/sos_service.dart';
-import 'package:metamorfose_flutter/components/input_field.dart';
+import 'package:metamorfose_flutter/services/gemini_service.dart';
 import 'package:metamorfose_flutter/components/metamorfose_button.dart';
 import 'package:metamorfose_flutter/components/secondary_button.dart';
-
-import 'dart:async';
+import 'package:metamorfose_flutter/components/input_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
-class _SosLayoutConstants {
-  static const double shadowBlurRadius = 16.0;
-}
-
-/// Helper simplificado usando apenas os botões padrão do projeto
-class _MetamorfeseButtonHelper {
-  /// Botão primário roxo - padrão do projeto
-  static Widget createPrimaryButton({
-    required String text,
-    required VoidCallback? onPressed,
-    Widget? child,
-    bool isLoading = false,
-  }) {
-    if (isLoading) {
-      return MetamorfeseButton(
-        text: text,
-        onPressed: () {}, // Não faz nada quando loading
-        child: SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              MetamorfoseColors.whiteLight,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return MetamorfeseButton(
-      text: text,
-      onPressed: onPressed ?? () {},
-      child: child,
-    );
-  }
-
-  /// Botão secundário branco - padrão do projeto
-  static Widget createSecondaryButton({
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return MetamorfeseSecondaryButton(
-      text: text,
-      onPressed: onPressed,
-    );
-  }
-
-
-  /// Botão vermelho para exclusão
-  static Widget createDeleteButton({
-    required String text,
-    required VoidCallback? onPressed,
-  }) {
-    final bool isDisabled = onPressed == null;
-
-    return Container(
-      width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        color: isDisabled
-            ? MetamorfoseColors.redNormal.withOpacity(0.5)
-            : MetamorfoseColors.redNormal,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: MetamorfoseColors.redNormal,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: MetamorfoseColors.redDark,
-            blurRadius: 0,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: MetamorfoseColors.whiteLight,
-                fontSize: 15,
-                fontFamily: 'DinNext',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SosScreen extends StatefulWidget {
-  const SosScreen({super.key});
+class NewSosScreen extends StatefulWidget {
+  const NewSosScreen({super.key});
 
   @override
-  State<SosScreen> createState() => _SosScreenState();
+  State<NewSosScreen> createState() => _NewSosScreenState();
 }
 
-class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
+class SosScreen extends StatelessWidget {
+  const SosScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const NewSosScreen();
+  }
+}
+
+class _NewSosScreenState extends State<NewSosScreen>
+    with TickerProviderStateMixin {
   late AnimationController _pulseController;
-  late AnimationController _fadeController;
   late Animation<double> _pulseAnimation;
-  late Animation<double> _fadeAnimation;
-  bool _showOptions = false;
   SosContact? _lastKnownContact;
 
   @override
   void initState() {
     super.initState();
-    context.read<SosBloc>().add(InitializeSosEvent());
-
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
     _pulseAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.2,
+      end: 1.1,
     ).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
     ));
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
     _pulseController.repeat(reverse: true);
+
+    context.read<SosBloc>().add(InitializeSosEvent());
 
     // Inicializar o contato conhecido
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -194,27 +78,17 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     _pulseController.dispose();
-    _fadeController.dispose();
     super.dispose();
   }
 
-  void _onSosPressed() {
-    setState(() {
-      _showOptions = !_showOptions;
-    });
-
-    if (_showOptions) {
-      _fadeController.forward();
-      context.read<SosBloc>().add(ActivateSosEvent());
-    } else {
-      _fadeController.reverse();
-      context.read<SosBloc>().add(DeactivateSosEvent());
+  void _forceUIUpdateAfterContactDeletion() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Valores responsivos usando ResponsiveValue
     final horizontalPadding = ResponsiveValue<double>(
       context,
       defaultValue: 24.0,
@@ -224,33 +98,23 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
       ],
     ).value;
 
-    final verticalPadding = ResponsiveValue<double>(
+    final spacing = ResponsiveValue<double>(
       context,
-      defaultValue: 20.0,
+      defaultValue: 24.0,
       conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 16.0),
-        Condition.largerThan(name: TABLET, value: 24.0),
-      ],
-    ).value;
-
-    final borderRadius = ResponsiveValue<double>(
-      context,
-      defaultValue: 12.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 10.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 32.0),
       ],
     ).value;
 
     final maxContentWidth = ResponsiveValue<double>(
       context,
-      defaultValue: 400.0,
+      defaultValue: 500.0,
       conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: double.infinity),
-        Condition.largerThan(name: TABLET, value: 500.0),
+        Condition.largerThan(name: TABLET, value: 600.0),
       ],
     ).value;
-
 
     return BlocConsumer<SosBloc, SosState>(
       listener: (context, state) {
@@ -267,9 +131,6 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
               margin: EdgeInsets.all(horizontalPadding),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
             ),
           );
           context.read<SosBloc>().add(ClearSosErrorEvent());
@@ -278,7 +139,6 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
         final previousContact = _lastKnownContact;
         if (state.emergencyContact != previousContact) {
           _lastKnownContact = state.emergencyContact;
-
           if (mounted) {
             setState(() {});
           }
@@ -286,16 +146,14 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: MetamorfoseColors.purpleDark,
           body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
                   MetamorfoseColors.purpleDark,
                   MetamorfoseColors.purpleNormal,
-                  MetamorfoseColors.purpleLight,
                 ],
               ),
             ),
@@ -303,25 +161,64 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxContentWidth),
-                  child: Column(
-                    children: [
-                      _buildResponsiveHeader(context, horizontalPadding, borderRadius),
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        backgroundColor: Colors.transparent,
+                        leading: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPressed: () => context.go('/home'),
+                          color: MetamorfoseColors.whiteLight,
+                        ),
+                        floating: true,
+                        snap: true,
+                        elevation: 0,
+                      ),
 
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                      // Conteúdo principal
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(horizontalPadding),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              SizedBox(height: verticalPadding * 2),
+                              _buildSmallSosButton(),
 
-                              _buildResponsiveSosButton(state, context),
+                              SizedBox(height: spacing),
 
-                              SizedBox(height: verticalPadding * 1.5),
+                              // Título da seção
+                              Text(
+                                'Como podemos ajudar?',
+                                style: AppTypography.displayMedium.copyWith(
+                                  color: MetamorfoseColors.whiteLight,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
 
-                              if (_showOptions)
-                                _buildResponsiveOptionsMenu(state, context, horizontalPadding, borderRadius),
+                              SizedBox(height: spacing / 2),
 
-                              SizedBox(height: verticalPadding),
+                              // Subtítulo
+                              Text(
+                                'Escolha uma das opções abaixo para receber suporte',
+                                style: AppTypography.titleMedium.copyWith(
+                                  color: MetamorfoseColors.whiteLight
+                                      .withOpacity(0.8),
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+
+                              SizedBox(height: spacing),
+
+                              // Grid de opções
+                              _buildOptionsGrid(context, spacing),
+
+                              SizedBox(height: spacing),
+
+                              // Seção de contatos de emergência
+                              _buildEmergencyContactSection(state, context),
+
+                              SizedBox(height: spacing),
                             ],
                           ),
                         ),
@@ -337,17 +234,17 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildResponsiveHeader(BuildContext context, double horizontalPadding, double borderRadius) {
-    final headerHeight = ResponsiveValue<double>(
+  Widget _buildSmallSosButton() {
+    final buttonSize = ResponsiveValue<double>(
       context,
-      defaultValue: 60.0,
+      defaultValue: 80.0,
       conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 50.0),
-        Condition.largerThan(name: TABLET, value: 70.0),
+        Condition.smallerThan(name: MOBILE, value: 70.0),
+        Condition.largerThan(name: TABLET, value: 90.0),
       ],
     ).value;
 
-    final iconSize = ResponsiveValue<double>(
+    final fontSize = ResponsiveValue<double>(
       context,
       defaultValue: 20.0,
       conditionalValues: const [
@@ -356,237 +253,134 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
       ],
     ).value;
 
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    return Container(
-      height: headerHeight,
-      padding: EdgeInsets.symmetric(
-        horizontal: horizontalPadding,
-        vertical: spacing * 0.5,
-      ),
-      child: Row(
-        children: [
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => context.go('/home'),
-              borderRadius: BorderRadius.circular(borderRadius * 0.75),
-              child: Container(
-                padding: EdgeInsets.all(spacing * 0.5),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: MetamorfoseColors.whiteLight,
-                  size: iconSize,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: spacing),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResponsiveSosButton(SosState state, BuildContext context) {
-    final buttonSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 200.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 160.0),
-        Condition.largerThan(name: TABLET, value: 240.0),
-      ],
-    ).value;
-
-    final fontSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 32.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 28.0),
-        Condition.largerThan(name: TABLET, value: 36.0),
-      ],
-    ).value;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: _onSosPressed,
-        borderRadius: BorderRadius.circular(buttonSize / 2),
-        splashColor: MetamorfoseColors.whiteLight.withOpacity(0.2),
-        highlightColor: MetamorfoseColors.whiteLight.withOpacity(0.1),
-        child: AnimatedBuilder(
-          animation: _pulseAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _pulseAnimation.value,
-              child: Container(
-                width: buttonSize,
-                height: buttonSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      MetamorfoseColors.redNormal,
-                      MetamorfoseColors.pinkNormal,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.read<SosBloc>().add(ActivateSosEvent()),
+          borderRadius: BorderRadius.circular(buttonSize / 2),
+          splashColor: MetamorfoseColors.whiteLight.withOpacity(0.2),
+          highlightColor: MetamorfoseColors.whiteLight.withOpacity(0.1),
+          child: AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _pulseAnimation.value,
+                child: Container(
+                  width: buttonSize,
+                  height: buttonSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        MetamorfoseColors.redNormal,
+                        MetamorfoseColors.pinkNormal,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: MetamorfoseColors.purpleLight.withOpacity(0.3),
+                        offset: const Offset(0, 4),
+                        blurRadius: 8,
+                        spreadRadius: 0,
+                      ),
                     ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: MetamorfoseColors.purpleLight.withOpacity(0.3),
-                      offset: const Offset(0, 4),
-                      blurRadius: 8,
-                      spreadRadius: 0,
-                    ),
-                    BoxShadow(
-                      color: MetamorfoseColors.purpleLight.withOpacity(0.4),
-                      offset: const Offset(0, 12),
-                      blurRadius: _SosLayoutConstants.shadowBlurRadius,
-                      spreadRadius: 2,
-                    ),
-                    BoxShadow(
-                      color: MetamorfoseColors.purpleLight.withOpacity(0.25),
-                      offset: const Offset(0, 20),
-                      blurRadius: _SosLayoutConstants.shadowBlurRadius * 1.5,
-                      spreadRadius: 4,
-                    ),
-                    BoxShadow(
-                      color: MetamorfoseColors.purpleLight.withOpacity(0.2),
-                      offset: const Offset(0, 0),
-                      blurRadius: 2,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    'SOS',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.displayLarge.copyWith(
-                      color: MetamorfoseColors.whiteLight,
-                      fontWeight: FontWeight.w900,
-                      fontSize: fontSize,
+                  child: Center(
+                    child: Text(
+                      'SOS',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.displaySmall.copyWith(
+                        color: MetamorfoseColors.whiteLight,
+                        fontWeight: FontWeight.w900,
+                        fontSize: fontSize,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildResponsiveOptionsMenu(
-      SosState state, BuildContext context, double horizontalPadding, double borderRadius) {
-    final titleFontSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 20.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 18.0),
-        Condition.largerThan(name: TABLET, value: 22.0),
-      ],
-    ).value;
+  Widget _buildOptionsGrid(BuildContext context, double spacing) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isSmallScreen = screenWidth < 600;
+        final isMediumScreen = screenWidth < 900;
 
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
+        final crossAxisCount = isSmallScreen ? 1 : (isMediumScreen ? 2 : 3);
 
-
-    return AnimatedBuilder(
-      animation: _fadeAnimation,
-      builder: (context, child) {
-        return FadeTransition(
-          opacity: _fadeAnimation,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(horizontalPadding),
-            decoration: BoxDecoration(
-              color: MetamorfoseColors.whiteLight.withOpacity(0.96),
-              borderRadius: BorderRadius.circular(borderRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: MetamorfoseColors.shadowLight,
-                  offset: const Offset(0, 4),
-                  blurRadius: _SosLayoutConstants.shadowBlurRadius,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'O que você precisa?',
-                  style: AppTypography.titleLarge.copyWith(
-                    color: MetamorfoseColors.greyDark,
-                    fontWeight: FontWeight.w700,
-                    fontSize: titleFontSize,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                SizedBox(height: spacing),
-
-                _buildVerticalOptionsLayout(state, context),
-
-                SizedBox(height: spacing),
-
-                _buildEmergencyContactsSection(state, context),
-              ],
-            ),
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: spacing,
+            crossAxisSpacing: spacing,
+            childAspectRatio: isSmallScreen ? 3.2 : 2.4,
           ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            final items = [
+              {
+                'icon': Icons.chat_bubble_outline,
+                'title': 'Conversar com sua Planta',
+                'subtitle': 'Sua companheira está aqui para ouvir você',
+                'color': MetamorfoseColors.greenNormal,
+                'onTap': () =>
+                    context.push('/chat', extra: PersonalityType.padrao),
+              },
+              {
+                'icon': Icons.support_agent_rounded,
+                'title': 'Encontrar Psicólogos',
+                'subtitle': 'Profissionais prontos para ajudar',
+                'color': MetamorfoseColors.purpleNormal,
+                'onTap': () => context.push('/psychologists?from=sos'),
+              },
+              {
+                'icon': Icons.spa_outlined,
+                'title': 'Exercícios de Respiração',
+                'subtitle': 'Técnicas para acalmar e relaxar',
+                'color': MetamorfoseColors.blueNormal,
+                'onTap': () => _showBreathingExercises(context),
+              },
+              {
+                'icon': Icons.emergency_outlined,
+                'title': 'CVV - 188',
+                'subtitle': 'Atendimento gratuito 24h',
+                'color': MetamorfoseColors.redNormal,
+                'onTap': () async {
+                  final url = Uri.parse('tel:188');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                },
+              },
+            ];
+
+            final item = items[index];
+
+            return _buildResponsiveOptionCard(
+              icon: item['icon'] as IconData,
+              title: item['title'] as String,
+              subtitle: item['subtitle'] as String,
+              color: item['color'] as Color,
+              onTap: item['onTap'] as VoidCallback,
+              context: context,
+            );
+          },
         );
       },
     );
   }
-
-  Widget _buildVerticalOptionsLayout(SosState state, BuildContext context) {
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    return Column(
-      children: [
-        _buildResponsiveOptionCard(
-          icon: Icons.chat_bubble_outline,
-          title: 'Conversar com sua Planta',
-          subtitle: 'Desabafe e receba apoio da sua companheira virtual',
-          onTap: () => _talkToPlant(),
-          color: MetamorfoseColors.greenNormal,
-          context: context,
-        ),
-        SizedBox(height: spacing),
-        _buildResponsiveOptionCard(
-          icon: Icons.location_on,
-          title: 'Psicólogos Próximos',
-          subtitle: 'Encontre ajuda profissional',
-          onTap: () =>
-              context.read<SosBloc>().add(OpenNearbyPsychologistsEvent()),
-          color: MetamorfoseColors.purpleNormal,
-          context: context,
-        ),
-      ],
-    );
-  }
-
 
   Widget _buildResponsiveOptionCard({
     required IconData icon,
@@ -605,43 +399,7 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
       ],
     ).value;
 
-    final cardHeight = ResponsiveValue<double>(
-      context,
-      defaultValue: 80.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 70.0),
-        Condition.largerThan(name: TABLET, value: 90.0),
-      ],
-    ).value;
-
     final cardPadding = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    final iconSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 20.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 18.0),
-        Condition.largerThan(name: TABLET, value: 24.0),
-      ],
-    ).value;
-
-    final titleFontSize = ResponsiveValue<double>(
       context,
       defaultValue: 16.0,
       conditionalValues: const [
@@ -650,12 +408,39 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
       ],
     ).value;
 
+    final spacing = ResponsiveValue<double>(
+      context,
+      defaultValue: 12.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 10.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
+      ],
+    ).value;
+
+    final iconSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 24.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 20.0),
+        Condition.largerThan(name: TABLET, value: 28.0),
+      ],
+    ).value;
+
+    final titleFontSize = ResponsiveValue<double>(
+      context,
+      defaultValue: 15.0,
+      conditionalValues: const [
+        Condition.smallerThan(name: MOBILE, value: 14.0),
+        Condition.largerThan(name: TABLET, value: 16.0),
+      ],
+    ).value;
+
     final subtitleFontSize = ResponsiveValue<double>(
       context,
-      defaultValue: 14.0,
+      defaultValue: 13.0,
       conditionalValues: const [
         Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
+        Condition.largerThan(name: TABLET, value: 14.0),
       ],
     ).value;
 
@@ -667,63 +452,71 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Container(
-          constraints: BoxConstraints(
-            minHeight: cardHeight,
-          ),
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
+            color: MetamorfoseColors.whiteLight,
             borderRadius: BorderRadius.circular(borderRadius),
+            boxShadow: [
+              BoxShadow(
+                color: MetamorfoseColors.shadowLight,
+                offset: const Offset(0, 4),
+                blurRadius: 24,
+                spreadRadius: -2,
+              ),
+            ],
             border: Border.all(
-              color: color.withOpacity(0.2),
+              color: MetamorfoseColors.greyLightest2,
               width: 1,
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(spacing * 0.6),
+                padding: EdgeInsets.all(spacing * 0.75),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(borderRadius * 0.6),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: iconSize,
-                ),
+                child: Icon(icon, color: color, size: iconSize),
               ),
               SizedBox(width: spacing),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       title,
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.greyDark,
-                        fontWeight: FontWeight.w600,
+                        color: MetamorfoseColors.blackLight,
+                        fontWeight: FontWeight.w700,
                         fontSize: titleFontSize,
+                        height: 1.2,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: spacing * 0.25),
+                    SizedBox(height: spacing * 0.3),
                     Text(
                       subtitle,
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
                         fontSize: subtitleFontSize,
+                        height: 1.3,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              SizedBox(width: spacing * 0.5),
               Icon(
                 Icons.arrow_forward_ios,
                 color: color.withOpacity(0.6),
-                size: iconSize,
+                size: iconSize * 0.7,
               ),
             ],
           ),
@@ -732,34 +525,11 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     );
   }
 
-  /// Navega para o chat de voz com a planta do usuário
-  void _talkToPlant() {
-    try {
-      // Navegar para o chat com personalidade padrão (mais empática)
-      context.push('/chat', extra: PersonalityType.padrao);
-      debugPrint("🌱 SOS - Navegando para conversar com a planta");
-    } catch (e) {
-      debugPrint("🌱 SOS - Erro na navegação: $e");
-      // Fallback: navegar para home e depois para chat
-      context.go('/home');
-      Future.delayed(Duration(milliseconds: 100), () {
-        if (context.mounted) {
-          context.push('/chat', extra: PersonalityType.padrao);
-        }
-      });
+  Widget _buildEmergencyContactSection(SosState state, BuildContext context) {
+    if (state.hasEmergencyContact && state.emergencyContact != null) {
+      return _buildExistingContactCard(state.emergencyContact!, context);
     }
-  }
-
-  Widget _buildEmergencyContactsSection(SosState state, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (state.hasEmergencyContact && state.emergencyContact != null)
-          _buildExistingContactCard(state.emergencyContact!, context)
-        else
-          _buildAddContactCard(context),
-      ],
-    );
+    return _buildAddContactCard(context);
   }
 
   Widget _buildAddContactCard(BuildContext context) {
@@ -834,15 +604,21 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
         splashColor: MetamorfoseColors.purpleNormal.withOpacity(0.1),
         highlightColor: MetamorfoseColors.purpleNormal.withOpacity(0.05),
         child: Container(
-          constraints: BoxConstraints(
-            minHeight: cardHeight,
-          ),
+          constraints: BoxConstraints(minHeight: cardHeight),
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
-            color: MetamorfoseColors.blueNormal.withOpacity(0.08),
+            color: MetamorfoseColors.whiteLight,
             borderRadius: BorderRadius.circular(borderRadius),
+            boxShadow: [
+              BoxShadow(
+                color: MetamorfoseColors.shadowLight,
+                offset: const Offset(0, 4),
+                blurRadius: 24,
+                spreadRadius: -2,
+              ),
+            ],
             border: Border.all(
-              color: MetamorfoseColors.blueNormal.withOpacity(0.2),
+              color: MetamorfoseColors.greyLightest2,
               width: 1,
             ),
           ),
@@ -867,31 +643,31 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Contatos de Emergência',
+                      'Contato de Emergência',
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.greyDark,
-                        fontWeight: FontWeight.w600,
+                        color: MetamorfoseColors.blackLight,
+                        fontWeight: FontWeight.w700,
                         fontSize: titleFontSize,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: spacing * 0.25),
                     Text(
-                      'Adicionar contato de confiança para emergências',
+                      'Adicione alguém de confiança',
                       style: AppTypography.bodySmall.copyWith(
                         color: MetamorfoseColors.greyMedium,
                         fontSize: subtitleFontSize,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: MetamorfoseColors.blueNormal.withOpacity(0.6),
-                size: iconSize,
-              ),
+              Icon(Icons.arrow_forward_ios,
+                  color: MetamorfoseColors.blueNormal.withOpacity(0.6),
+                  size: iconSize),
             ],
           ),
         ),
@@ -964,15 +740,21 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
     ).value;
 
     return Container(
-      constraints: BoxConstraints(
-        minHeight: cardHeight,
-      ),
+      constraints: BoxConstraints(minHeight: cardHeight),
       padding: EdgeInsets.all(cardPadding),
       decoration: BoxDecoration(
-        color: MetamorfoseColors.greenNormal.withOpacity(0.08),
+        color: MetamorfoseColors.whiteLight,
         borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: MetamorfoseColors.shadowLight,
+            offset: const Offset(0, 4),
+            blurRadius: 24,
+            spreadRadius: -2,
+          ),
+        ],
         border: Border.all(
-          color: MetamorfoseColors.greenNormal.withOpacity(0.2),
+          color: MetamorfoseColors.greyLightest2,
           width: 1,
         ),
       ),
@@ -1000,22 +782,24 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Contatos de Emergência',
+                      'Contato de Emergência',
                       style: AppTypography.titleSmall.copyWith(
-                        color: MetamorfoseColors.greyDark,
-                        fontWeight: FontWeight.w600,
+                        color: MetamorfoseColors.blackLight,
+                        fontWeight: FontWeight.w700,
                         fontSize: titleFontSize,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: spacing * 0.25),
                     Text(
                       '${contact.name} - ${contact.phoneNumber}',
                       style: AppTypography.bodySmall.copyWith(
-                        color: MetamorfoseColors.greyMedium,
+                        color: MetamorfoseColors.greyDark,
                         fontSize: subtitleFontSize,
                       ),
-                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -1037,92 +821,55 @@ class _SosScreenState extends State<SosScreen> with TickerProviderStateMixin {
               ),
             ],
           ),
-
           SizedBox(height: spacing),
-
-          _buildWhatsAppButton(contact, context),
+          Row(
+            children: [
+              Expanded(
+                child: MetamorfeseButton(
+                  onPressed: () => _enviarMensagemWhatsApp(contact),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.send, color: Colors.white, size: 18),
+                      SizedBox(width: 8),
+                      Text('MENSAGEM',
+                          style: TextStyle(
+                              fontFamily: 'DinNext',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: MetamorfeseButton(
+                  onPressed: () => _makeEmergencyCall(contact),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.phone, color: Colors.white, size: 18),
+                      SizedBox(width: 8),
+                      Text('LIGAR',
+                          style: TextStyle(
+                              fontFamily: 'DinNext',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildWhatsAppButton(SosContact contact, BuildContext context) {
-    final borderRadius = ResponsiveValue<double>(
-      context,
-      defaultValue: 12.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 10.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
-      ],
-    ).value;
-
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    final cardHeight = ResponsiveValue<double>(
-      context,
-      defaultValue: 80.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 70.0),
-        Condition.largerThan(name: TABLET, value: 90.0),
-      ],
-    ).value;
-
-    final iconSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 20.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 18.0),
-        Condition.largerThan(name: TABLET, value: 24.0),
-      ],
-    ).value;
-
-    final fontSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 14.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
-      ],
-    ).value;
-
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: MetamorfoseColors.greenNormal,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-        ),
-        elevation: 6,
-        padding: EdgeInsets.symmetric(
-            vertical: spacing * 0.8,
-            horizontal: spacing),
-        minimumSize: Size(double.infinity, cardHeight * 0.4),
-      ),
-      onPressed: () => _enviarMensagemWhatsApp(contact),
-      icon: Icon(Icons.chat, color: MetamorfoseColors.whiteLight, size: iconSize),
-      label: Text(
-        "ENVIAR MENSAGEM WHATSAPP",
-        style: AppTypography.titleSmall.copyWith(
-          color: MetamorfoseColors.whiteLight,
-          fontWeight: FontWeight.w600,
-          fontSize: fontSize,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  /// Enviar mensagem WhatsApp usando url_launcher
   Future<void> _enviarMensagemWhatsApp(SosContact contact) async {
-    // Formatar telefone para formato internacional (Brasil: 5511999999999)
     final telefone = _formatarTelefoneParaWhatsApp(contact.phoneNumber);
-
     final mensagem = """
 Oi, ${contact.name}! Esse é um alerta SOS do aplicativo Metamorfose.
 Estou em um momento difícil e preciso de ajuda agora.
@@ -1136,124 +883,53 @@ Podemos conversar?
     try {
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
-
-        // Fecha o modal automaticamente após 500ms
-        Future.delayed(Duration(milliseconds: 500), () {
-          if (mounted && _showOptions) {
-            setState(() {
-              _showOptions = false;
-            });
-            _fadeController.reverse();
-            context.read<SosBloc>().add(DeactivateSosEvent());
-          }
-        });
       } else {
         if (mounted) {
-          final horizontalPadding = ResponsiveValue<double>(
-            context,
-            defaultValue: 24.0,
-            conditionalValues: const [
-              Condition.smallerThan(name: MOBILE, value: 16.0),
-              Condition.largerThan(name: TABLET, value: 32.0),
-            ],
-          ).value;
-
-          final borderRadius = ResponsiveValue<double>(
-            context,
-            defaultValue: 12.0,
-            conditionalValues: const [
-              Condition.smallerThan(name: MOBILE, value: 10.0),
-              Condition.largerThan(name: TABLET, value: 16.0),
-            ],
-          ).value;
-
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                "Não foi possível abrir o WhatsApp.",
-                style: AppTypography.bodyMedium.copyWith(
-                  color: MetamorfoseColors.whiteLight,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              content: Text("Não foi possível abrir o WhatsApp."),
               backgroundColor: MetamorfoseColors.redNormal,
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(horizontalPadding),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
             ),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        final horizontalPadding = ResponsiveValue<double>(
-          context,
-          defaultValue: 24.0,
-          conditionalValues: const [
-            Condition.smallerThan(name: MOBILE, value: 16.0),
-            Condition.largerThan(name: TABLET, value: 32.0),
-          ],
-        ).value;
-
-        final borderRadius = ResponsiveValue<double>(
-          context,
-          defaultValue: 12.0,
-          conditionalValues: const [
-            Condition.smallerThan(name: MOBILE, value: 10.0),
-            Condition.largerThan(name: TABLET, value: 16.0),
-          ],
-        ).value;
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              "Erro ao abrir WhatsApp: $e",
-              style: AppTypography.bodyMedium.copyWith(
-                color: MetamorfoseColors.whiteLight,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            content: Text("Erro ao abrir WhatsApp: $e"),
             backgroundColor: MetamorfoseColors.redNormal,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(horizontalPadding),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
           ),
         );
       }
     }
   }
 
-  /// Formatar telefone para formato internacional do WhatsApp
   String _formatarTelefoneParaWhatsApp(String telefone) {
-    // Remove todos os caracteres não numéricos
     String numeros = telefone.replaceAll(RegExp(r'[^\d]'), '');
-
-    // Se já tem 13 dígitos (55 + DDD + 9 dígitos), retorna como está
-    if (numeros.length == 13) {
-      return numeros;
-    }
-
-    // Se tem 12 dígitos (DDD + 9 dígitos), adiciona 55
-    if (numeros.length == 12) {
-      return '55$numeros';
-    }
-
-    // Se tem 11 dígitos (DDD + 9 dígitos), adiciona 55
-    if (numeros.length == 11) {
-      return '55$numeros';
-    }
-
-    // Se tem 10 dígitos (DDD + 8 dígitos), adiciona 55
-    if (numeros.length == 10) {
-      return '55$numeros';
-    }
-
-    // Se não conseguir formatar, retorna como está
+    if (numeros.length == 13) return numeros;
+    if (numeros.length == 12) return '55$numeros';
+    if (numeros.length == 11) return '55$numeros';
+    if (numeros.length == 10) return '55$numeros';
     return numeros;
+  }
+
+  Future<void> _makeEmergencyCall(SosContact contact) async {
+    final url = Uri.parse('tel:${contact.phoneNumber}');
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao fazer ligação: $e"),
+            backgroundColor: MetamorfoseColors.redNormal,
+          ),
+        );
+      }
+    }
   }
 
   void _showAddContactModal(BuildContext context) {
@@ -1326,17 +1002,18 @@ Podemos conversar?
     }
   }
 
-  /// Força a atualização da UI após a exclusão de um contato.
-  /// Isso é necessário porque a exclusão é assíncrona e a UI não se atualiza
-  /// instantaneamente devido ao BlocConsumer.
-  void _forceUIUpdateAfterContactDeletion() {
-    if (mounted) {
-      setState(() {});
-    }
+  void _showBreathingExercises(BuildContext context) {
+    // TODO: Implementar modal de exercícios de respiração
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Exercícios de respiração em breve!'),
+        backgroundColor: MetamorfoseColors.blueNormal,
+      ),
+    );
   }
 }
 
-// Modal responsivo para contatos de emergência
+// Modal completo para contatos de emergência (copiado do sos_screen.dart original)
 class _EmergencyContactModal extends StatefulWidget {
   final bool useCompactLayout;
   final bool isEditing;
@@ -1369,14 +1046,12 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
   void initState() {
     super.initState();
 
-    // Preencher campos se estiver editando
     if (widget.isEditing && widget.contact != null) {
       _nameController.text = widget.contact!.name;
       _phoneController.text = widget.contact!.phoneNumber;
       _relationshipController.text = widget.contact!.message ?? '';
     }
 
-    // Adicionar listeners para validação em tempo real
     _nameController.addListener(_validateName);
     _phoneController.addListener(_validatePhone);
     _relationshipController.addListener(_validateRelationship);
@@ -1415,20 +1090,15 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
 
   void _validateRelationship() {
     setState(() {
-      _relationshipError = null; // Relacionamento é opcional
+      _relationshipError = null;
     });
   }
 
   String _formatPhoneNumber(String phone) {
-    // Remove todos os caracteres não numéricos
     String numbers = phone.replaceAll(RegExp(r'[^\d]'), '');
-
-    // Limita a 11 dígitos (DDD + 9 dígitos)
     if (numbers.length > 11) {
       numbers = numbers.substring(0, 11);
     }
-
-    // Aplica formatação baseada no comprimento
     if (numbers.length <= 2) {
       return numbers;
     } else if (numbers.length <= 7) {
@@ -1436,7 +1106,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
     } else if (numbers.length <= 11) {
       return '(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7)}';
     }
-
     return numbers;
   }
 
@@ -1468,11 +1137,8 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
         sosBloc.add(SaveEmergencyContactEvent(contact));
       }
 
-      // Fechar modal
       if (mounted) {
         Navigator.of(context).pop();
-
-        // Mostrar feedback de sucesso
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -1486,9 +1152,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             backgroundColor: MetamorfoseColors.greenNormal,
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.all(24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
           ),
         );
       }
@@ -1505,9 +1168,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
             backgroundColor: MetamorfoseColors.redNormal,
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.all(24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
           ),
         );
       }
@@ -1521,7 +1181,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
   }
 
   Future<void> _deleteContact() async {
-    // Mostrar diálogo de confirmação
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -1530,14 +1189,14 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Text(
-          'Limpar Contato',
+          'Excluir Contato',
           style: AppTypography.titleMedium.copyWith(
             color: MetamorfoseColors.greyDark,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
-          'Tem certeza que deseja limpar todos os campos deste contato? Esta ação pode ser desfeita editando novamente.',
+          'Tem certeza que deseja excluir este contato de emergência?',
           style: AppTypography.bodyMedium.copyWith(
             color: MetamorfoseColors.greyMedium,
           ),
@@ -1556,13 +1215,13 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
-              backgroundColor: MetamorfoseColors.blueNormal,
+              backgroundColor: MetamorfoseColors.redNormal,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
             child: Text(
-              'LIMPAR CAMPOS',
+              'EXCLUIR',
               style: AppTypography.bodyMedium.copyWith(
                 color: MetamorfoseColors.whiteLight,
                 fontWeight: FontWeight.w600,
@@ -1579,50 +1238,38 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
       });
 
       try {
-        // Limpar todos os campos
         _nameController.clear();
         _phoneController.clear();
         _relationshipController.clear();
 
         final sosBloc = context.read<SosBloc>();
-
         final emptyContact = SosContact(
           id: widget.contact!.id,
           name: '',
           phoneNumber: '',
           message: '',
-          isActive: false, // Marcar como inativo
+          isActive: false,
           createdAt: widget.contact!.createdAt,
         );
 
-        // Atualizar o contato com campos vazios
         sosBloc.add(UpdateEmergencyContactEvent(emptyContact));
 
-        // Fechar modal e atualizar tela principal
         if (mounted) {
-          // Chamar callback para forçar atualização da UI na tela principal
           if (widget.onContactDeleted != null) {
             widget.onContactDeleted!();
           }
-
-          // Fechar o modal de edição
           Navigator.of(context).pop();
-
-          // Mostrar feedback de sucesso
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Contato limpo com sucesso!',
+                'Contato excluído com sucesso!',
                 style: AppTypography.bodyMedium.copyWith(
                   color: MetamorfoseColors.whiteLight,
                 ),
               ),
-              backgroundColor: MetamorfoseColors.blueNormal,
+              backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
               margin: EdgeInsets.all(24),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
             ),
           );
         }
@@ -1631,7 +1278,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Erro ao limpar contato: $e',
+                'Erro ao excluir contato: $e',
                 style: AppTypography.bodyMedium.copyWith(
                   color: MetamorfoseColors.whiteLight,
                 ),
@@ -1639,9 +1286,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
               backgroundColor: MetamorfoseColors.redNormal,
               behavior: SnackBarBehavior.floating,
               margin: EdgeInsets.all(24),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
             ),
           );
         }
@@ -1667,7 +1311,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
     ).value;
 
     if (widget.useCompactLayout) {
-      // Modal centralizado para compact
       return Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.all(32),
@@ -1679,20 +1322,11 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
           decoration: BoxDecoration(
             color: MetamorfoseColors.whiteLight,
             borderRadius: BorderRadius.circular(16.0),
-            boxShadow: [
-              BoxShadow(
-                color: MetamorfoseColors.shadowLight,
-                offset: const Offset(0, 8),
-                blurRadius: 24,
-                spreadRadius: 0,
-              ),
-            ],
           ),
           child: _buildModalContent(),
         ),
       );
     } else {
-      // Bottom sheet para normal
       return Container(
         width: double.infinity,
         constraints: BoxConstraints(
@@ -1721,7 +1355,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-
         Padding(
           padding: EdgeInsets.all(widget.useCompactLayout ? 32 : 24),
           child: Column(
@@ -1738,24 +1371,13 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                         color: MetamorfoseColors.greyDark,
                         fontWeight: FontWeight.w700,
                       ),
-                      textAlign: TextAlign.start,
                     ),
                   ),
                   if (widget.useCompactLayout)
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.close,
-                            color: MetamorfoseColors.greyMedium,
-                            size: 24,
-                          ),
-                        ),
-                      ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close,
+                          color: MetamorfoseColors.greyMedium),
                     ),
                 ],
               ),
@@ -1765,13 +1387,10 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                 style: AppTypography.bodyMedium.copyWith(
                   color: MetamorfoseColors.greyMedium,
                 ),
-                textAlign: TextAlign.start,
               ),
             ],
           ),
         ),
-
-        // Formulário
         Flexible(
           child: Form(
             key: _formKey,
@@ -1781,7 +1400,6 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                 horizontal: widget.useCompactLayout ? 32 : 24,
               ),
               children: [
-                // Campo Nome
                 InputField(
                   hintText: 'Nome completo',
                   controller: _nameController,
@@ -1792,10 +1410,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                     color: MetamorfoseColors.purpleLight,
                   ),
                 ),
-
                 SizedBox(height: 16),
-
-                // Campo Telefone
                 InputField(
                   hintText: 'Telefone',
                   controller: _phoneController,
@@ -1817,10 +1432,7 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                     }
                   },
                 ),
-
                 SizedBox(height: 16),
-
-                // Campo Relacionamento
                 InputField(
                   hintText: 'Relacionamento (ex.: mãe, amigo, parceiro)',
                   controller: _relationshipController,
@@ -1831,12 +1443,8 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
                     color: MetamorfoseColors.purpleLight,
                   ),
                 ),
-
                 SizedBox(height: widget.useCompactLayout ? 32 : 24),
-
-                // Botões de ação
                 _buildActionButtons(),
-
                 SizedBox(height: widget.useCompactLayout ? 32 : 24),
               ],
             ),
@@ -1849,311 +1457,70 @@ class _EmergencyContactModalState extends State<_EmergencyContactModal> {
   Widget _buildActionButtons() {
     return Column(
       children: [
-        // Botão principal
-        _MetamorfeseButtonHelper.createPrimaryButton(
-          text: widget.isEditing ? 'ATUALIZAR CONTATO' : 'SALVAR CONTATO',
-          onPressed: _isLoading ? null : _saveContact,
-          isLoading: _isLoading,
+        MetamorfeseButton(
+          onPressed: _isLoading ? () {} : () => _saveContact(),
+          child: _isLoading
+              ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      MetamorfoseColors.whiteLight,
+                    ),
+                  ),
+                )
+              : Text(
+                  widget.isEditing ? 'ATUALIZAR CONTATO' : 'SALVAR CONTATO',
+                  style: TextStyle(
+                    fontFamily: 'DinNext',
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
         ),
-
         if (widget.isEditing) ...[
           SizedBox(height: 16),
-
-          // Botão de exclusão
-          _MetamorfeseButtonHelper.createDeleteButton(
-            text: 'EXCLUIR CONTATO',
-            onPressed: _isLoading ? null : _deleteContact,
+          Container(
+            width: double.infinity,
+            height: 50,
+            decoration: BoxDecoration(
+              color: _isLoading
+                  ? MetamorfoseColors.redNormal.withOpacity(0.5)
+                  : MetamorfoseColors.redNormal,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: MetamorfoseColors.redNormal,
+                width: 1,
+              ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _isLoading ? null : () => _deleteContact(),
+                borderRadius: BorderRadius.circular(12),
+                child: Center(
+                  child: Text(
+                    'EXCLUIR CONTATO',
+                    style: TextStyle(
+                      color: MetamorfoseColors.whiteLight,
+                      fontSize: 15,
+                      fontFamily: 'DinNext',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
-
         SizedBox(height: 16),
-
-        // Botão cancelar
-        _MetamorfeseButtonHelper.createSecondaryButton(
+        MetamorfeseSecondaryButton(
           text: 'CANCELAR',
           onPressed: _isLoading ? () {} : () => Navigator.of(context).pop(),
         ),
       ],
-    );
-  }
-}
-
-// Dialog para sessão de respiração
-class _BreathingSessionDialog extends StatefulWidget {
-  final BreathingExercise exercise;
-
-  const _BreathingSessionDialog({required this.exercise});
-
-  @override
-  State<_BreathingSessionDialog> createState() =>
-      _BreathingSessionDialogState();
-}
-
-class _BreathingSessionDialogState extends State<_BreathingSessionDialog>
-    with TickerProviderStateMixin {
-  late AnimationController _breathingController;
-  late Animation<double> _breathingAnimation;
-  String _currentPhase = 'Inspire';
-  int _currentCycle = 1;
-  int _timeLeft = 0;
-  bool _isActive = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _breathingController = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    );
-
-    _breathingAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(
-      parent: _breathingController,
-      curve: Curves.easeInOut,
-    ));
-
-    _startBreathing();
-  }
-
-  void _startBreathing() {
-    setState(() {
-      _isActive = true;
-      _currentPhase = 'Inspire';
-      _timeLeft = widget.exercise.inhaleSeconds;
-    });
-
-    _breathingController.repeat(reverse: true);
-    _startTimer();
-  }
-
-  void _startTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      if (!mounted || !_isActive) {
-        timer.cancel();
-        return;
-      }
-
-      setState(() {
-        _timeLeft--;
-      });
-
-      if (_timeLeft <= 0) {
-        _nextPhase();
-      }
-    });
-  }
-
-  void _nextPhase() {
-    if (_currentPhase == 'Inspire') {
-      setState(() {
-        _currentPhase = 'Segure';
-        _timeLeft = widget.exercise.holdSeconds;
-      });
-    } else if (_currentPhase == 'Segure') {
-      setState(() {
-        _currentPhase = 'Expire';
-        _timeLeft = widget.exercise.exhaleSeconds;
-      });
-    } else {
-      if (_currentCycle < widget.exercise.cycles) {
-        setState(() {
-          _currentCycle++;
-          _currentPhase = 'Inspire';
-          _timeLeft = widget.exercise.inhaleSeconds;
-        });
-      } else {
-        _finishSession();
-        return;
-      }
-    }
-  }
-
-  void _finishSession() {
-    if (!mounted) return;
-
-    setState(() {
-      _isActive = false;
-    });
-
-    _breathingController.stop();
-
-    Future.delayed(Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _breathingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final horizontalPadding = ResponsiveValue<double>(
-      context,
-      defaultValue: 24.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 16.0),
-        Condition.largerThan(name: TABLET, value: 32.0),
-      ],
-    ).value;
-
-    final borderRadius = ResponsiveValue<double>(
-      context,
-      defaultValue: 12.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 10.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
-      ],
-    ).value;
-
-    final titleFontSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 20.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 18.0),
-        Condition.largerThan(name: TABLET, value: 22.0),
-      ],
-    ).value;
-
-    final spacing = ResponsiveValue<double>(
-      context,
-      defaultValue: 16.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 20.0),
-      ],
-    ).value;
-
-    final buttonSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 200.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 160.0),
-        Condition.largerThan(name: TABLET, value: 240.0),
-      ],
-    ).value;
-
-    final bodyFontSize = ResponsiveValue<double>(
-      context,
-      defaultValue: 14.0,
-      conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 12.0),
-        Condition.largerThan(name: TABLET, value: 16.0),
-      ],
-    ).value;
-
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.all(horizontalPadding * 1.3),
-        decoration: BoxDecoration(
-          color: MetamorfoseColors.whiteLight,
-          borderRadius: BorderRadius.circular(borderRadius * 1.5),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.exercise.name,
-              style: AppTypography.titleLarge.copyWith(
-                color: MetamorfoseColors.greyDark,
-                fontWeight: FontWeight.w700,
-                fontSize: titleFontSize,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: spacing * 2),
-            AnimatedBuilder(
-              animation: _breathingAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _breathingAnimation.value,
-                  child: Container(
-                    width: buttonSize * 0.6,
-                    height: buttonSize * 0.6,
-                    decoration: BoxDecoration(
-                      color: MetamorfoseColors.greenNormal.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.air,
-                      color: MetamorfoseColors.greenNormal,
-                      size: 20.0,
-                    ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: spacing * 2),
-            Text(
-              _currentPhase,
-              style: AppTypography.displayMedium.copyWith(
-                color: MetamorfoseColors.greenNormal,
-                fontWeight: FontWeight.w700,
-                fontSize: titleFontSize * 1.2,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: spacing),
-            Text(
-              '$_timeLeft',
-              style: AppTypography.displayLarge.copyWith(
-                color: MetamorfoseColors.greyDark,
-                fontWeight: FontWeight.w200,
-                fontSize: titleFontSize * 2.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: spacing),
-            Text(
-              'Ciclo $_currentCycle de ${widget.exercise.cycles}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: MetamorfoseColors.greyMedium,
-                fontSize: bodyFontSize,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: spacing * 2),
-            if (_isActive)
-              ElevatedButton(
-                onPressed: () {
-                  if (!mounted) return;
-
-                  setState(() {
-                    _isActive = false;
-                  });
-                  _breathingController.stop();
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: MetamorfoseColors.redNormal,
-                  foregroundColor: MetamorfoseColors.whiteLight,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding * 1.3,
-                      vertical: spacing),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                ),
-                child: Text(
-                  'Parar',
-                  style: AppTypography.titleMedium.copyWith(
-                    color: MetamorfoseColors.whiteLight,
-                    fontWeight: FontWeight.w600,
-                    fontSize: bodyFontSize,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-          ],
-        ),
-      ),
     );
   }
 }

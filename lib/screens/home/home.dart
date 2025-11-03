@@ -182,7 +182,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               size: iconSize,
             ),
           ),
-          SizedBox(width: ResponsiveValue<double>(
+          SizedBox(
+              width: ResponsiveValue<double>(
             context,
             defaultValue: 20.0,
             conditionalValues: [
@@ -200,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: MetamorfoseColors.blackLight,
                   ),
                 ),
-                SizedBox(height: ResponsiveValue<double>(
+                SizedBox(
+                    height: ResponsiveValue<double>(
                   context,
                   defaultValue: 4.0,
                   conditionalValues: [
@@ -366,7 +368,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         maxLines: 1,
                       ),
                     ),
-                    SizedBox(width: ResponsiveValue<double>(
+                    SizedBox(
+                        width: ResponsiveValue<double>(
                       context,
                       defaultValue: 16.0,
                       conditionalValues: [
@@ -392,13 +395,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             Text(
                               state.weather!.location,
                               style: AppTypography.bodyLarge.copyWith(
-                                color: MetamorfoseColors.whiteLight.withOpacity(0.9),
+                                color: MetamorfoseColors.whiteLight
+                                    .withOpacity(0.9),
                                 fontWeight: FontWeight.w500,
                               ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
-                            SizedBox(height: ResponsiveValue<double>(
+                            SizedBox(
+                                height: ResponsiveValue<double>(
                               context,
                               defaultValue: 4.0,
                               conditionalValues: [
@@ -409,19 +414,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             Row(
                               children: [
                                 Flexible(
-                                  child: _buildTempIndicator('H', state.weather!.tempMax,
+                                  child: _buildTempIndicator(
+                                      'H',
+                                      state.weather!.tempMax,
                                       Icons.keyboard_arrow_up),
                                 ),
-                                SizedBox(width: ResponsiveValue<double>(
+                                SizedBox(
+                                    width: ResponsiveValue<double>(
                                   context,
                                   defaultValue: 16.0,
                                   conditionalValues: [
-                                    Condition.smallerThan(name: MOBILE, value: 12.0),
-                                    Condition.largerThan(name: TABLET, value: 20.0),
+                                    Condition.smallerThan(
+                                        name: MOBILE, value: 12.0),
+                                    Condition.largerThan(
+                                        name: TABLET, value: 20.0),
                                   ],
                                 ).value),
                                 Flexible(
-                                  child: _buildTempIndicator('L', state.weather!.tempMin,
+                                  child: _buildTempIndicator(
+                                      'L',
+                                      state.weather!.tempMin,
                                       Icons.keyboard_arrow_down),
                                 ),
                               ],
@@ -465,7 +477,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ],
           ).value,
         ),
-        SizedBox(width: ResponsiveValue<double>(
+        SizedBox(
+            width: ResponsiveValue<double>(
           context,
           defaultValue: 4.0,
           conditionalValues: [
@@ -611,7 +624,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: MetamorfoseColors.purpleNormal.withOpacity(0.1),
+                            color:
+                                MetamorfoseColors.purpleNormal.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -630,8 +644,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               context,
                               defaultValue: AppTypography.titleLarge.fontSize,
                               conditionalValues: [
-                                Condition.smallerThan(name: MOBILE, value: 16.0),
-                                Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                                Condition.smallerThan(
+                                    name: MOBILE, value: 16.0),
+                                Condition.largerThan(
+                                    name: TABLET,
+                                    value:
+                                        AppTypography.titleLarge.fontSize! + 2),
                               ],
                             ).value,
                           ),
@@ -643,7 +661,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: MetamorfoseColors.purpleNormal.withOpacity(0.1),
+                            color:
+                                MetamorfoseColors.purpleNormal.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -661,7 +680,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               context,
                               defaultValue: AppTypography.titleLarge.fontSize,
                               conditionalValues: [
-                                Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                                Condition.largerThan(
+                                    name: TABLET,
+                                    value:
+                                        AppTypography.titleLarge.fontSize! + 2),
                               ],
                             ).value,
                           ),
@@ -679,8 +701,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         strokeWidth: 2,
                       ),
                     );
-                  } else if (state.quoteLoadingState ==
-                          LoadingState.success &&
+                  } else if (state.quoteLoadingState == LoadingState.success &&
                       state.quote != null) {
                     return Text(
                       '"${state.quote!.text}"',
@@ -693,7 +714,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           defaultValue: AppTypography.bodyMedium.fontSize,
                           conditionalValues: [
                             Condition.smallerThan(name: MOBILE, value: 12.0),
-                            Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                            Condition.largerThan(
+                                name: TABLET,
+                                value: AppTypography.bodyMedium.fontSize! + 1),
                           ],
                         ).value,
                       ),
@@ -739,7 +762,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       onTap: () async {
         final plantService = PlantConfigService();
         final hasPlant = await plantService.hasExistingPlant();
-        
+
         if (mounted) {
           if (hasPlant) {
             context.go('/plant-care');
@@ -839,7 +862,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ).value,
                   ),
                 ),
-                SizedBox(height: ResponsiveValue<double>(
+                SizedBox(
+                    height: ResponsiveValue<double>(
                   context,
                   defaultValue: 16.0,
                   conditionalValues: [
@@ -857,12 +881,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       defaultValue: AppTypography.titleLarge.fontSize,
                       conditionalValues: [
                         Condition.smallerThan(name: MOBILE, value: 16.0),
-                        Condition.largerThan(name: TABLET, value: AppTypography.titleLarge.fontSize! + 2),
+                        Condition.largerThan(
+                            name: TABLET,
+                            value: AppTypography.titleLarge.fontSize! + 2),
                       ],
                     ).value,
                   ),
                 ),
-                SizedBox(height: ResponsiveValue<double>(
+                SizedBox(
+                    height: ResponsiveValue<double>(
                   context,
                   defaultValue: 4.0,
                   conditionalValues: [
@@ -879,12 +906,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       defaultValue: AppTypography.bodyMedium.fontSize,
                       conditionalValues: [
                         Condition.smallerThan(name: MOBILE, value: 12.0),
-                        Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                        Condition.largerThan(
+                            name: TABLET,
+                            value: AppTypography.bodyMedium.fontSize! + 1),
                       ],
                     ).value,
                   ),
                 ),
-                SizedBox(height: ResponsiveValue<double>(
+                SizedBox(
+                    height: ResponsiveValue<double>(
                   context,
                   defaultValue: 12.0,
                   conditionalValues: [
@@ -904,12 +934,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           defaultValue: AppTypography.bodyMedium.fontSize,
                           conditionalValues: [
                             Condition.smallerThan(name: MOBILE, value: 12.0),
-                            Condition.largerThan(name: TABLET, value: AppTypography.bodyMedium.fontSize! + 1),
+                            Condition.largerThan(
+                                name: TABLET,
+                                value: AppTypography.bodyMedium.fontSize! + 1),
                           ],
                         ).value,
                       ),
                     ),
-                    SizedBox(width: ResponsiveValue<double>(
+                    SizedBox(
+                        width: ResponsiveValue<double>(
                       context,
                       defaultValue: 4.0,
                       conditionalValues: [
@@ -939,7 +972,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-
   IconData _getIconForFeature(String title) {
     switch (title.toLowerCase()) {
       case 'daily check-in':
@@ -966,7 +998,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         return Icons.circle;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -1009,8 +1040,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         title: 'Psicólogos',
         image: 'assets/images/features/psychologists.png',
         icon: _getIconForFeature('Psicólogos'),
-        isComingSoon: true,
-        onTap: null,
+        isComingSoon: false,
+        onTap: () => context.go('/psychologists?from=home'),
       ),
       CarouselItem(
         title: 'Hub Educacional',
@@ -1091,8 +1122,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 animation: _heightAnimation,
                 builder: (context, child) {
                   return Positioned(
-                    top: screenSize.height *
-                        (1 - _heightAnimation.value),
+                    top: screenSize.height * (1 - _heightAnimation.value),
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -1158,13 +1188,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     children: [
                                       _buildHeaderStats(),
                                       const SizedBox(height: 28),
-
                                       _buildWeatherCard(state),
                                       const SizedBox(height: 24),
-
                                       _buildContentCards(state),
                                       const SizedBox(height: 40),
-
                                       Carousel(
                                         title: 'Pessoal',
                                         items: personalFeatures,
@@ -1172,7 +1199,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         itemExtent: 164,
                                       ),
                                       const SizedBox(height: 32),
-
                                       Carousel(
                                         title: 'Suporte & Cuidado',
                                         items: supportFeatures,
@@ -1180,7 +1206,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         itemExtent: 164,
                                       ),
                                       const SizedBox(height: 32),
-
                                       Carousel(
                                         title: 'Progresso & Conquistas',
                                         items: progressFeatures,
@@ -1188,7 +1213,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         itemExtent: 164,
                                       ),
                                       const SizedBox(height: 32),
-
                                       const SizedBox(height: 120),
                                     ],
                                   ),

@@ -48,6 +48,9 @@ import 'package:metamorfose_flutter/blocs/sos_bloc.dart';
 import 'package:metamorfose_flutter/blocs/calendar_bloc.dart';
 import 'package:metamorfose_flutter/services/gemini_service.dart'
     show PersonalityType;
+import 'package:metamorfose_flutter/blocs/psychologist_bloc.dart';
+import 'package:metamorfose_flutter/screens/psychologist/psychologists_screen.dart';
+import 'package:metamorfose_flutter/screens/psychologist/psychologist_profile_screen.dart';
 
 // Telas de Onboarding
 import 'package:metamorfose_flutter/screens/onboarding/onboarding_butterfly_screen.dart';
@@ -205,6 +208,29 @@ class AppRouter {
           create: (_) => SosBloc(),
           child: const SosScreen(),
         ),
+      ),
+      GoRoute(
+        path: Routes.psychologists,
+        builder: (context, state) {
+          final from = state.uri.queryParameters['from'];
+          return BlocProvider(
+            create: (_) => PsychologistBloc(),
+            child: PsychologistsScreen(from: from),
+          );
+        },
+      ),
+      GoRoute(
+        path: '${Routes.psychologists}/:id',
+        builder: (context, state) {
+          // Get the id from path segments
+          final segments = state.uri.pathSegments;
+          final id = segments.isNotEmpty ? segments.last : '';
+
+          // Get the from parameter
+          final from = state.uri.queryParameters['from'];
+
+          return PsychologistProfileScreen(id: id, from: from);
+        },
       ),
       GoRoute(
         path: Routes.calendar,

@@ -43,5 +43,6 @@ class Routes {
   static const updateProfile = '/update-profile';
   static const changePassword = '/change-password';
   static const sos = '/sos';
+  static const psychologists = '/psychologists';
   static const calendar = '/calendar';
 }
