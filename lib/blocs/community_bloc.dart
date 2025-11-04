@@ -16,6 +16,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:metamorfose_flutter/models/community_post.dart';
+import 'package:metamorfose_flutter/models/community_friend.dart';
 import 'package:metamorfose_flutter/state/community/community_state.dart';
 import 'package:metamorfose_flutter/services/community_service.dart';
 
@@ -101,12 +103,12 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         postsError: null,
       ));
 
-      // Simular carregamento (não há posts ainda)
-      await Future.delayed(const Duration(milliseconds: 1000));
+      // Carregar posts simulados
+      final posts = await _service.loadPosts();
 
       emit(state.copyWith(
         postsLoadingState: LoadingState.success,
-        posts: [], // Lista vazia para simular "sem posts"
+        posts: posts,
         postsError: null,
       ));
     } catch (e) {
@@ -128,12 +130,12 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         friendsError: null,
       ));
 
-      // Simular carregamento (não há amigos ainda)
-      await Future.delayed(const Duration(milliseconds: 1000));
+      // Carregar amigos simulados
+      final friends = await _service.loadFriends();
 
       emit(state.copyWith(
         friendsLoadingState: LoadingState.success,
-        friends: [], // Lista vazia para simular "sem amigos"
+        friends: friends,
         friendsError: null,
       ));
     } catch (e) {

@@ -1,3 +1,6 @@
+import 'package:metamorfose_flutter/models/community_post.dart';
+import 'package:metamorfose_flutter/models/community_friend.dart';
+
 /**
  * File: community_state.dart
  * Description: Estado da tela de comunidade
@@ -22,8 +25,8 @@ class CommunityState {
   final int activeTabIndex; // 0 = Feed, 1 = Amigos
   final LoadingState postsLoadingState;
   final LoadingState friendsLoadingState;
-  final List<dynamic> posts; // Lista de posts (vazia por enquanto)
-  final List<dynamic> friends; // Lista de amigos (vazia por enquanto)
+  final List<CommunityPost> posts;
+  final List<CommunityFriend> friends;
   final String? postsError;
   final String? friendsError;
   final String? errorMessage;
@@ -44,8 +47,8 @@ class CommunityState {
     int? activeTabIndex,
     LoadingState? postsLoadingState,
     LoadingState? friendsLoadingState,
-    List<dynamic>? posts,
-    List<dynamic>? friends,
+    List<CommunityPost>? posts,
+    List<CommunityFriend>? friends,
     String? postsError,
     String? friendsError,
     String? errorMessage,

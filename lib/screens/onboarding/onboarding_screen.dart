@@ -25,7 +25,8 @@ class OnboardingScreen extends StatelessWidget {
   // Proporções originais da borboleta
   static const double originalButterflyWidth = 267;
   static const double originalButterflyHeight = 196.06;
-  static const double butterflyAspectRatio = originalButterflyWidth / originalButterflyHeight;
+  static const double butterflyAspectRatio =
+      originalButterflyWidth / originalButterflyHeight;
 
   const OnboardingScreen({super.key});
 
@@ -89,10 +90,10 @@ class OnboardingScreen extends StatelessWidget {
     // Valores responsivos para tamanhos de fonte
     final titleFontSize = ResponsiveValue<double>(
       context,
-      defaultValue: 34.0,
+      defaultValue: 32.0,
       conditionalValues: const [
-        Condition.smallerThan(name: MOBILE, value: 29.0),
-        Condition.largerThan(name: TABLET, value: 39.0),
+        Condition.smallerThan(name: MOBILE, value: 27.0),
+        Condition.largerThan(name: TABLET, value: 37.0),
       ],
     ).value;
 
@@ -132,7 +133,6 @@ class OnboardingScreen extends StatelessWidget {
                     RichText(
                       textAlign: TextAlign.center,
                       maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                       text: TextSpan(
                         style: TextStyle(
                           fontSize: titleFontSize,
@@ -252,4 +252,4 @@ class OnboardingScreen extends StatelessWidget {
       );
     }
   }
-} 
+}

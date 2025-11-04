@@ -1,10 +1,10 @@
 name: metamorfose_flutter
 description: Aplicativo Metamorfose convertido para Flutter.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -84,7 +84,9 @@ flutter:
     - assets/images/chat/
     - assets/images/home/
     - assets/images/selectionactivity/
-  
+    - assets/images/massdata/community/
+    - assets/images/massdata/calendar/
+
   fonts:
     - family: DinNext
       fonts:

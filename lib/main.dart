@@ -31,15 +31,14 @@ import 'dart:ui';
 // import 'package:metamorfose_flutter/blocs/voice_chat_bloc.dart';
 // import 'package:metamorfose_flutter/screens/chat/voice_chat_screen.dart';
 
-
 /// Ponto de entrada do aplicativo Flutter
 void main() async {
   // Inicializa o binding do Flutter
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializa o Firebase
   await FirebaseConfig.initialize();
-  
+
   // Define a orientação do aplicativo como apenas retrato
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -55,7 +54,7 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  
+
   // Inicializa o Site24x7 APM (Temporariamente comentado para evitar crash)
   // FlutterError.onError = ApmMobileapmFlutterPlugin.instance.captureFlutterError;
   // PlatformDispatcher.instance.onError = (error, stack) {
@@ -63,7 +62,7 @@ void main() async {
   //   return true;
   // };
   // ApmMobileapmFlutterPlugin.instance.startMonitoring("US_300058d81ed3d79b702f7391fe0979d2", 20);
-  
+
   // Inicia o aplicativo com GoRouter
   runApp(const MetamorfoseApp());
 }
