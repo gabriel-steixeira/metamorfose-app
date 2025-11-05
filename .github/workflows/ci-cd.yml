@@ -1,0 +1,241 @@
+#
+# File: ci-cd.yml
+# Description: Define o pipeline de CI/CD completo para o backend Metamorfose usando GitHub Actions.
+#
+# Responsabilidades:
+# - Disparar o pipeline em push/PR para a main ou manualmente (workflow_dispatch).
+# - Replicar os estágios do Jenkinsfile: Build, Test (Unit/Integration), Analysis, Security Scan.
+# - Construir a imagem Docker e publicá-la no registry.
+# - Automatizar o deploy da aplicação.
+# - Executar health checks pós-deploy e testes de fumaça.
+#
+# Author: Ester Silva
+# Created on: 29-11-2025
+# Last modified: 04-11-2025
+# Version: 1.2.0
+# Squad: Metamorfose
+#
+
+name: CI/CD Pipeline (GitHub Actions)
+
+# 1. Triggers: Dispara em push/PR para a 'main' ou manualmente
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+  # Permite disparar manualmente, assim como no Jenkins
+  # Também replica os "parameters" do Jenkinsfile
+  workflow_dispatch:
+    inputs:
+      ENVIRONMENT:
+        description: 'Ambiente de deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      RUN_TESTS:
+        description: 'Executar testes automatizados?'
+        required: true
+        type: boolean
+        default: true
+      DEPLOY_AFTER_BUILD:
+        description: 'Deploy automático após build?'
+        required: true
+        type: boolean
+        default: true
+
+# Variáveis de ambiente globais (do Jenkinsfile)
+env:
+  DOCKER_IMAGE: metamorfose/backend
+  ORACLE_HOST: oracle-db
+  MAVEN_OPTS: -Xmx1024m
+
+jobs:
+  #########################################
+  # JOB 1: CONSTRUIR, TESTAR E ANALISAR
+  #########################################
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # Define as variáveis de input para usar nos steps
+    # (Pega os valores manuais se for 'workflow_dispatch', ou usa defaults se for push/PR)
+    env:
+      RUN_TESTS_BOOL: ${{ (github.event_name == 'workflow_dispatch' && inputs.RUN_TESTS == true) || github.event_name != 'workflow_dispatch' }}
+      ENVIRONMENT_NAME: ${{ (github.event_name == 'workflow_dispatch' && inputs.ENVIRONMENT) || 'dev' }}
+
+    steps:
+      # Stage: Checkout 
+      - name: 'STAGE 1: Checkout do Código'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessário para SonarQube
+
+      - name: 'Setup: Configurar JDK 17'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 'Setup: Cache do Maven'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # Stage: Build Backend 
+      - name: 'STAGE 2: Build do Backend (sem testes)'
+        working-directory: ./backend 
+        run: mvn -B package -DskipTests
+
+      # Stage: Unit Tests 
+      - name: 'STAGE 3: Testes Unitários'
+        if: env.RUN_TESTS_BOOL == 'true'
+        working-directory: ./backend
+        run: mvn -B test
+
+      # Stage: Integration Tests 
+      - name: 'STAGE 4: Testes de Integração (Iniciando DB)'
+        if: env.RUN_TESTS_BOOL == 'true'
+        run: |
+          docker-compose up -d oracle-db
+          echo "Aguardando 30s o Oracle DB iniciar..."
+          sleep 30
+
+      # Stage: Integration Tests (Run) 
+      - name: 'STAGE 4: Testes de Integração (Executando)'
+        if: env.RUN_TESTS_BOOL == 'true'
+        working-directory: ./backend
+        run: mvn -B verify -P integration-tests
+      
+      # Stage: Integration Tests (Teardown) 
+      - name: 'STAGE 4: Testes de Integração (Parando DB)'
+        if: always() && env.RUN_TESTS_BOOL == 'true' # always() roda mesmo se o step anterior falhar
+        run: docker-compose down
+
+      # Stage: Code Analysis & Quality Gate 
+      - name: 'STAGE 5/6: Análise SonarQube e Quality Gate'
+        if: github.event_name != 'pull_request' # Análise de PR requer setup diferente
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # Ex: https://sonar.seuservidor.com
+        with:
+          projectBaseDir: ./backend
+          args: >
+            -Dsonar.projectKey=metamorfose-backend
+
+      # Stage: Build Docker Image [cite: 23, 24]
+      - name: 'STAGE 7: Build Docker Image'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+            ${{ env.DOCKER_IMAGE }}:latest
+          push: false # Apenas constrói e carrega no runner
+          load: true
+
+      # Stage: Security Scan (Trivy) [cite: 26, 27]
+      - name: 'STAGE 8: Security Scan (Trivy)'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE }}:${{ github.run_number }}'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1' # Falha o pipeline se encontrar vulnerabilidades
+
+      # Stage: Security Scan (OWASP) [cite: 28]
+      - name: 'STAGE 8: Security Scan (OWASP Dependency Check)'
+        working-directory: ./backend
+        run: mvn -B org.owasp:dependency-check-maven:check
+
+  #########################################
+  # JOB 2: DEPLOY E VERIFICAÇÃO
+  #########################################
+  deploy:
+    # Só roda depois que o job 'build-and-test' passar
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    # Define as variáveis de input para usar nos steps
+    env:
+      ENVIRONMENT_NAME: ${{ (github.event_name == 'workflow_dispatch' && inputs.ENVIRONMENT) || 'dev' }}
+
+    # Condições de deploy:
+    # [cite_start]1. Ser na branch 'main' [cite: 32]
+    # [cite_start]2. O deploy estar habilitado (seja por push/PR ou se 'DEPLOY_AFTER_BUILD' for true no manual) [cite: 37]
+    if: github.ref == 'refs/heads/main' && ((github.event_name == 'workflow_dispatch' && inputs.DEPLOY_AFTER_BUILD == true) || (github.event_name != 'workflow_dispatch'))
+
+    steps:
+      # [cite_start]Stage: Push to Registry [cite: 33, 34, 35]
+      - name: 'STAGE 9: Login no Docker Hub'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      
+      - name: 'STAGE 9: Push para Registry'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+            ${{ env.DOCKER_IMAGE }}:latest
+          push: true # Agora sim, faz o push
+
+      # [cite_start]Stage: Deploy [cite: 38, 39, 40, 41]
+      - name: 'STAGE 10: Deploy para ${{ env.ENVIRONMENT_NAME }}'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.ENVIRONMENT_NAME }}.metamorfose.com
+          username: deploy
+          key: ${{ secrets.DEPLOY_SERVER_KEY }} # Chave SSH privada para acessar o servidor
+          script: |
+            cd /opt/metamorfose
+            docker-compose pull
+            docker-compose up -d --force-recreate backend
+            docker-compose ps
+
+      # [cite_start]Stage: Health Check [cite: 43-52]
+      - name: 'STAGE 11: Health Check'
+        run: |
+          echo "Aguardando 30s para o deploy..."
+          sleep 30
+          HEALTH_URL="http://${{ env.ENVIRONMENT_NAME }}.metamorfose.com/actuator/health"
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          HEALTHY=false
+          
+          while [[ $RETRY_COUNT -lt $MAX_RETRIES && $HEALTHY == false ]]; do
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_URL)
+            if [[ $RESPONSE == "200" ]]; then
+              HEALTHY=true
+              echo "✓ Aplicação saudável!"
+            else
+              echo "Tentativa $((RETRY_COUNT + 1))/$MAX_RETRIES: Status $RESPONSE"
+              sleep 10
+            fi
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          if [[ $HEALTHY == false ]]; then
+            echo "Health check falhou após $MAX_RETRIES tentativas"
+            exit 1
+          fi
+
+      # [cite_start]Stage: Smoke Tests [cite: 54, 55]
+      - name: 'STAGE 12: Smoke Tests'
+        run: |
+          echo "Executando smoke tests..."
+          curl -f http://${{ env.ENVIRONMENT_NAME }}.metamorfose.com/api/v1/health
+          curl -f http://${{ env.ENVIRONMENT_NAME }}.metamorfose.com/api/v1/ai/health
+          echo "✓ Smoke tests passaram!"

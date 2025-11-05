@@ -1,0 +1,361 @@
+/**
+* File: Jenkinsfile
+* [cite_start]Description: Define o pipeline declarativo de CI/CD completo para o backend Metamorfose. [cite: 1]
+*
+* Responsabilidades:
+* - Definir o pipeline de integração e entrega contínua (CI/CD).
+* - [cite_start]Orquestrar os estágios de Build [cite: 5][cite_start], Testes (Unitários [cite: 8] [cite_start]e Integração [cite: 13][cite_start]), Análise de Código [cite: 17] [cite_start]e Scan de Segurança[cite: 25].
+* - [cite_start]Construir a imagem Docker do backend [cite: 21] [cite_start]e publicá-la no registry[cite: 31].
+* - [cite_start]Automatizar o deploy da aplicação em diferentes ambientes. [cite: 36]
+* - [cite_start]Executar health checks pós-deploy [cite: 42] [cite_start]e testes de fumaça. [cite: 53]
+* - [cite_start]Gerar relatórios de testes (JUnit, JaCoCo) [cite: 10, 11] [cite_start]e enviar notificações. [cite: 59]
+*
+* Author: Ester Silva
+* Created on: 29-11-2025
+* Last modified: 03-11-2025
+* Version: 1.2.0
+* Squad: Metamorfose
+*/
+
+pipeline {
+    agent any
+    
+    environment {
+        // Variáveis de ambiente
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_IMAGE = 'metamorfose/backend'
+        ORACLE_HOST = 'oracle-db'
+        ORACLE_PORT = '1521'
+        ORACLE_SID = 'XEPDB1'
+        MAVEN_OPTS = '-Xmx1024m'
+    }
+    
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'prod'], 
+               description: 'Ambiente de deploy')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, 
+                    description: 'Executar testes automatizados?')
+        booleanParam(name: 'DEPLOY_AFTER_BUILD', defaultValue: true, 
+                    description: 'Deploy automático após build?')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 1: Checkout do Código'
+                    echo '========================================='
+                }
+                checkout scm
+                sh 'git log -1 --pretty=format:"%h - %an: %s"'
+            }
+        }
+        
+        stage('Build Backend') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 2: Build do Backend'
+                    echo '========================================='
+                }
+                dir('backend') {
+                    sh 'mvn clean compile -B'
+                    sh 'mvn package -DskipTests -B'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 3: Testes Unitários'
+                    echo '========================================='
+                }
+                dir('backend') {
+                    sh 'mvn test -B'
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                    jacoco(
+                        execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java'
+                    )
+                }
+            }
+        }
+        
+        stage('Integration Tests') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 4: Testes de Integração'
+                    echo '========================================='
+                }
+                // Iniciar container Oracle para testes
+                sh '''
+                    docker-compose up -d oracle-db
+                    sleep 30
+                '''
+                
+                dir('backend') {
+                    sh 'mvn verify -P integration-tests -B'
+                }
+            }
+            post {
+                always {
+                    sh 'docker-compose down'
+                }
+            }
+        }
+        
+        stage('Code Analysis') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 5: Análise de Código'
+                    echo '========================================='
+                }
+                dir('backend') {
+                    // SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=metamorfose-backend'
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 6: Quality Gate'
+                    echo '========================================='
+                }
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 7: Build Docker Image'
+                    echo '========================================='
+                    
+                    def imageTag = "${env.BUILD_NUMBER}"
+                    def latestTag = "latest"
+                    
+                    dir('backend') {
+                        docker.build("${DOCKER_IMAGE}:${imageTag}")
+                        docker.build("${DOCKER_IMAGE}:${latestTag}")
+                    }
+                }
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 8: Security Scan'
+                    echo '========================================='
+                }
+                // Trivy vulnerability scan
+                sh """
+                    trivy image --severity HIGH,CRITICAL \
+                        --format json --output trivy-report.json \
+                        ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                """
+                
+                // OWASP Dependency Check
+                dir('backend') {
+                    sh 'mvn org.owasp:dependency-check-maven:check'
+                }
+            }
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'backend/target',
+                        reportFiles: 'dependency-check-report.html',
+                        reportName: 'OWASP Dependency Check Report'
+                    ])
+                }
+            }
+        }
+        
+        stage('Push to Registry') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 9: Push para Registry'
+                    echo '========================================='
+                }
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh """
+                        echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                        docker push ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                        docker push ${DOCKER_IMAGE}:latest
+                    """
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                expression { params.DEPLOY_AFTER_BUILD == true }
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo "STAGE 10: Deploy para ${params.ENVIRONMENT}"
+                    echo '========================================='
+                    
+                    def deployScript = """
+                        cd /opt/metamorfose
+                        docker-compose pull
+                        docker-compose up -d --force-recreate backend
+                        docker-compose ps
+                    """
+                    
+                    // Deploy via SSH
+                    sshagent(['deploy-server-key']) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=no \
+                                deploy@${params.ENVIRONMENT}.metamorfose.com \
+                                '${deployScript}'
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Health Check') {
+            when {
+                expression { params.DEPLOY_AFTER_BUILD == true }
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 11: Health Check'
+                    echo '========================================='
+                    
+                    sleep(time: 30, unit: 'SECONDS')
+                    
+                    def healthUrl = "http://${params.ENVIRONMENT}.metamorfose.com/actuator/health"
+                    def maxRetries = 5
+                    def retryCount = 0
+                    def healthy = false
+                    
+                    while (retryCount < maxRetries && !healthy) {
+                        try {
+                            def response = sh(
+                                script: "curl -s -o /dev/null -w '%{http_code}' ${healthUrl}",
+                                returnStdout: true
+                            ).trim()
+                            
+                            if (response == '200') {
+                                healthy = true
+                                echo "✓ Aplicação saudável!"
+                            } else {
+                                echo "Tentativa ${retryCount + 1}/${maxRetries}: Status ${response}"
+                                sleep(10)
+                            }
+                        } catch (Exception e) {
+                            echo "Erro no health check: ${e.message}"
+                        }
+                        retryCount++
+                    }
+                    
+                    if (!healthy) {
+                        error("Health check falhou após ${maxRetries} tentativas")
+                    }
+                }
+            }
+        }
+        
+        stage('Smoke Tests') {
+            when {
+                expression { params.DEPLOY_AFTER_BUILD == true }
+            }
+            steps {
+                script {
+                    echo '========================================='
+                    echo 'STAGE 12: Smoke Tests'
+                    echo '========================================='
+                }
+                // Executar testes de fumaça básicos
+                sh """
+                    curl -f http://${params.ENVIRONMENT}.metamorfose.com/api/v1/health
+                    curl -f http://${params.ENVIRONMENT}.metamorfose.com/api/v1/ai/health
+                """
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                echo '========================================='
+                echo 'Pipeline Finalizado'
+                echo '========================================='
+            }
+            
+            // Limpar workspace
+            cleanWs()
+            
+            // Gerar relatório
+            script {
+                def status = currentBuild.result ?: 'SUCCESS'
+                def color = status == 'SUCCESS' ? 'good' : 'danger'
+                def message = """
+                    *Pipeline: ${env.JOB_NAME}*
+                    Build: #${env.BUILD_NUMBER}
+                    Status: ${status}
+                    Ambiente: ${params.ENVIRONMENT}
+                    Duração: ${currentBuild.durationString}
+                    <${env.BUILD_URL}|Ver detalhes>
+                """
+                
+                // Enviar notificação (Slack, Email, etc)
+                // slackSend(color: color, message: message)
+            }
+        }
+        
+        success {
+            echo '✓ Pipeline executado com sucesso!'
+        }
+        
+        failure {
+            echo '✗ Pipeline falhou!'
+            // Reverter deploy se necessário
+        }
+        
+        unstable {
+            echo '⚠ Pipeline instável!'
+        }
+    }
+}
