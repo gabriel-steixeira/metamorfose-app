@@ -1,0 +1,30 @@
+/**
+ * File: index.dart
+ * Description: Arquivo de índice para exportação de BLoCs.
+ *
+ * Responsabilidades:
+ * - Centralizar exportação de todos os BLoCs
+ * - Facilitar importação de BLoCs no projeto
+ * - Organizar estrutura de BLoCs
+ *
+ * Author: Gabriel Teixeira e Vitoria Lana
+ * Created on: 29-05-2025
+ * Last modified: 31-08-2025
+ * 
+ * Changes:
+ * - Adicionado CalendarBloc (Evelin Cordeiro)
+ * 
+ * Version: 1.0.0
+ * Squad: Metamorfose
+ */
+
+export 'auth_bloc.dart';
+export 'calendar_bloc.dart' hide ClearErrorEvent;
+export 'community_bloc.dart' hide ClearErrorEvent;
+export 'home_bloc.dart' hide ClearErrorEvent;
+export 'map_bloc.dart';
+export 'plant_care_bloc.dart' hide ClearErrorEvent;
+export 'plant_config_bloc.dart' hide ClearErrorEvent;
+export 'voice_chat_bloc.dart';
+export 'text_chat_bloc.dart';
+export 'sos_bloc.dart';

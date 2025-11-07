@@ -1,0 +1,6 @@
+<project>
+    <modelVersion>1.0.0</modelVersion>
+    <groupId>com.zoho.site24x7</groupId>
+    <artifactId>mobileapm</artifactId>
+    <version>2.1.1</version>
+</project>

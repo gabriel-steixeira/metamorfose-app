@@ -1,0 +1,125 @@
+name: metamorfose_flutter
+description: Aplicativo Metamorfose convertido para Flutter.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  firebase_messaging: ^15.1.1
+  # Authentication
+  google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^6.0.4
+  # State Management
+  flutter_bloc: ^8.1.4
+  # Navigation
+  go_router: ^13.2.1
+  # UI Components
+  flutter_svg: ^2.1.0
+  google_fonts: ^6.2.1
+  table_calendar: ^3.1.2
+  flutter_local_notifications: ^17.0.0
+  responsive_framework: ^1.5.1
+  # Maps & Location
+  google_maps_flutter: ^2.5.0
+  google_maps_flutter_web: ^0.5.4+2
+  geolocator: ^10.1.0
+  # Networking
+  dio: ^5.4.1
+  http: ^1.1.0
+  # Code Generation
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  # UI
+  cupertino_icons: ^1.0.2
+  site24x7_flutter_plugin:
+    path: local_plugins/site24x7_flutter_plugin/site24x7_flutter_plugin-1.0.0
+  flutter_tts: ^3.8.5
+  speech_to_text: ^7.0.0
+  google_generative_ai: ^0.3.0
+  shared_preferences: ^2.2.2
+  firebase_storage: ^12.3.3
+  screenshot: ^3.0.0
+  url_launcher: ^6.2.5
+  image_picker: ^1.0.7
+  intl: ^0.20.2
+  path_provider: ^2.1.2
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  # Testing
+  bloc_test: ^9.1.5
+  mockito: ^5.4.4
+  integration_test:
+    sdk: flutter
+  # Code Generation
+  build_runner: ^2.4.8
+  freezed: ^2.4.7
+  json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/onboarding/
+    - assets/images/splashscreen/
+    - assets/images/plantsetup/
+    - assets/images/auth/
+    - assets/images/
+    - assets/animations/
+    - assets/images/chat/
+    - assets/images/home/
+    - assets/images/selectionactivity/
+    - assets/images/massdata/community/
+    - assets/images/massdata/calendar/
+
+  fonts:
+    - family: DinNext
+      fonts:
+        - asset: assets/fonts/din_next_regular.otf
+        - asset: assets/fonts/din_next_bold.otf
+          weight: 700
+
+flutter_launcher_icons:
+  android: "adaptive"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#B18EF2"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    background_color: "#B18EF2"
+    theme_color: "#B18EF2"
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+  color: "#B18EF2"
+  android_12:
+    color: "#B18EF2"
+  fullscreen: true
